@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-defineProps({
-  enterAction: {
-    type: Object,
-    required: true
-  }
-})
+import type { PluginEnterAction } from '../types/utools'
+
+defineProps<{
+  enterAction: PluginEnterAction
+}>()
 </script>
 
 <template>

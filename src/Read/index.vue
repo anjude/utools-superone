@@ -1,54 +1,67 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch } from 'vue'
+import type { PluginEnterAction } from '../types/utools'
 
-const props = defineProps({
-  enterAction: {
-    type: Object,
-    required: true
+interface FilesPayloadItem {
+  path: string
+}
+
+const props = defineProps<{
+  enterAction: PluginEnterAction
+}>()
+
+const filePath = ref<string>('')
+const fileContent = ref<string>('')
+const error = ref<string>('')
+
+const readFileSafely = (targetPath: string) => {
+  try {
+    const content = window.services.readFile(targetPath)
+    fileContent.value = content
+    error.value = ''
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : String(err)
+    fileContent.value = ''
   }
-})
-
-
-const filePath = ref('')
-const fileContent = ref('')
-const error = ref('')
+}
 
 const handleOpenDialog = () => {
   // 通过 uTools 的 api 打开文件选择窗口
   const files = window.utools.showOpenDialog({
     title: '选择文件',
-    properties: ['openFile']
+    properties: ['openFile'],
   })
-  if (!files) return
-  const _filePath = files[0]
-  filePath.value = _filePath
-  try {
-    const content = window.services.readFile(_filePath)
-    fileContent.value = content
-  } catch (err) {
-    error.value = err.message
-    fileContent.value = ''
-  }
+  if (!files || files.length === 0) return
+  const selectedPath = files[0] as string
+  filePath.value = selectedPath
+  readFileSafely(selectedPath)
 }
 
-watch(() => props.enterAction, (enterAction) => {
-  if (enterAction.type === "files") {
-    // 匹配文件进入，直接读取文件
-    const _filePath = enterAction.payload[0].path;
+const isFilesEnterAction = (
+  action: PluginEnterAction,
+): action is PluginEnterAction<FilesPayloadItem[]> => {
+  return action.type === 'files' && Array.isArray(action.payload)
+}
 
-    filePath.value = _filePath
-    try {
-      const content = window.services.readFile(_filePath);
-      fileContent.value = content
-    } catch (err) {
-      error.value = err.message
-      fileContent.value = ''
+watch(
+  () => props.enterAction,
+  (enterAction) => {
+    if (!isFilesEnterAction(enterAction) || enterAction.payload.length === 0) {
+      return
     }
-  }
-}, {
-  immediate: true
-})
 
+    const targetFile = enterAction.payload[0]?.path
+    if (!targetFile) {
+      return
+    }
+
+    filePath.value = targetFile
+    readFileSafely(targetFile)
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
@@ -101,3 +114,4 @@ watch(() => props.enterAction, (enterAction) => {
   }
 }
 </style>
+

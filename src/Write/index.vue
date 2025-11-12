@@ -1,37 +1,50 @@
 <script lang="ts" setup>
-import { watch } from 'vue';
+import { watch } from 'vue'
+import type { PluginEnterAction } from '../types/utools'
 
-const props = defineProps({
-  enterAction: {
-    type: Object,
-    required: true
-  }
-})
+type TextEnterAction = PluginEnterAction<string>
+type ImageEnterAction = PluginEnterAction<string>
 
-watch(() => props.enterAction, (enterAction) => {
-  let outputPath;
-  try {
-    if (enterAction.type === "over") {
-      outputPath = window.services.writeTextFile(enterAction.payload);
-    } else if (enterAction.type === "img") {
-      outputPath = window.services.writeImageFile(enterAction.payload);
+const props = defineProps<{
+  enterAction: PluginEnterAction
+}>()
+
+const isTextEnterAction = (
+  action: PluginEnterAction,
+): action is TextEnterAction => action.type === 'over'
+
+const isImageEnterAction = (
+  action: PluginEnterAction,
+): action is ImageEnterAction => action.type === 'img'
+
+watch(
+  () => props.enterAction,
+  (enterAction) => {
+    let outputPath: string | undefined
+
+    try {
+      if (isTextEnterAction(enterAction)) {
+        outputPath = window.services.writeTextFile(enterAction.payload)
+      } else if (isImageEnterAction(enterAction)) {
+        outputPath = window.services.writeImageFile(enterAction.payload)
+      }
+    } catch (err) {
+      window.utools.showNotification(
+        (err instanceof Error ? err.message : undefined) ?? '文件保存出错了！',
+      )
     }
-  } catch (err) {
-    // 写入错误弹出通知
-    window.utools.showNotification("文件保存出错了！");
-  }
-  if (outputPath) {
-    // 在资源管理器中显示
-    window.utools.shellShowItemInFolder(outputPath);
-  }
-  // 退出插件应用
-  // window.utools.outPlugin();
-}, {
-  immediate: true
-})
 
+    if (outputPath) {
+      window.utools.shellShowItemInFolder(outputPath)
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
   <div></div>
 </template>
+
