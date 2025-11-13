@@ -1,0 +1,222 @@
+# 开发流程
+
+## 功能开发
+
+### 1. 确认需求
+
+- 需要的 Node 能力、路由/指令、界面位置。
+- 缺失信息时先向用户确认再动手。
+
+### 2. 设计架构
+
+- 确定分层架构、数据流、API 设计。
+- 确定需要使用哪些层（Composable、Store、Repo）。
+
+### 3. 实现功能
+
+- 按照分层架构实现功能，保持代码规范。
+- 遵循代码风格、类型安全、错误处理等规范。
+
+### 4. 测试验证
+
+- 手动触发 `features` 中配置的全部触发方式（指令、文件拖入、粘贴等）。
+- 测试各种边界情况和错误情况。
+
+## 代码提交
+
+### 提交前检查
+
+- **自测**：手动触发 `features` 中配置的全部触发方式（指令、文件拖入、粘贴等）。
+- **类型检查**：使用 `npm run typecheck` 进行类型检查。
+- **代码格式化**：使用 Prettier 格式化代码。
+- **代码质量**：使用 ESLint 检查代码质量。
+
+### 提交信息
+
+- 使用清晰的提交信息，说明修改内容。
+- 遵循提交信息规范（如 Conventional Commits）。
+
+```bash
+# ✅ 正确：清晰的提交信息
+git commit -m "feat: 添加文件读取功能"
+git commit -m "fix: 修复文件读取错误处理"
+git commit -m "refactor: 重构数据管理逻辑"
+```
+
+## 本地调试
+
+### 开发服务器
+
+- 本地调试使用 `npm run dev`，并通过 uTools 开发者工具选择 `plugin.json` 进行热调试。
+- 修改代码后自动重新加载。
+
+### 重新接入开发
+
+- 修改 `plugin.json` 或 `preload/services.js` 后，需要重新在开发者工具中「接入开发」以同步变更。
+
+### 调试技巧
+
+- 使用 `console.log` 输出调试信息。
+- 使用浏览器开发者工具调试。
+- 使用 uTools 开发者工具调试。
+
+## manifest & 资源
+
+### plugin.json 配置
+
+- 所有入口、logo、preload 等路径由 `public/plugin.json` 管理。
+- 新增功能必须同步更新 `features` 列表中的 `code`、`cmds`、`explain`。
+- `features[].code` 应与前端路由字符串一致 (`hello`/`read`/`write` 等)，以保证 `onPluginEnter` 可以正确匹配界面。
+
+```json
+// ✅ 正确：plugin.json 配置
+{
+  "main": "index.html",
+  "preload": "preload/services.js",
+  "logo": "logo.png",
+  "development": {
+    "main": "http://localhost:5173"
+  },
+  "features": [
+    {
+      "code": "hello",
+      "explain": "这是插件应用的第一个功能",
+      "cmds": ["你好", "hello"]
+    },
+    {
+      "code": "read",
+      "explain": "功能指令+匹配指令示例，使用 node.js 能力读文件",
+      "cmds": [
+        "读文件",
+        {
+          "type": "files",
+          "fileType": "file",
+          "maxLength": 1,
+          "label": "读文件"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 资源文件
+
+- 资源文件（如 logo、预置图片）放在 `public/`，并确保构建产物可以被 `plugin.json` 相对路径访问。
+- 新增功能时，同步更新 `App.vue` 中的路由逻辑和功能页组件。
+
+## 路由管理
+
+### App.vue 路由
+
+- 在 `App.vue` 中通过 `window.utools.onPluginEnter/Out` 维护路由状态。
+- 新增功能页时同步扩展此路由逻辑。
+
+```vue
+<!-- ✅ 正确：路由管理 -->
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import type { PluginEnterAction } from './types/utools'
+import Hello from './Hello/index.vue'
+import Read from './Read/index.vue'
+import Write from './Write/index.vue'
+
+type GenericEnterAction = PluginEnterAction<unknown, unknown>
+
+const route = ref<string>('')
+const enterAction = ref<GenericEnterAction | null>(null)
+
+onMounted(() => {
+  window.utools.onPluginEnter((action) => {
+    route.value = action.code
+    enterAction.value = action as GenericEnterAction
+  })
+  window.utools.onPluginOut(() => {
+    route.value = ''
+    enterAction.value = null
+  })
+})
+</script>
+
+<template>
+  <template v-if="route === 'hello' && enterAction">
+    <Hello :enterAction="enterAction!" />
+  </template>
+  <template v-if="route === 'read' && enterAction">
+    <Read :enterAction="enterAction!" />
+  </template>
+  <template v-if="route === 'write' && enterAction">
+    <Write :enterAction="enterAction!" />
+  </template>
+</template>
+```
+
+## 交互与 API 使用
+
+### uTools API
+
+- 使用 `window.utools.showNotification`、`shellShowItemInFolder` 等 uTools API 时，优先添加错误处理与用户提示，必要时写入日志。
+- 读取/写入文件等耗时操作需捕获异常并反馈友好信息，保持 `Read`、`Write` 页的处理模式。
+- 区分不同 `PluginEnterAction` 的 `type`，优先通过类型守卫实现（参考 `src/Write/index.vue` 的模式）。
+- 使用 uTools 的 `dbStorage` API 进行数据持久化，避免使用 `localStorage`。
+- 使用 uTools 的 `showOpenDialog`、`showSaveDialog` 等 API 进行文件操作。
+
+### Services API
+
+- 通过 `window.services` 统一访问 Node 能力。
+- 更新 `window.services` 后同步更新类型声明。
+- 所有 Node 能力调用必须捕获异常。
+
+## 文档更新
+
+### 代码注释
+
+- 更新相关文档和注释。
+- 保持代码注释清晰、准确。
+- 使用 JSDoc 注释说明函数和类。
+
+```typescript
+// ✅ 正确：JSDoc 注释
+/**
+ * 读取文件内容
+ * @param filePath 文件路径
+ * @returns 文件内容
+ * @throws {Error} 文件读取失败时抛出错误
+ */
+const readFile = (filePath: string): string => {
+  // 实现
+}
+```
+
+### 项目文档
+
+- 新增功能时更新 README 或相关文档。
+- 更新架构文档、API 文档等。
+
+## 构建部署
+
+### 构建命令
+
+```bash
+# 开发
+npm run dev
+
+# 构建
+npm run build
+
+# 类型检查
+npm run typecheck
+```
+
+### 构建产物
+
+- 构建产物在 `dist/` 目录。
+- 确保构建产物可以被 `plugin.json` 相对路径访问。
+
+## 最佳实践
+
+1. **确认需求**：开发前确认需求，避免返工
+2. **设计架构**：设计好架构再开始编码
+3. **测试验证**：开发完成后进行充分测试
+4. **代码规范**：遵循代码风格和类型安全规范
+5. **文档更新**：及时更新文档和注释

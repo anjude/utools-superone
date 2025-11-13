@@ -1,0 +1,56 @@
+# Cursor Rules
+
+## 项目背景
+
+- 这是一个基于 Vite + Vue 3 + TypeScript 的 uTools 插件应用，渲染层运行在浏览器环境，核心能力通过 `preload/services.js` 注入。
+- uTools 插件本质是「Node.js 本地原生能力 + Web 前端界面」，请严格区分渲染进程与 Node 能力的调用边界。
+- 参考文档：`https://www.u-tools.cn/docs/developer/basic/getting-started.html`、`https://www.u-tools.cn/docs/developer/basic/first-plugin.html`、`https://www.u-tools.cn/docs/developer/ai/cursor.html`。
+- 本项目参考 uni-superone 小程序版和 backend-superone 后端的架构规范，采用分层架构设计，确保代码的可维护性、可扩展性和可测试性。
+
+## 规则文件结构
+
+本项目的 Cursor 规则按主题拆分为多个文件，便于维护和使用：
+
+- [代码风格](code-style.mdc) - 代码风格规范
+- [架构规范](architecture.mdc) - 分层架构和架构约定
+- [数据管理](data-management.mdc) - 数据存储和缓存管理
+- [API 使用](api-usage.mdc) - API 使用规范（为未来对接后端准备）
+- [组件开发](component-development.mdc) - 组件开发规范
+- [错误处理](error-handling.mdc) - 错误处理规范
+- [类型安全](type-safety.mdc) - 类型安全规范
+- [开发流程](development-workflow.mdc) - 开发流程和 manifest 管理
+- [性能优化](performance.mdc) - 性能优化规范
+- [测试规范](testing.mdc) - 测试规范（为未来扩展准备）
+- [最佳实践](best-practices.mdc) - 最佳实践和常见反模式
+
+## 快速参考
+
+### 架构分层
+
+```
+页面/组件 → Composable（可选）→ Store（可选）→ Repo（可选）→ Services/API
+```
+
+### 核心原则
+
+- 各层职责清晰，禁止跨层直连
+- 使用 TypeScript 严格模式，避免 `any` 类型
+- 所有异步操作使用 try-catch
+- 通过 `window.services` 统一访问 Node 能力
+- 更新 `window.services` 后同步更新类型声明
+- 使用类型守卫区分不同的 `PluginEnterAction` 类型
+
+## 文档协作
+
+- 回答 uTools API 行为、打包发布流程等问题时，优先引用官方文档链接，必要时粘贴关键段落进行解释。
+- 若用户需求超出当前文档范围（如团队发布流程、AI 辅助开发），提醒用户参考 `developer/ai/cursor.md` 中的操作截图与步骤。
+- 新增功能时，更新相关文档和注释。
+- 保持代码注释清晰、准确。
+
+## 提问/产出要求
+
+- 在信息不足时先询问（例如缺少指令关键词、文件存储位置等），避免主观臆断。
+- 输出示例代码须与现有风格一致，并说明需更新的文件列表及注意事项。
+- 若修改涉及 `plugin.json` 或 `preload/services.js`，明确提醒用户重新在开发者工具中「接入开发」以同步变更。
+- 提供完整的代码示例，包括类型定义、错误处理、用户提示等。
+- 说明代码的适用场景和注意事项。

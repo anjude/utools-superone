@@ -1,0 +1,242 @@
+# 类型安全
+
+## 类型定义
+
+- 所有接口和类型定义在 `src/types/` 目录。
+- 使用 TypeScript 严格模式。
+- 避免使用 `any` 类型，必要时使用 `unknown`。
+
+```typescript
+// ✅ 正确：类型定义
+// src/types/feature.ts
+export interface FeatureData {
+  id: string
+  name: string
+  description?: string
+  createTime: number
+  updateTime: number
+}
+
+export interface CreateFeatureRequest {
+  name: string
+  description?: string
+}
+```
+
+## 类型声明
+
+### Window 对象扩展
+
+- 更新 `window.services` 后同步更新 `src/env.d.ts` 中的类型声明。
+- 更新 `window.utools` 的类型声明（使用 `utools-api-types` 包）。
+
+```typescript
+// ✅ 正确：类型声明
+// src/env.d.ts
+type UToolsApi = typeof utools
+
+interface WindowServices {
+  readFile(file: string): string
+  writeTextFile(text: string): string
+  writeImageFile(base64Url: string): string | undefined
+  // 新增方法后同步更新
+}
+
+declare global {
+  interface Window {
+    utools: UToolsApi
+    services: WindowServices
+  }
+}
+
+export {}
+```
+
+### PluginEnterAction 类型
+
+```typescript
+// ✅ 正确：PluginEnterAction 类型定义
+// src/types/utools.ts
+export type PluginEnterFrom = 'main' | 'panel' | 'hotkey' | 'redirect'
+
+export interface PluginEnterAction<TPayload = unknown, TOption = unknown> {
+  code: string
+  type: string
+  payload: TPayload
+  option: TOption
+  from?: PluginEnterFrom
+}
+```
+
+## 类型守卫
+
+- 使用类型守卫区分不同的类型。
+- 提高代码的类型安全性。
+
+```typescript
+// ✅ 正确：类型守卫
+function isString(value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number' && !isNaN(value)
+}
+
+// PluginEnterAction 类型守卫
+type TextEnterAction = PluginEnterAction<string>
+type ImageEnterAction = PluginEnterAction<string>
+
+const isTextEnterAction = (action: PluginEnterAction): action is TextEnterAction => 
+  action.type === 'over'
+
+const isImageEnterAction = (action: PluginEnterAction): action is ImageEnterAction => 
+  action.type === 'img'
+```
+
+## 严格模式
+
+- 启用 TypeScript 严格模式（`tsconfig.json` 中设置 `strict: true`）。
+- 使用 `npm run typecheck` 进行类型检查。
+
+```json
+// ✅ 正确：tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true
+  }
+}
+```
+
+## 类型安全最佳实践
+
+### 避免 any 类型
+
+```typescript
+// ❌ 错误：使用 any 类型
+const getUserInfo = async (id: any): Promise<any> => {
+  // 实现
+}
+
+// ✅ 正确：使用严格类型
+const getUserInfo = async (id: string): Promise<UserInfo> => {
+  // 实现
+}
+```
+
+### 使用 unknown 类型
+
+```typescript
+// ✅ 正确：使用 unknown 类型
+const handleUnknownData = (data: unknown) => {
+  if (typeof data === 'string') {
+    // 处理字符串
+  } else if (typeof data === 'object' && data !== null) {
+    // 处理对象
+  }
+}
+```
+
+### 使用泛型
+
+```typescript
+// ✅ 正确：使用泛型
+function identity<T>(value: T): T {
+  return value
+}
+
+const result = identity<string>('hello')
+```
+
+### 使用联合类型
+
+```typescript
+// ✅ 正确：使用联合类型
+type Status = 'pending' | 'success' | 'error'
+
+const status: Status = 'pending'
+```
+
+### 使用类型断言
+
+```typescript
+// ✅ 正确：使用类型断言（谨慎使用）
+const data = JSON.parse(jsonString) as UserInfo
+
+// ✅ 正确：使用类型守卫
+if (isUserInfo(data)) {
+  // 使用 data
+}
+```
+
+## 类型检查
+
+### 类型检查命令
+
+```bash
+# 类型检查
+npm run typecheck
+
+# 构建时类型检查
+npm run build
+```
+
+### 编辑器配置
+
+- 使用 VS Code 的 TypeScript 插件
+- 启用 TypeScript 严格模式
+- 启用类型检查提示
+
+## 常见类型错误
+
+### 类型不匹配
+
+```typescript
+// ❌ 错误：类型不匹配
+const count: number = '123'
+
+// ✅ 正确：类型匹配
+const count: number = 123
+```
+
+### 空值检查
+
+```typescript
+// ❌ 错误：可能为空
+const name: string = user.name
+
+// ✅ 正确：空值检查
+const name: string = user.name ?? 'unknown'
+```
+
+### 可选属性
+
+```typescript
+// ✅ 正确：可选属性
+interface User {
+  id: string
+  name: string
+  email?: string
+}
+
+const user: User = {
+  id: '1',
+  name: 'John'
+  // email 是可选的
+}
+```
+
+## 最佳实践
+
+1. **启用严格模式**：使用 TypeScript 严格模式
+2. **避免 any 类型**：尽量使用具体类型，必要时使用 `unknown`
+3. **使用类型守卫**：使用类型守卫提高类型安全性
+4. **同步类型声明**：更新 `window.services` 后同步更新类型声明
+5. **类型检查**：提交前运行类型检查，确保类型正确

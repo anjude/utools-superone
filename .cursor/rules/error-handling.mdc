@@ -1,0 +1,192 @@
+# 错误处理
+
+## 异常捕获
+
+- 所有异步操作必须使用 try-catch。
+- 所有 Node 能力调用必须捕获异常。
+- 提供明确的错误信息。
+
+```typescript
+// ✅ 正确：异常捕获
+try {
+  const content = window.services.readFile(filePath)
+  // 处理成功
+} catch (err) {
+  const errorMessage = err instanceof Error ? err.message : String(err)
+  window.utools.showNotification(errorMessage)
+}
+```
+
+## 用户提示
+
+- 使用 `window.utools.showNotification` 提示用户。
+- 错误信息要友好、明确。
+- 成功操作也可提供反馈。
+
+```typescript
+// ✅ 正确：用户提示
+window.utools.showNotification('操作成功')
+window.utools.showNotification('操作失败：' + errorMessage)
+```
+
+## 日志记录
+
+- 重要操作记录日志（可通过 `window.services` 封装日志功能）。
+- 日志包含时间戳、操作类型、错误信息等。
+- 开发环境输出到控制台，生产环境可选记录到文件。
+
+```typescript
+// ✅ 正确：日志记录（如已封装）
+window.services.logger.info('用户操作', { action: 'readFile', filePath })
+window.services.logger.error('操作失败', { error: errorMessage })
+```
+
+## 错误恢复
+
+- 提供错误恢复机制（如重试、回滚）。
+- 允许用户手动恢复操作。
+- 避免因错误导致应用崩溃。
+
+```typescript
+// ✅ 正确：错误恢复
+const retryOperation = async (maxRetries = 3) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await performOperation()
+      return
+    } catch (error) {
+      if (i === maxRetries - 1) {
+        window.utools.showNotification('操作失败，请重试')
+        throw error
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+  }
+}
+```
+
+## 分层错误处理
+
+### Store 层
+
+- 记录日志 + 向上抛出
+
+```typescript
+// ✅ 正确：Store 中的错误处理
+const addItem = async (data: ItemData) => {
+  const reqId = logger.logRequestStart('item.add', 'CREATE')
+  try {
+    const res = await itemRepo.saveAll(next)
+    if (!res.success) throw new Error('保存失败')
+    items.value = next
+    logger.logRequestSuccess(reqId, 200, { id })
+    return newItem
+  } catch (e) {
+    logger.logRequestError(reqId, e)
+    throw e
+  }
+}
+```
+
+### Composable 层
+
+- 捕获错误 + UI 反馈（Toast）
+
+```typescript
+// ✅ 正确：Composable 中的错误处理
+const handleDelete = async (item: Item) => {
+  try {
+    await itemStore.deleteItem(item.id)
+    window.utools.showNotification('删除成功')
+  } catch (error) {
+    window.utools.showNotification('删除失败：' + error.message)
+  }
+}
+```
+
+### 组件层
+
+- 显示错误信息，提供重试机制
+
+```typescript
+// ✅ 正确：组件中的错误处理
+const error = ref<string>('')
+
+const handleOperation = async () => {
+  try {
+    await performOperation()
+    error.value = ''
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : String(err)
+  }
+}
+```
+
+## 错误类型
+
+### 网络错误
+
+```typescript
+// ✅ 正确：网络错误处理
+try {
+  const response = await request.get('/api/users')
+} catch (error: any) {
+  if (error.statusCode === 401) {
+    window.utools.showNotification('未授权，请重新登录')
+  } else if (error.statusCode === 404) {
+    window.utools.showNotification('请求地址不存在')
+  } else if (error.statusCode === 500) {
+    window.utools.showNotification('服务器内部错误')
+  } else {
+    window.utools.showNotification('网络错误：' + error.message)
+  }
+}
+```
+
+### 文件操作错误
+
+```typescript
+// ✅ 正确：文件操作错误处理
+try {
+  const content = window.services.readFile(filePath)
+} catch (err) {
+  if (err instanceof Error) {
+    if (err.message.includes('ENOENT')) {
+      window.utools.showNotification('文件不存在')
+    } else if (err.message.includes('EACCES')) {
+      window.utools.showNotification('文件无权限访问')
+    } else {
+      window.utools.showNotification('文件读取失败：' + err.message)
+    }
+  }
+}
+```
+
+### 数据验证错误
+
+```typescript
+// ✅ 正确：数据验证错误处理
+const validateData = (data: ItemData): { valid: boolean; errors: string[] } => {
+  const errors: string[] = []
+  if (!data.name?.trim()) errors.push('名称不能为空')
+  if (!data.price || data.price < 0) errors.push('价格必须大于等于 0')
+  return { valid: errors.length === 0, errors }
+}
+
+const handleSubmit = async () => {
+  const validation = validateData(formData)
+  if (!validation.valid) {
+    window.utools.showNotification(validation.errors.join('；'))
+    return
+  }
+  // 继续处理
+}
+```
+
+## 最佳实践
+
+1. **统一错误处理**：在响应拦截器中统一处理业务错误码
+2. **错误信息友好**：错误信息要清晰、易懂，避免技术术语
+3. **错误恢复机制**：提供重试、回滚等错误恢复机制
+4. **错误日志记录**：记录错误日志，便于调试和问题排查
+5. **错误分类处理**：根据错误类型采用不同的处理策略

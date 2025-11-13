@@ -1,0 +1,235 @@
+# API 使用规范
+
+> 注意：本文档为未来对接后端准备，当前项目如不需要可暂时忽略。
+
+## 请求封装
+
+- 创建统一的 HTTP 请求工具（如 `src/utils/request.ts`）。
+- 支持请求/响应拦截器。
+- 自动处理错误和加载状态。
+
+## 参数转换
+
+- **请求时**：驼峰命名自动转换为下划线命名。
+- **响应时**：下划线命名自动转换为驼峰命名。
+- 支持嵌套对象和数组的转换。
+
+### 请求参数转换
+
+```typescript
+// 原始数据（驼峰命名）
+const userData = {
+  userName: '张三',
+  userEmail: 'zhangsan@example.com',
+  userPhone: '13800138000',
+  userAddress: {
+    provinceName: '广东省',
+    cityName: '深圳市'
+  }
+}
+
+// 发送请求时自动转换为下划线命名
+// user_name, user_email, user_phone, user_address.province_name, user_address.city_name
+```
+
+### 响应数据转换
+
+```typescript
+// 服务器返回的数据（下划线命名）
+// {
+//   "user_id": "123",
+//   "user_name": "张三",
+//   "created_at": "2024-01-01 12:00:00",
+//   "user_info": {
+//     "phone_number": "13800138000"
+//   }
+// }
+
+// 自动转换为驼峰命名
+// {
+//   "userId": "123",
+//   "userName": "张三",
+//   "createdAt": "2024-01-01 12:00:00",
+//   "userInfo": {
+//     "phoneNumber": "13800138000"
+//   }
+// }
+```
+
+## 基础使用
+
+### 导入
+
+```typescript
+import request from '@/utils/request'
+```
+
+### GET 请求
+
+```typescript
+// 简单 GET 请求
+const response = await request.get('/api/users')
+
+// 带参数的 GET 请求
+const response = await request.get('/api/users', { userId: '123' })
+
+// 带配置的 GET 请求
+const response = await request.get('/api/users', { page: 1, size: 10 }, {
+  showLoading: true,
+  loadingText: '加载中...',
+  timeout: 15000
+})
+```
+
+### POST 请求
+
+```typescript
+// 创建用户
+const userData = {
+  userName: '张三',
+  userEmail: 'zhangsan@example.com',
+  userPhone: '13800138000'
+}
+
+const response = await request.post('/api/users', userData)
+```
+
+### PUT 请求
+
+```typescript
+// 更新用户信息
+const updateData = {
+  userName: '李四',
+  userEmail: 'lisi@example.com'
+}
+
+const response = await request.put('/api/users/123', updateData)
+```
+
+### DELETE 请求
+
+```typescript
+// 删除用户
+const response = await request.delete('/api/users/123')
+```
+
+## 错误处理
+
+### 自动错误提示
+
+```typescript
+try {
+  const response = await request.get('/api/users')
+} catch (error) {
+  // 错误会自动显示 Toast 提示
+  // 401: 未授权，请重新登录
+  // 404: 请求地址不存在
+  // 500: 服务器内部错误
+  // 等等...
+}
+```
+
+### 自定义错误处理
+
+```typescript
+try {
+  const response = await request.get('/api/users')
+} catch (error: any) {
+  if (error.statusCode === 401) {
+    // 处理登录过期
+    window.utools.showNotification('未授权，请重新登录')
+  } else if (error.statusCode === 403) {
+    // 处理权限不足
+    window.utools.showNotification('您没有权限访问此功能')
+  } else {
+    window.utools.showNotification(error.message || '请求失败')
+  }
+}
+```
+
+## 请求拦截
+
+- 自动添加认证 token（从 `window.utools.dbStorage` 读取）。
+- 添加自定义请求头。
+- 记录请求日志。
+
+```typescript
+// 添加请求拦截器
+request.interceptors.request.use((config) => {
+  // 添加时间戳
+  config.headers = {
+    ...config.headers,
+    'X-Request-Time': Date.now().toString()
+  }
+  
+  // 添加认证 token
+  const token = window.utools.dbStorage.getItem('token')
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`
+  }
+  
+  // 添加其他自定义逻辑
+  return config
+})
+```
+
+## 响应拦截
+
+- 统一处理业务状态码。
+- 自动转换响应数据格式。
+- 记录响应日志。
+
+```typescript
+// 添加响应拦截器
+request.interceptors.response.use((response) => {
+  // 处理业务逻辑
+  if (response.data && response.data.code === 0) {
+    return response
+  } else {
+    throw new Error(response.data?.message || '业务处理失败')
+  }
+})
+```
+
+## 配置选项
+
+### RequestConfig 接口
+
+```typescript
+interface RequestConfig {
+  url: string                    // 请求 URL
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'  // 请求方法
+  data?: any                     // 请求数据（POST/PUT 等）
+  params?: any                   // 请求参数（GET 等）
+  headers?: Record<string, string>  // 自定义请求头
+  timeout?: number               // 超时时间（毫秒）
+  showLoading?: boolean          // 是否显示加载提示
+  loadingText?: string           // 加载提示文本
+}
+```
+
+### 全局配置
+
+```typescript
+// 设置基础 URL
+request.setBaseURL('https://api.example.com')
+
+// 获取基础 URL
+const baseURL = request.getBaseURL()
+```
+
+## 注意事项
+
+1. **URL 处理**：如果传入的 URL 以 `http://` 或 `https://` 开头，将不会自动添加 baseURL
+2. **参数转换**：参数转换只对对象和数组生效，基本类型不会被转换
+3. **错误处理**：所有请求都应该使用 try-catch 包装以处理可能的错误
+4. **拦截器顺序**：拦截器按照添加顺序执行，先添加的先执行
+5. **加载提示**：如果设置了 `showLoading: true`，加载提示会在请求完成后自动隐藏
+
+## 最佳实践
+
+1. **统一错误处理**：在响应拦截器中统一处理业务错误码
+2. **请求重试**：对于网络错误，可以实现请求重试机制
+3. **缓存策略**：对于不常变化的数据，可以实现缓存机制
+4. **请求取消**：对于长时间运行的请求，可以实现取消机制
+5. **日志记录**：在拦截器中记录请求和响应日志，便于调试

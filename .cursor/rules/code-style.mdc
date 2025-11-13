@@ -1,0 +1,115 @@
+# 代码风格
+
+## 基本规范
+
+- 使用 2 空格缩进，禁止制表符。
+- 统一使用单引号，Vue `<template>` 内的文本除外。
+- 默认不写分号，保持当前项目风格。
+- 维护末尾逗号，遵循现有 Prettier/Vetur 默认格式。
+- `<script setup lang="ts">` 中优先使用组合式 API，保持 `defineProps`、`defineEmits` 的类型声明紧随其后。
+- CSS 选择器与属性按照现有文件的紧凑风格书写，必要时添加媒体查询支持深色模式。
+
+## 命名规范
+
+- **组件命名**：使用 PascalCase（如 `UserCard.vue`）
+- **文件命名**：使用 kebab-case（如 `user-card.vue`）
+- **变量和函数命名**：使用 camelCase（如 `getUserInfo`）
+- **常量命名**：使用 UPPER_SNAKE_CASE（如 `MAX_SIZE`）
+- **类型和接口命名**：使用 PascalCase（如 `UserInfo`、`PluginEnterAction`）
+
+## Vue 组件规范
+
+### Script Setup
+
+```vue
+<script setup lang="ts">
+// ✅ 正确：使用组合式 API
+import { ref, computed, watch } from 'vue'
+import type { PluginEnterAction } from '../types/utools'
+
+interface Props {
+  enterAction: PluginEnterAction
+  title?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  title: '默认标题'
+})
+
+const emit = defineEmits<{
+  update: [value: string]
+  delete: [id: string]
+}>()
+
+const count = ref(0)
+const doubled = computed(() => count.value * 2)
+</script>
+```
+
+### Template
+
+```vue
+<template>
+  <div class="component">
+    <button @click="handleClick">{{ title }}</button>
+  </div>
+</template>
+```
+
+### Style
+
+```vue
+<style scoped>
+.component {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  .component {
+    background-color: #424242;
+  }
+}
+</style>
+```
+
+## TypeScript 规范
+
+### 类型定义
+
+```typescript
+// ✅ 正确：使用严格类型
+interface UserInfo {
+  id: string
+  name: string
+  email: string
+}
+
+const getUserInfo = async (id: string): Promise<UserInfo> => {
+  // 实现
+}
+
+// ❌ 错误：使用 any 类型
+const getUserInfo = async (id: any): Promise<any> => {
+  // 实现
+}
+```
+
+### 类型守卫
+
+```typescript
+// ✅ 正确：使用类型守卫
+function isString(value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+const isTextEnterAction = (
+  action: PluginEnterAction,
+): action is PluginEnterAction<string> => action.type === 'over'
+```
+
+## 代码格式化
+
+- 使用 Prettier 进行代码格式化
+- 使用 ESLint 进行代码质量检查
+- 提交前运行 `npm run typecheck` 进行类型检查

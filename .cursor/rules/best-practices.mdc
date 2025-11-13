@@ -1,0 +1,266 @@
+# 最佳实践
+
+## 核心原则
+
+- 各层职责清晰，禁止跨层直连
+- 写入操作：计算 next → 持久化 → 原子替换
+- 数据验证在写入前执行
+- 错误分层处理：Store 记录，Composable 反馈
+- 使用 TypeScript 严格模式，避免 `any` 类型
+- 所有异步操作使用 try-catch
+- 使用 `window.utools.showNotification` 提供用户反馈
+- 通过 `window.services` 统一访问 Node 能力
+- 更新 `window.services` 后同步更新类型声明
+- 使用类型守卫区分不同的 `PluginEnterAction` 类型
+
+## 常见反模式
+
+| 反模式 | 错误示例 | ✅ 正确做法 |
+|----|---|---------|
+| 页面直连 Services | `const data = window.services.readFile()` | 通过 Store 或 Composable 调用 |
+| Store 含 UI 逻辑 | `window.utools.showNotification()` 在 Store 中 | Store 记录日志，Composable 反馈用户 |
+| Composable 访问缓存 | `window.utools.dbStorage.getItem()` 在 Composable | 通过 Store 或 Repo 访问 |
+| 直接使用存储 API | `localStorage.getItem('key')` | 使用 `window.utools.dbStorage` 或封装接口 |
+| 缺少错误处理 | 未捕获 `window.services` 调用的异常 | 使用 try-catch 捕获异常 |
+| 缺少类型定义 | 使用 `any` 类型 | 使用严格的 TypeScript 类型 |
+| 缺少用户提示 | 静默失败 | 使用 `window.utools.showNotification` 提示用户 |
+| 多次持久化 | 直接修改 + 单次 `save()` | 计算 next → 批量 `saveAll()` |
+| 缺少类型守卫 | 直接使用 `action.payload` | 使用类型守卫检查类型 |
+| 缺少数据验证 | 直接保存数据 | 写入前验证数据有效性 |
+
+## 代码质量
+
+### 代码可读性
+
+- 使用有意义的变量名和函数名
+- 添加必要的注释
+- 保持函数简洁，单一职责
+- 避免深层嵌套
+
+```typescript
+// ✅ 正确：可读的代码
+const readFileSafely = (targetPath: string) => {
+  try {
+    const content = window.services.readFile(targetPath)
+    fileContent.value = content
+    error.value = ''
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : String(err)
+    fileContent.value = ''
+  }
+}
+
+// ❌ 错误：难以理解的代码
+const rf = (p: string) => {
+  try { fc.value = window.services.readFile(p); e.value = '' } catch (err) { e.value = err instanceof Error ? err.message : String(err); fc.value = '' }
+}
+```
+
+### 代码复用
+
+- 提取公共逻辑到 Composable 或工具函数
+- 使用组件封装可复用 UI
+- 避免重复代码
+
+```typescript
+// ✅ 正确：复用的代码
+const useFileOperation = () => {
+  const readFile = (path: string) => {
+    return window.services.readFile(path)
+  }
+  const writeFile = (path: string, content: string) => {
+    return window.services.writeFile(path, content)
+  }
+  return { readFile, writeFile }
+}
+
+// ❌ 错误：重复的代码
+const readFile1 = (path: string) => window.services.readFile(path)
+const readFile2 = (path: string) => window.services.readFile(path)
+```
+
+### 代码维护性
+
+- 遵循单一职责原则
+- 保持函数简洁
+- 使用类型定义
+- 添加必要的注释
+
+```typescript
+// ✅ 正确：可维护的代码
+/**
+ * 验证用户数据
+ * @param data 用户数据
+ * @returns 验证结果
+ */
+const validateUserData = (data: UserData): ValidationResult => {
+  const errors: string[] = []
+  if (!data.name?.trim()) errors.push('名称不能为空')
+  if (!data.email?.trim()) errors.push('邮箱不能为空')
+  return { valid: errors.length === 0, errors }
+}
+```
+
+## 性能优化
+
+### 避免不必要的计算
+
+```typescript
+// ✅ 正确：使用 computed 缓存
+const filteredItems = computed(() => 
+  items.value.filter(item => item.status === 'active')
+)
+
+// ❌ 错误：每次渲染都计算
+const filteredItems = () => 
+  items.value.filter(item => item.status === 'active')
+```
+
+### 避免不必要的渲染
+
+```vue
+<!-- ✅ 正确：使用 v-memo -->
+<template>
+  <div v-for="item in items" :key="item.id" v-memo="[item.id, item.status]">
+    {{ item.name }}
+  </div>
+</template>
+```
+
+### 合理使用缓存
+
+```typescript
+// ✅ 正确：使用缓存
+const cache = new Map<string, any>()
+
+const getData = async (key: string) => {
+  if (cache.has(key)) {
+    return cache.get(key)
+  }
+  const data = await fetchData(key)
+  cache.set(key, data)
+  return data
+}
+```
+
+## 错误处理
+
+### 统一错误处理
+
+```typescript
+// ✅ 正确：统一错误处理
+const handleError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error)
+  window.utools.showNotification('操作失败：' + message)
+  console.error('Error:', error)
+}
+```
+
+### 错误恢复
+
+```typescript
+// ✅ 正确：错误恢复
+const retryOperation = async (maxRetries = 3) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await performOperation()
+      return
+    } catch (error) {
+      if (i === maxRetries - 1) {
+        throw error
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+  }
+}
+```
+
+## 类型安全
+
+### 使用严格类型
+
+```typescript
+// ✅ 正确：严格类型
+interface UserInfo {
+  id: string
+  name: string
+  email: string
+}
+
+const getUserInfo = async (id: string): Promise<UserInfo> => {
+  // 实现
+}
+
+// ❌ 错误：使用 any
+const getUserInfo = async (id: any): Promise<any> => {
+  // 实现
+}
+```
+
+### 使用类型守卫
+
+```typescript
+// ✅ 正确：类型守卫
+const isTextEnterAction = (action: PluginEnterAction): action is PluginEnterAction<string> => 
+  action.type === 'over'
+
+if (isTextEnterAction(enterAction)) {
+  // 处理文本类型
+}
+```
+
+## 安全考虑
+
+### 数据验证
+
+```typescript
+// ✅ 正确：数据验证
+const validateData = (data: UserData): ValidationResult => {
+  const errors: string[] = []
+  if (!data.name?.trim()) errors.push('名称不能为空')
+  if (!data.email?.trim()) errors.push('邮箱不能为空')
+  return { valid: errors.length === 0, errors }
+}
+```
+
+### 输入清理
+
+```typescript
+// ✅ 正确：输入清理
+const sanitizeInput = (input: string): string => {
+  return input.trim().replace(/[<>]/g, '')
+}
+```
+
+## 文档和注释
+
+### 代码注释
+
+```typescript
+// ✅ 正确：清晰的注释
+/**
+ * 读取文件内容
+ * @param filePath 文件路径
+ * @returns 文件内容
+ * @throws {Error} 文件读取失败时抛出错误
+ */
+const readFile = (filePath: string): string => {
+  // 实现
+}
+```
+
+### 文档更新
+
+- 新增功能时更新相关文档
+- 保持代码注释清晰、准确
+- 使用 JSDoc 注释说明函数和类
+
+## 最佳实践总结
+
+1. **遵循架构规范**：各层职责清晰，禁止跨层直连
+2. **类型安全**：使用 TypeScript 严格模式，避免 `any` 类型
+3. **错误处理**：所有异步操作使用 try-catch，提供用户反馈
+4. **性能优化**：合理使用缓存，避免不必要的计算和渲染
+5. **代码质量**：保持代码可读性、可维护性、可复用性
+6. **安全考虑**：数据验证、输入清理、错误处理
+7. **文档更新**：及时更新文档和注释，保持代码清晰
