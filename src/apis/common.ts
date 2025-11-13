@@ -33,38 +33,69 @@ export const commonApi = {
    * @param filePath 文件路径
    */
   async uploadImg(filePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const token = CacheManager.get(CACHE_KEYS.TOKEN)
-      const headers: Record<string, string> = {
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    try {
+      // 读取文件内容（base64）
+      if (!window.services || typeof window.services.readFileBuffer !== 'function') {
+        throw new Error('文件读取服务不可用')
       }
+
+      const base64Data = window.services.readFileBuffer(filePath)
+      
+      // 获取文件扩展名，确定 MIME 类型
+      const ext = filePath.split('.').pop()?.toLowerCase() || 'jpg'
+      const mimeTypes: Record<string, string> = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'gif': 'image/gif',
+        'bmp': 'image/bmp',
+        'webp': 'image/webp'
+      }
+      const mimeType = mimeTypes[ext] || 'image/jpeg'
+
+      // 将 base64 转换为 Blob
+      const byteCharacters = atob(base64Data)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], { type: mimeType })
+
+      // 创建 FormData
+      const formData = new FormData()
+      const fileName = filePath.split(/[/\\]/).pop() || `image.${ext}`
+      formData.append('file', blob, fileName)
+
+      // 准备请求头
+      const token = CacheManager.get(CACHE_KEYS.TOKEN)
+      const headers: Record<string, string> = {}
       
       if (token) {
         headers.Authorization = `Bearer ${token}`
       }
-      
-      uni.uploadFile({
-        url: CONFIG.baseURL + '/api/so/common/wx_upload',
-        filePath: filePath,
-        name: 'file',
-        header: headers,
-        success(res) {
-          try {
-            const data = JSON.parse(res.data)
-            if (data.err_code === 0) {
-              resolve(data.data.url)
-            } else {
-              reject(new Error(data.msg || '上传失败'))
-            }
-          } catch (error) {
-            reject(new Error('解析响应数据失败'))
-          }
-        },
-        fail(err) {
-          reject(err)
-        }
+
+      // 发送请求
+      const response = await fetch(CONFIG.baseURL + '/api/so/common/wx_upload', {
+        method: 'POST',
+        headers,
+        body: formData
       })
-    })
+
+      if (!response.ok) {
+        throw new Error(`上传失败: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.err_code === 0) {
+        return data.data.url
+      } else {
+        throw new Error(data.msg || '上传失败')
+      }
+    } catch (error) {
+      throw error
+    }
   },
 
   /**

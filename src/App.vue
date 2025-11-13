@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import type { PluginEnterAction } from './types/utools'
-import Hello from './Hello/index.vue'
-import Read from './Read/index.vue'
-import Write from './Write/index.vue'
+import Login from './Login/index.vue'
+import TopicList from './components/TopicList.vue'
 
 type GenericEnterAction = PluginEnterAction<unknown, unknown>
 
@@ -23,13 +22,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <template v-if="route === 'hello' && enterAction">
-    <Hello :enterAction="enterAction!" />
+  <template v-if="route === 'login' && enterAction">
+    <Login :enterAction="enterAction!" />
   </template>
-  <template v-if="route === 'read' && enterAction">
-    <Read :enterAction="enterAction!" />
-  </template>
-  <template v-if="route === 'write' && enterAction">
-    <Write :enterAction="enterAction!" />
+  <template v-else>
+    <TopicList />
   </template>
 </template>
+
+<style scoped>
+.basic-wrap { padding: 16px; }
+</style>

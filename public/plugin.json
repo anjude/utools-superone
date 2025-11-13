@@ -41,6 +41,15 @@
           "label": "保存为文件"
         }
       ]
+    },
+    {
+      "code": "login",
+      "explain": "用户登录",
+      "mainHide": true,
+      "cmds": [
+        "登录",
+        "login"
+      ]
     }
   ]
 }

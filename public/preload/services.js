@@ -7,6 +7,11 @@ window.services = {
   readFile (file) {
     return fs.readFileSync(file, { encoding: 'utf-8' })
   },
+  // 读取二进制文件，返回 base64 字符串
+  readFileBuffer (file) {
+    const buffer = fs.readFileSync(file)
+    return buffer.toString('base64')
+  },
   // 文本写入到下载目录
   writeTextFile (text) {
     const filePath = path.join(window.utools.getPath('downloads'), Date.now().toString() + '.txt')

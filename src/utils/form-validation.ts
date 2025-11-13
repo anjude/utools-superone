@@ -102,11 +102,11 @@ export const validateKeyResults = (
  */
 export const showValidationError = (message: string): void => {
   logger.warn('表单验证失败', { message })
-  uni.showToast({
-    title: message,
-    icon: 'none',
-    duration: 2000,
-  })
+  if (window.utools && typeof window.utools.showNotification === 'function') {
+    window.utools.showNotification(message)
+  } else if (typeof window !== 'undefined' && typeof window.alert === 'function') {
+    window.alert(message)
+  }
 }
 
 /**

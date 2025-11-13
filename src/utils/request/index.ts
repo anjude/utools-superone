@@ -1,4 +1,5 @@
-export { default } from './request-client'
+import request from './request-client'
+export default request
 export { Request } from './request-client'
 export { LoginManager } from './login-manager'
 export { ParamConverter } from './param-converter'

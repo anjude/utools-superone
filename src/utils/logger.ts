@@ -1,12 +1,7 @@
 /**
  * 统一日志管理工具
- * 支持微信小程序实时日志和所有环境的控制台日志
+ * 适配 uTools/浏览器环境的控制台日志
  */
-
-// 微信小程序全局配置类型声明
-declare const __wxConfig: {
-  envVersion?: 'develop' | 'trial' | 'release'
-} | undefined
 
 // Node.js process 类型声明
 declare const process: {
@@ -42,17 +37,12 @@ class Logger {
   private requestId: number = 0
 
   constructor() {
-    // 判断当前环境
     const isDevelopment = this.isDevelopmentEnvironment()
-    
     this.config = {
-      enableDebugLog: true, // 所有环境都启用控制台日志
-      enableRealtimeLog: true, // 实时日志在所有环境都启用
-      maxLogLength: 5000 // 5KB 限制
+      enableDebugLog: true,
+      enableRealtimeLog: false,
+      maxLogLength: 5000
     }
-
-    // 初始化实时日志管理器
-    this.initRealtimeLogManager()
   }
 
   /**
@@ -60,39 +50,22 @@ class Logger {
    */
   private getEnvironmentDetails(): { isDevelopment: boolean; envVersion?: string; platform?: string } {
     let isDevelopment = false
-    let envVersion: string | undefined
     let platform: string | undefined
 
     try {
-      // 方法1: 使用 __wxConfig.envVersion 判断 (推荐)
-      if (typeof __wxConfig !== 'undefined' && __wxConfig?.envVersion) {
-        envVersion = __wxConfig.envVersion
-        // develop: 开发版, trial: 体验版, release: 正式版
-        isDevelopment = envVersion === 'develop' || envVersion === 'trial'
-      }
-      
-      // 方法2: 使用 process.env (如果可用)
-      if (!isDevelopment && typeof process !== 'undefined' && process?.env?.NODE_ENV) {
+      if (typeof process !== 'undefined' && process?.env?.NODE_ENV) {
         isDevelopment = process.env.NODE_ENV === 'development'
       }
-      
-      // 方法3: 检查是否有调试工具 (微信开发者工具)
-      if (!isDevelopment && typeof wx !== 'undefined' && (wx as any).getSystemInfoSync) {
-        try {
-          const systemInfo = (wx as any).getSystemInfoSync()
-          platform = systemInfo.platform
-          // 如果在微信开发者工具中运行
-          isDevelopment = platform === 'devtools'
-        } catch {
-          // 忽略错误
-        }
+      if (typeof window !== 'undefined' && (window as any).utools) {
+        platform = 'utools'
+      } else if (typeof navigator !== 'undefined') {
+        platform = 'web'
       }
-    } catch (error) {
-      // 出错时默认生产环境，避免泄露调试信息
+    } catch {
       isDevelopment = false
     }
 
-    return { isDevelopment, envVersion, platform }
+    return { isDevelopment, envVersion: undefined, platform }
   }
 
   /**
@@ -102,26 +75,7 @@ class Logger {
     return this.getEnvironmentDetails().isDevelopment
   }
 
-  /**
-   * 初始化实时日志管理器
-   */
-  private initRealtimeLogManager(): void {
-    try {
-      if (typeof wx !== 'undefined' && (wx as any).getRealtimeLogManager) {
-        this.logManager = (wx as any).getRealtimeLogManager()
-        const envInfo = this.getEnvironmentInfo()
-        if (this.config.enableDebugLog) {
-          console.log('[Logger] Logger initialized successfully', envInfo)
-        }
-      } else {
-        if (this.config.enableDebugLog) {
-          console.log('[Logger] RealtimeLogManager not available, using console only')
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to initialize RealtimeLogManager:', error)
-    }
-  }
+  // uTools/浏览器环境不使用实时日志管理器
 
   /**
    * 生成请求ID
