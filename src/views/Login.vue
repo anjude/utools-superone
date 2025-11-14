@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { PluginEnterAction } from '@/types/utools'
 import { LoginManager } from '@/utils/request/login-manager'
 import request from '@/utils/request'
+
+const { t } = useI18n()
 
 // 从 window 获取 enterAction，如果没有则使用空对象作为默认值
 const enterAction = computed<PluginEnterAction>(() => {
@@ -46,11 +49,11 @@ const handleLogin = async () => {
       }
     } else {
       loginStatus.value = 'error'
-      errorMessage.value = result.msg || '登录失败'
+      errorMessage.value = result.msg || t('login.loginFailed')
     }
   } catch (error) {
     loginStatus.value = 'error'
-    errorMessage.value = error instanceof Error ? error.message : '登录失败'
+      errorMessage.value = error instanceof Error ? error.message : t('login.loginFailed')
   } finally {
     isLoggingIn.value = false
   }
@@ -65,23 +68,23 @@ onMounted(() => {
 <template>
   <div class="login-container">
     <div class="login-content">
-      <h1 class="login-title">登录</h1>
+      <h1 class="login-title">{{ t('login.title') }}</h1>
 
       <div v-if="loginStatus === 'idle' || loginStatus === 'scanning'" class="login-status">
         <div v-if="loginStatus === 'scanning'" class="loading-spinner"></div>
-        <p v-if="loginStatus === 'scanning'">正在获取登录二维码...</p>
-        <p v-else>点击下方按钮开始登录</p>
+        <p v-if="loginStatus === 'scanning'">{{ t('login.scanning') }}</p>
+        <p v-else>{{ t('login.clickToLogin') }}</p>
       </div>
 
       <div v-if="loginStatus === 'success'" class="login-success">
-        <p class="success-message">✓ 登录成功！</p>
-        <p class="success-tip">正在跳转...</p>
+        <p class="success-message">✓ {{ t('login.loginSuccess') }}</p>
+        <p class="success-tip">{{ t('login.redirecting') }}</p>
       </div>
 
       <div v-if="loginStatus === 'error'" class="login-error">
         <p class="error-message">✗ {{ errorMessage }}</p>
         <button class="retry-button" @click="handleLogin" :disabled="isLoggingIn">
-          {{ isLoggingIn ? '登录中...' : '重试' }}
+          {{ isLoggingIn ? t('login.loggingIn') : t('login.retry') }}
         </button>
       </div>
 
@@ -91,7 +94,7 @@ onMounted(() => {
         @click="handleLogin"
         :disabled="isLoggingIn"
       >
-        {{ isLoggingIn ? '登录中...' : '开始登录' }}
+        {{ isLoggingIn ? t('login.loggingIn') : t('login.startLogin') }}
       </button>
     </div>
   </div>

@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TopicRepo } from '@/repos/topic-repo'
 import type { ITopic } from '@/types/topic'
 import { timestampToChineseDateTime } from '@/utils/time'
+
+const { t } = useI18n()
 
 const topics = ref<ITopic[]>([])
 const loading = ref(false)
@@ -21,7 +24,7 @@ const loadTopics = async () => {
       return b.createTime - a.createTime // 创建时间新的在前
     })
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '加载主题列表失败'
+    error.value = err instanceof Error ? err.message : t('topic.loadFailed')
     console.error('加载主题列表失败:', err)
   } finally {
     loading.value = false
@@ -36,26 +39,30 @@ onMounted(() => {
 <template>
   <div class="topic-list-wrap">
     <div class="topic-list-header">
-      <h2>主题列表</h2>
+      <h2>{{ t('topic.title') }}</h2>
       <button @click="loadTopics" :disabled="loading">
-        {{ loading ? '加载中...' : '刷新' }}
+        {{ loading ? t('common.loading') : t('topic.refresh') }}
       </button>
     </div>
 
-    <div v-if="loading && topics.length === 0" class="loading">加载中...</div>
+    <div v-if="loading && topics.length === 0" class="loading">
+      {{ t('common.loading') }}
+    </div>
 
     <div v-else-if="error" class="error">
       <p>{{ error }}</p>
-      <button @click="loadTopics">重试</button>
+      <button @click="loadTopics">{{ t('login.retry') }}</button>
     </div>
 
-    <div v-else-if="topics.length === 0" class="empty">暂无主题</div>
+    <div v-else-if="topics.length === 0" class="empty">
+      {{ t('topic.empty') }}
+    </div>
 
     <ul v-else class="topic-list">
       <li v-for="topic in topics" :key="topic.id" class="topic-item">
         <div class="topic-header">
           <h3 class="topic-name">
-            <span v-if="topic.top > 0" class="top-badge">置顶</span>
+            <span v-if="topic.top > 0" class="top-badge">{{ t('topic.top') }}</span>
             {{ topic.topicName }}
           </h3>
           <span class="topic-time">
