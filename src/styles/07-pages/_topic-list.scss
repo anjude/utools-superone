@@ -177,22 +177,8 @@
   }
 }
 
-// 置顶徽章
-.p-top-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--error-color) 0%, #C0392B 100%);
-  color: #fff;
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+// 置顶徽章样式已迁移到通用组件 cu-tag
+// 使用 cu-tag cu-tag--danger cu-tag--small cu-tag--status 等类名
 
 // 主题时间
 .p-topic-time {

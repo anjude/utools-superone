@@ -1,0 +1,610 @@
+// ============================================
+// 通用卡片组件样式系统 (cu-card)
+// 项目的唯一card标准，通过样式类组合适应不同场景
+// ============================================
+
+@use '../02-tools/mixins' as *;
+
+// ============================================
+// 基础卡片样式
+// ============================================
+
+.cu-card {
+  // 基础样式
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  
+  // 基础内边距
+  padding: 20px 24px;
+  
+  // 基础阴影
+  box-shadow: var(--shadow-sm);
+  
+  // 基础边框
+  border: 1px solid var(--border-color);
+  
+  // 内容区域
+  .cu-card__header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+  
+  .cu-card__body {
+    flex: 1;
+    margin-bottom: 16px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .cu-card__footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    
+    &:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+  }
+  
+  .cu-card__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+  }
+  
+  .cu-card__subtitle {
+    font-size: 14px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .cu-card__content {
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+}
+
+// ============================================
+// 液态玻璃变体 (Glass Variant)
+// ============================================
+
+.cu-card--glass {
+  @include glass-card;
+  border: 1px solid var(--glass-border-light);
+  background: var(--glass-bg-light);
+  
+  .cu-card__header {
+    border-bottom-color: var(--glass-border-soft);
+  }
+  
+  .cu-card__footer {
+    border-top-color: var(--glass-border-soft);
+  }
+  
+  // 暗色模式优化
+  [data-theme='dark'] &,
+  .dark & {
+    background: var(--glass-bg-light);
+    border-color: var(--glass-border-light);
+  }
+}
+
+// ============================================
+// 实心变体 (Solid Variant)
+// ============================================
+
+.cu-card--solid {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  
+  .cu-card__header {
+    border-bottom-color: var(--border-color);
+  }
+  
+  .cu-card__footer {
+    border-top-color: var(--border-color);
+  }
+}
+
+// ============================================
+// 边框变体 (Outline Variant)
+// ============================================
+
+.cu-card--outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  
+  .cu-card__header {
+    border-bottom-color: var(--border-color);
+  }
+  
+  .cu-card__footer {
+    border-top-color: var(--border-color);
+  }
+  
+  &:hover {
+    border-color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.05);
+  }
+}
+
+// ============================================
+// 阴影变体 (Elevated Variant)
+// ============================================
+
+.cu-card--elevated {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  // 暗色模式优化
+  [data-theme='dark'] &,
+  .dark & {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    
+    &:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+// ============================================
+// 尺寸变体 (Size Variants)
+// ============================================
+
+// 小尺寸
+.cu-card--small {
+  padding: 12px 16px;
+  border-radius: var(--radius-base);
+  
+  .cu-card__header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+  
+  .cu-card__body {
+    margin-bottom: 12px;
+  }
+  
+  .cu-card__footer {
+    padding-top: 8px;
+  }
+  
+  .cu-card__title {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  
+  .cu-card__subtitle {
+    font-size: 12px;
+  }
+}
+
+// 大尺寸
+.cu-card--large {
+  padding: 32px 40px;
+  border-radius: var(--radius-lg);
+  
+  .cu-card__header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+  
+  .cu-card__body {
+    margin-bottom: 24px;
+  }
+  
+  .cu-card__footer {
+    padding-top: 16px;
+  }
+  
+  .cu-card__title {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  
+  .cu-card__subtitle {
+    font-size: 16px;
+  }
+}
+
+// ============================================
+// 圆角变体 (Radius Variants)
+// ============================================
+
+.cu-card--rounded {
+  border-radius: var(--radius-lg);
+}
+
+.cu-card--round {
+  border-radius: var(--radius-xl);
+}
+
+.cu-card--square {
+  border-radius: 0;
+}
+
+// ============================================
+// 交互状态 (Interactive States)
+// ============================================
+
+// 可点击卡片
+.cu-card--clickable {
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  // 玻璃卡片悬停效果
+  &.cu-card--glass:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-card);
+    background: rgba(255, 255, 255, 0.2);
+    
+    [data-theme='dark'] &,
+    .dark & {
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
+  
+  // 阴影卡片悬停效果
+  &.cu-card--elevated:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    
+    [data-theme='dark'] &,
+    .dark & {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+// 禁用状态
+.cu-card--disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+// ============================================
+// 无内边距变体 (No Padding)
+// ============================================
+
+.cu-card--no-padding {
+  padding: 0;
+  
+  .cu-card__header {
+    padding: 20px 24px 12px;
+    margin-bottom: 0;
+  }
+  
+  .cu-card__body {
+    padding: 0 24px 16px;
+    margin-bottom: 0;
+  }
+  
+  .cu-card__footer {
+    padding: 12px 24px 20px;
+    margin-top: 0;
+  }
+  
+  &.cu-card--small {
+    .cu-card__header {
+      padding: 12px 16px 8px;
+    }
+    
+    .cu-card__body {
+      padding: 0 16px 12px;
+    }
+    
+    .cu-card__footer {
+      padding: 8px 16px 12px;
+    }
+  }
+  
+  &.cu-card--large {
+    .cu-card__header {
+      padding: 32px 40px 16px;
+    }
+    
+    .cu-card__body {
+      padding: 0 40px 24px;
+    }
+    
+    .cu-card__footer {
+      padding: 16px 40px 32px;
+    }
+  }
+}
+
+// ============================================
+// 水平布局变体 (Horizontal Layout)
+// ============================================
+
+.cu-card--horizontal {
+  flex-direction: row;
+  
+  .cu-card__header {
+    margin-bottom: 0;
+    margin-right: 24px;
+    padding-bottom: 0;
+    padding-right: 24px;
+    border-bottom: none;
+    border-right: 1px solid var(--border-color);
+    min-width: 200px;
+  }
+  
+  .cu-card__body {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  
+  .cu-card__footer {
+    margin-top: 0;
+    margin-left: 24px;
+    padding-top: 0;
+    padding-left: 24px;
+    border-top: none;
+    border-left: 1px solid var(--border-color);
+  }
+  
+  &.cu-card--glass {
+    .cu-card__header {
+      border-right-color: var(--glass-border-soft);
+    }
+    
+    .cu-card__footer {
+      border-left-color: var(--glass-border-soft);
+    }
+  }
+  
+  &.cu-card--small {
+    .cu-card__header {
+      margin-right: 16px;
+      padding-right: 16px;
+      min-width: 150px;
+    }
+    
+    .cu-card__footer {
+      margin-left: 16px;
+      padding-left: 16px;
+    }
+  }
+  
+  &.cu-card--large {
+    .cu-card__header {
+      margin-right: 32px;
+      padding-right: 32px;
+      min-width: 250px;
+    }
+    
+    .cu-card__footer {
+      margin-left: 32px;
+      padding-left: 32px;
+    }
+  }
+}
+
+// ============================================
+// 分割线样式 (Divider Styles)
+// ============================================
+
+.cu-card__divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 16px 0;
+  border: none;
+  
+  .cu-card--glass & {
+    background: var(--glass-border-soft);
+  }
+}
+
+// ============================================
+// 图片卡片 (Image Card)
+// ============================================
+
+.cu-card--image {
+  padding: 0;
+  overflow: hidden;
+  
+  .cu-card__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+  
+  .cu-card__header,
+  .cu-card__body,
+  .cu-card__footer {
+    padding: 20px 24px;
+  }
+  
+  &.cu-card--small {
+    .cu-card__header,
+    .cu-card__body,
+    .cu-card__footer {
+      padding: 12px 16px;
+    }
+  }
+  
+  &.cu-card--large {
+    .cu-card__header,
+    .cu-card__body,
+    .cu-card__footer {
+      padding: 32px 40px;
+    }
+  }
+}
+
+// ============================================
+// 响应式优化
+// ============================================
+
+@include respond-to('sm') {
+  .cu-card {
+    // 移动端优化
+    padding: 16px 20px;
+  }
+  
+  .cu-card--horizontal {
+    flex-direction: column;
+    
+    .cu-card__header {
+      margin-right: 0;
+      margin-bottom: 16px;
+      padding-right: 0;
+      padding-bottom: 12px;
+      border-right: none;
+      border-bottom: 1px solid var(--border-color);
+      min-width: auto;
+    }
+    
+    .cu-card__footer {
+      margin-left: 0;
+      margin-top: 16px;
+      padding-left: 0;
+      padding-top: 12px;
+      border-left: none;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    &.cu-card--glass {
+      .cu-card__header {
+        border-bottom-color: var(--glass-border-soft);
+      }
+      
+      .cu-card__footer {
+        border-top-color: var(--glass-border-soft);
+      }
+    }
+  }
+}
+
+// ============================================
+// 暗色模式优化
+// ============================================
+
+[data-theme='dark'] .cu-card,
+.dark .cu-card {
+  // 暗色模式下的通用调整
+  box-shadow: var(--shadow-md);
+  
+  &.cu-card--elevated {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    
+    &:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+  }
+  
+  &.cu-card--outline {
+    &:hover {
+      background: rgba(1, 194, 96, 0.1);
+    }
+  }
+}
+
+// ============================================
+// 无障碍优化 (A11y)
+// ============================================
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .cu-card {
+    border-width: 2px;
+    
+    &.cu-card--glass {
+      border-width: 2px;
+    }
+  }
+}
+
+// 减少动画模式支持
+@media (prefers-reduced-motion: reduce) {
+  .cu-card {
+    transition: none;
+    
+    &.cu-card--clickable {
+      &:hover {
+        transform: none;
+      }
+      
+      &:active {
+        transform: none;
+      }
+    }
+  }
+}
+
+// ============================================
+// 工具类辅助 (Utility Helpers)
+// ============================================
+
+// 卡片间距工具类
+.cu-card + .cu-card {
+  margin-top: 16px;
+}
+
+.cu-card-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  &.cu-card-group--horizontal {
+    flex-direction: row;
+    
+    .cu-card {
+      flex: 1;
+    }
+    
+    @include respond-to('sm') {
+      flex-direction: column;
+    }
+  }
+  
+  &.cu-card-group--grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    
+    @include respond-to('sm') {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+

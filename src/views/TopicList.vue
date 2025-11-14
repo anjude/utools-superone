@@ -72,7 +72,7 @@ onMounted(() => {
       <li v-for="topic in topics" :key="topic.id" class="p-topic-item">
         <div class="p-topic-header">
           <h3 class="p-topic-name">
-            <span v-if="topic.top > 0" class="p-top-badge">{{ t('topic.top') }}</span>
+            <span v-if="topic.top > 0" class="cu-tag cu-tag--danger cu-tag--small cu-tag--status">{{ t('topic.top') }}</span>
             {{ topic.topicName }}
           </h3>
           <span class="p-topic-time">

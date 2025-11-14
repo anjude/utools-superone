@@ -1,0 +1,590 @@
+// ============================================
+// 通用标签/胶囊组件样式系统 (cu-tag)
+// 项目的唯一tag/badge标准，通过样式类组合适应不同场景
+// ============================================
+
+@use '../02-tools/mixins' as *;
+
+// ============================================
+// 基础标签样式
+// ============================================
+
+.cu-tag {
+  // 基础样式
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  vertical-align: middle;
+  white-space: nowrap;
+  user-select: none;
+  
+  // 基础尺寸（medium）
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  border-radius: var(--radius-full);
+  min-height: 24px;
+  
+  // 基础颜色和背景
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  
+  // 过渡效果
+  transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+  
+  // 图标样式
+  .cu-tag__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  
+  // 关闭按钮样式
+  .cu-tag__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    margin-left: 4px;
+    margin-right: -4px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    
+    &:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+      transform: scale(0.9);
+    }
+    
+    // 暗色模式
+    [data-theme='dark'] &,
+    .dark & {
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  
+  // 点状指示器
+  .cu-tag__dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+}
+
+// ============================================
+// 尺寸变体 (Size Variants)
+// ============================================
+
+// 小尺寸
+.cu-tag--small {
+  padding: 2px 8px;
+  font-size: 11px;
+  min-height: 20px;
+  gap: 4px;
+  
+  .cu-tag__icon {
+    font-size: 11px;
+  }
+  
+  .cu-tag__close {
+    width: 12px;
+    height: 12px;
+    margin-left: 2px;
+    margin-right: -2px;
+  }
+  
+  .cu-tag__dot {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+// 大尺寸
+.cu-tag--large {
+  padding: 6px 16px;
+  font-size: 14px;
+  min-height: 28px;
+  gap: 8px;
+  
+  .cu-tag__icon {
+    font-size: 14px;
+  }
+  
+  .cu-tag__close {
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
+    margin-right: -6px;
+  }
+  
+  .cu-tag__dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+// ============================================
+// 主要变体 (Primary Variant)
+// ============================================
+
+.cu-tag--primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-hover) 100%);
+  color: var(--light);
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 6px rgba(1, 194, 96, 0.2);
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(1, 194, 96, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  .cu-tag__close {
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 成功变体 (Success Variant)
+// ============================================
+
+.cu-tag--success {
+  background: linear-gradient(135deg, var(--success-color) 0%, #229954 100%);
+  color: var(--light);
+  border-color: var(--success-color);
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.2);
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  .cu-tag__close {
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 警告变体 (Warning Variant)
+// ============================================
+
+.cu-tag--warning {
+  background: linear-gradient(135deg, var(--warning-color) 0%, #e67e22 100%);
+  color: var(--light);
+  border-color: var(--warning-color);
+  box-shadow: 0 2px 6px rgba(243, 156, 18, 0.2);
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  .cu-tag__close {
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 危险变体 (Danger Variant)
+// ============================================
+
+.cu-tag--danger {
+  background: linear-gradient(135deg, var(--error-color) 0%, #c0392b 100%);
+  color: var(--light);
+  border-color: var(--error-color);
+  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.2);
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  .cu-tag__close {
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 信息变体 (Info Variant)
+// ============================================
+
+.cu-tag--info {
+  background: linear-gradient(135deg, var(--info-color) 0%, #2980b9 100%);
+  color: var(--light);
+  border-color: var(--info-color);
+  box-shadow: 0 2px 6px rgba(52, 152, 219, 0.2);
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  .cu-tag__close {
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 边框变体 (Outline Variant)
+// ============================================
+
+.cu-tag--outline {
+  background: transparent;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: none;
+  
+  &.cu-tag--primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    
+    &:hover {
+      background: rgba(1, 194, 96, 0.1);
+    }
+  }
+  
+  &.cu-tag--success {
+    color: var(--success-color);
+    border-color: var(--success-color);
+    
+    &:hover {
+      background: rgba(39, 174, 96, 0.1);
+    }
+  }
+  
+  &.cu-tag--warning {
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+    
+    &:hover {
+      background: rgba(243, 156, 18, 0.1);
+    }
+  }
+  
+  &.cu-tag--danger {
+    color: var(--error-color);
+    border-color: var(--error-color);
+    
+    &:hover {
+      background: rgba(231, 76, 60, 0.1);
+    }
+  }
+  
+  &.cu-tag--info {
+    color: var(--info-color);
+    border-color: var(--info-color);
+    
+    &:hover {
+      background: rgba(52, 152, 219, 0.1);
+    }
+  }
+}
+
+// ============================================
+// 液态玻璃变体 (Glass Variant)
+// ============================================
+
+.cu-tag--glass {
+  @include glass-soft;
+  color: var(--text-color);
+  border: 1px solid var(--glass-border-soft);
+  box-shadow: var(--glass-shadow-soft);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--glass-border-light);
+    transform: translateY(-1px);
+  }
+  
+  // 暗色模式优化
+  [data-theme='dark'] &,
+  .dark & {
+    background: var(--glass-bg-soft);
+    border-color: var(--glass-border-soft);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+      border-color: var(--glass-border-light);
+    }
+  }
+}
+
+// ============================================
+// 点状变体 (Dot Variant)
+// ============================================
+
+.cu-tag--dot {
+  padding-left: 0;
+  
+  .cu-tag__dot {
+    margin-right: 6px;
+  }
+  
+  &.cu-tag--small {
+    .cu-tag__dot {
+      margin-right: 4px;
+    }
+  }
+  
+  &.cu-tag--large {
+    .cu-tag__dot {
+      margin-right: 8px;
+    }
+  }
+}
+
+// ============================================
+// 圆角变体 (Radius Variants)
+// ============================================
+
+.cu-tag--rounded {
+  border-radius: var(--radius-base);
+}
+
+.cu-tag--square {
+  border-radius: var(--radius-sm);
+}
+
+// ============================================
+// 可关闭标签 (Closable Tag)
+// ============================================
+
+.cu-tag--closable {
+  padding-right: 4px;
+  
+  &.cu-tag--small {
+    padding-right: 2px;
+  }
+  
+  &.cu-tag--large {
+    padding-right: 6px;
+  }
+}
+
+// ============================================
+// 禁用状态 (Disabled State)
+// ============================================
+
+.cu-tag--disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+// ============================================
+// 可点击标签 (Clickable Tag)
+// ============================================
+
+.cu-tag--clickable {
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// 选中状态 (Selected State)
+// ============================================
+
+.cu-tag--selected {
+  &.cu-tag--primary {
+    background: linear-gradient(135deg, var(--primary-color-hover) 0%, var(--primary-color-active) 100%);
+    box-shadow: 0 4px 8px rgba(1, 194, 96, 0.4);
+  }
+  
+  &.cu-tag--outline {
+    background: var(--primary-color);
+    color: var(--light);
+    border-color: var(--primary-color);
+  }
+}
+
+// ============================================
+// 标签组 (Tag Group)
+// ============================================
+
+.cu-tag-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  
+  .cu-tag {
+    margin: 0;
+  }
+  
+  // 紧密排列
+  &.cu-tag-group--tight {
+    gap: 4px;
+  }
+  
+  // 宽松排列
+  &.cu-tag-group--loose {
+    gap: 12px;
+  }
+  
+  // 垂直排列
+  &.cu-tag-group--vertical {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// ============================================
+// 响应式优化
+// ============================================
+
+@include respond-to('sm') {
+  .cu-tag {
+    // 移动端触摸目标优化
+    min-height: 28px;
+    padding: 4px 12px;
+    
+    &.cu-tag--small {
+      min-height: 24px;
+    }
+  }
+}
+
+// ============================================
+// 暗色模式优化
+// ============================================
+
+[data-theme='dark'] .cu-tag,
+.dark .cu-tag {
+  // 暗色模式下的通用调整
+  &.cu-tag--outline {
+    border-color: var(--border-color);
+    color: var(--text-color);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+// ============================================
+// 无障碍优化 (A11y)
+// ============================================
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .cu-tag {
+    border-width: 2px;
+  }
+}
+
+// 减少动画模式支持
+@media (prefers-reduced-motion: reduce) {
+  .cu-tag {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    &:active {
+      transform: none;
+    }
+    
+    .cu-tag__close {
+      &:active {
+        transform: none;
+      }
+    }
+  }
+}
+
+// ============================================
+// 特殊用途标签 (Special Purpose Tags)
+// ============================================
+
+// 状态标签
+.cu-tag--status {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 11px;
+  
+  &.cu-tag--small {
+    font-size: 10px;
+  }
+  
+  &.cu-tag--large {
+    font-size: 12px;
+  }
+}
+
+// 数字标签（徽章）
+.cu-tag--badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.cu-tag--small {
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+  }
+  
+  &.cu-tag--large {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+}
+
+// 链接标签
+.cu-tag--link {
+  text-decoration: none;
+  cursor: pointer;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
