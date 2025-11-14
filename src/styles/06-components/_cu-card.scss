@@ -17,7 +17,7 @@
   background: var(--card-bg);
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  transition: all 0.3s ease;
   
   // 基础内边距
   padding: 20px 24px;
@@ -85,27 +85,20 @@
 }
 
 // ============================================
-// 液态玻璃变体 (Glass Variant)
+// 浅色变体 (Light Variant)
 // ============================================
 
-.cu-card--glass {
-  @include glass-card;
-  border: 1px solid var(--glass-border-light);
-  background: var(--glass-bg-light);
+.cu-card--light {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
   
   .cu-card__header {
-    border-bottom-color: var(--glass-border-soft);
+    border-bottom-color: var(--border-color);
   }
   
   .cu-card__footer {
-    border-top-color: var(--glass-border-soft);
-  }
-  
-  // 暗色模式优化
-  [data-theme='dark'] &,
-  .dark & {
-    background: var(--glass-bg-light);
-    border-color: var(--glass-border-light);
+    border-top-color: var(--border-color);
   }
 }
 
@@ -146,7 +139,7 @@
   
   &:hover {
     border-color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.05);
+    background: var(--bg-color);
   }
 }
 
@@ -160,16 +153,16 @@
   box-shadow: var(--shadow-lg);
   
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-lg);
   }
   
   // 暗色模式优化
   [data-theme='dark'] &,
   .dark & {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-lg);
     
     &:hover {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-lg);
     }
   }
 }
@@ -268,26 +261,21 @@
     box-shadow: var(--shadow-sm);
   }
   
-  // 玻璃卡片悬停效果
-  &.cu-card--glass:hover {
+  // 浅色卡片悬停效果
+  &.cu-card--light:hover {
     transform: translateY(-2px);
-    box-shadow: var(--glass-shadow-card);
-    background: rgba(255, 255, 255, 0.2);
-    
-    [data-theme='dark'] &,
-    .dark & {
-      background: rgba(0, 0, 0, 0.4);
-    }
+    box-shadow: var(--shadow-md);
+    background: var(--card-bg);
   }
   
   // 阴影卡片悬停效果
   &.cu-card--elevated:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
     
     [data-theme='dark'] &,
     .dark & {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-lg);
     }
   }
 }
@@ -381,13 +369,13 @@
     border-left: 1px solid var(--border-color);
   }
   
-  &.cu-card--glass {
+  &.cu-card--light {
     .cu-card__header {
-      border-right-color: var(--glass-border-soft);
+      border-right-color: var(--border-color);
     }
     
     .cu-card__footer {
-      border-left-color: var(--glass-border-soft);
+      border-left-color: var(--border-color);
     }
   }
   
@@ -428,8 +416,8 @@
   margin: 16px 0;
   border: none;
   
-  .cu-card--glass & {
-    background: var(--glass-border-soft);
+  .cu-card--light & {
+    background: var(--border-color);
   }
 }
 
@@ -503,13 +491,13 @@
       border-top: 1px solid var(--border-color);
     }
     
-    &.cu-card--glass {
+    &.cu-card--light {
       .cu-card__header {
-        border-bottom-color: var(--glass-border-soft);
+        border-bottom-color: var(--border-color);
       }
       
       .cu-card__footer {
-        border-top-color: var(--glass-border-soft);
+        border-top-color: var(--border-color);
       }
     }
   }
@@ -525,16 +513,16 @@
   box-shadow: var(--shadow-md);
   
   &.cu-card--elevated {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-lg);
     
     &:hover {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-lg);
     }
   }
   
   &.cu-card--outline {
     &:hover {
-      background: rgba(1, 194, 96, 0.1);
+      background: var(--bg-color);
     }
   }
 }
@@ -548,7 +536,7 @@
   .cu-card {
     border-width: 2px;
     
-    &.cu-card--glass {
+    &.cu-card--light {
       border-width: 2px;
     }
   }

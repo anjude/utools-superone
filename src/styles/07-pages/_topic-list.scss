@@ -1,89 +1,45 @@
-// TopicList页面样式 - 液态玻璃主题
+// TopicList页面样式 - 紧凑布局
 @use '../02-tools/mixins' as *;
 
 .p-topic-list-wrap {
-  padding: 24px;
+  padding: 12px;
   min-height: 100vh;
   background: var(--bg-color);
-  background-image: 
-    radial-gradient(circle at 20% 30%, rgba(1, 194, 96, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(52, 213, 128, 0.06) 0%, transparent 50%);
-  transition: background-color 0.3s ease;
-  position: relative;
-  overflow: hidden;
-
-  // 添加微妙的背景装饰
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
-      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.01) 0%, transparent 50%);
-    pointer-events: none;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 
   @include respond-to('sm') {
-    padding: 32px;
-  }
-
-  @include respond-to('md') {
-    padding: 40px;
+    padding: 16px;
+    gap: 16px;
   }
 }
 
 .p-topic-list-header {
-  position: relative;
-  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding: 20px 24px;
-  @include glass-card;
-  border-radius: var(--radius-md);
+  padding: 8px 0;
 
-  @include respond-to('sm') {
-    padding: 24px 32px;
-  }
-
-  h2 {
+  .p-page-title {
     margin: 0;
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-color);
     transition: color 0.3s ease;
-    letter-spacing: -0.5px;
-
-    @include respond-to('sm') {
-      font-size: 28px;
-    }
   }
-
-  // 按钮样式已迁移到通用组件 cu-button
-  // 使用 cu-button cu-button--secondary 等类名
 }
 
 // 加载、错误、空状态
 .p-loading,
 .p-error,
 .p-empty {
-  position: relative;
-  z-index: 1;
   text-align: center;
-  padding: 60px 20px;
+  padding: 20px;
   color: var(--text-color);
   opacity: 0.7;
-  font-size: 16px;
+  font-size: 14px;
   transition: color 0.3s ease, opacity 0.3s ease;
-
-  @include respond-to('sm') {
-    padding: 80px 20px;
-    font-size: 18px;
-  }
 }
 
 .p-error {
@@ -91,175 +47,116 @@
   opacity: 0.9;
 
   p {
-    margin: 0 0 16px;
+    margin: 0 0 12px;
     font-weight: 500;
   }
-
-  // 按钮样式已迁移到通用组件 cu-button
-  // 使用 cu-button cu-button--primary 等类名
 }
 
-// 主题列表
-.p-topic-list {
-  position: relative;
-  z-index: 1;
-  list-style: none;
-  padding: 0;
-  margin: 0;
+// 主题选择器
+.p-topics-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
 }
 
-// 主题卡片
-.p-topic-item {
-  @include glass-card;
+.p-topic-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
   border-radius: var(--radius-md);
-  padding: 20px 24px;
-  margin-bottom: 16px;
-  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 13px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 
-  @include respond-to('sm') {
-    padding: 24px 32px;
-    margin-bottom: 20px;
+  &:hover {
+    border-color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
+    color: var(--primary-color);
   }
 
-  // 悬停效果
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 16px 48px 0 rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
-
-    .p-topic-name {
-      color: var(--primary-color);
+  &--active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--light);
+    
+    .p-topic-tag-top {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--light);
     }
   }
-
-  // 点击效果
-  &:active {
-    transform: translateY(0);
-  }
 }
 
-// 暗色模式优化
-[data-theme='dark'] .p-topic-item,
-.dark .p-topic-item {
-  &:hover {
-    box-shadow: 
-      0 16px 48px 0 rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-  }
+.p-topic-tag-top {
+  display: inline-block;
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  background: var(--error-color);
+  color: var(--light);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
-// 主题头部
-.p-topic-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  gap: 16px;
-}
-
-// 主题名称
-.p-topic-name {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-color);
-  transition: color 0.3s ease;
-  line-height: 1.4;
-
-  @include respond-to('sm') {
-    font-size: 20px;
-  }
-}
-
-// 置顶徽章样式已迁移到通用组件 cu-tag
-// 使用 cu-tag cu-tag--danger cu-tag--small cu-tag--status 等类名
-
-// 主题时间
-.p-topic-time {
-  font-size: 13px;
-  color: var(--text-color);
-  opacity: 0.6;
-  white-space: nowrap;
-  transition: color 0.3s ease, opacity 0.3s ease;
-  flex-shrink: 0;
-
-  @include respond-to('sm') {
-    font-size: 14px;
-  }
-}
-
-// 主题描述
-.p-topic-description {
-  margin: 0;
-  color: var(--text-color);
-  font-size: 14px;
-  line-height: 1.6;
-  word-break: break-word;
-  opacity: 0.8;
-  transition: color 0.3s ease, opacity 0.3s ease;
-
-  @include respond-to('sm') {
-    font-size: 15px;
-    line-height: 1.7;
-  }
-}
-
-// 主题操作区域
-.p-topic-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
+.p-topic-tag-name {
+  font-weight: 500;
 }
 
 // 编辑器区域
-.p-topic-editor-section {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+.p-editor-section {
+  flex-shrink: 0;
 }
 
 .p-editor-wrapper {
-  margin-bottom: 16px;
-  @include glass-card;
+  position: relative;
+  margin-bottom: 8px;
   border-radius: var(--radius-md);
-  padding: 16px;
-  overflow: visible;
-  min-height: 350px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
 
   :deep(.md-editor) {
     background: var(--bg-color);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: var(--radius-md);
+    border: none;
     
-    // 确保编辑器内容区域可见
     .md-editor-content {
-      min-height: 300px;
+      min-height: 140px;
+    }
+    
+    .md-editor-toolbar {
+      position: relative;
     }
   }
 }
 
-.p-editor-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-bottom: 24px;
+.p-editor-save-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
+  
+  .cu-button {
+    font-size: 12px;
+    padding: 4px 12px;
+    height: 28px;
+    line-height: 1;
+  }
 }
 
 // 日志区域
 .p-logs-section {
-  margin-top: 24px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .p-logs-title {
-  margin: 0 0 16px;
-  font-size: 16px;
+  margin: 0 0 8px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-color);
   transition: color 0.3s ease;
@@ -268,11 +165,11 @@
 .p-logs-loading,
 .p-logs-error,
 .p-logs-empty {
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   color: var(--text-color);
   opacity: 0.6;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .p-logs-error {
@@ -284,29 +181,30 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .p-log-item {
-  @include glass-card;
+  padding: 8px 10px;
   border-radius: var(--radius-md);
-  padding: 16px 20px;
-  margin-bottom: 12px;
-  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 
-      0 8px 24px 0 rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+    border-color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
   }
 }
 
 .p-log-content {
   color: var(--text-color);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.5;
   word-break: break-word;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 
   :deep(h1),
   :deep(h2),
@@ -314,44 +212,46 @@
   :deep(h4),
   :deep(h5),
   :deep(h6) {
-    margin: 16px 0 8px;
+    margin: 8px 0 4px;
     font-weight: 600;
     color: var(--text-color);
+    font-size: 14px;
   }
 
   :deep(p) {
-    margin: 8px 0;
+    margin: 4px 0;
   }
 
   :deep(ul),
   :deep(ol) {
-    margin: 8px 0;
-    padding-left: 24px;
+    margin: 4px 0;
+    padding-left: 20px;
   }
 
   :deep(li) {
-    margin: 4px 0;
+    margin: 2px 0;
   }
 
   :deep(code) {
     background: rgba(0, 0, 0, 0.05);
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 2px 4px;
+    border-radius: 3px;
     font-size: 0.9em;
   }
 
   :deep(pre) {
     background: rgba(0, 0, 0, 0.05);
-    padding: 12px;
-    border-radius: 6px;
+    padding: 6px;
+    border-radius: 4px;
     overflow-x: auto;
-    margin: 12px 0;
+    margin: 6px 0;
+    font-size: 12px;
   }
 
   :deep(blockquote) {
-    border-left: 3px solid var(--primary-color);
-    padding-left: 12px;
-    margin: 12px 0;
+    border-left: 2px solid var(--primary-color);
+    padding-left: 8px;
+    margin: 6px 0;
     opacity: 0.8;
   }
 }
@@ -360,27 +260,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-color);
 }
 
 .p-log-time {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-color);
   opacity: 0.5;
-}
-
-// 暗色模式优化
-[data-theme='dark'] .p-topic-list-wrap,
-.dark .p-topic-list-wrap {
-  background-image: 
-    radial-gradient(circle at 20% 30%, rgba(1, 194, 96, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(52, 213, 128, 0.08) 0%, transparent 50%);
-
-  &::before {
-    background: 
-      radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
-      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
-  }
 }
