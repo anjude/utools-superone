@@ -1,0 +1,83 @@
+// 主题变量定义 - 支持light/dark模式
+
+// 浅色主题变量（默认）
+:root {
+  --bg-color: #f4f4f4;
+  --text-color: #333;
+  --card-bg: #fff;
+  --border-color: #e0e0e0;
+  --scrollbar-track: #f4f4f4;
+  --scrollbar-thumb: #c0c0c0;
+  
+  // 扩展主题变量
+  --primary-color: rgb(88, 164, 246);
+  --success-color: #27ae60;
+  --error-color: #e74c3c;
+  --warning-color: #f39c12;
+  --info-color: #3498db;
+  
+  // 阴影
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
+  
+  // 透明度
+  --opacity-disabled: 0.6;
+  --opacity-hover: 0.8;
+}
+
+// 深色主题变量
+[data-theme='dark'],
+.dark {
+  --bg-color: #303133;
+  --text-color: #fff;
+  --card-bg: #2d2d2d;
+  --border-color: #404040;
+  --scrollbar-track: #303133;
+  --scrollbar-thumb: #666;
+  
+  // 扩展主题变量
+  --primary-color: rgb(88, 164, 246);
+  --success-color: #27ae60;
+  --error-color: #e74c3c;
+  --warning-color: #f39c12;
+  --info-color: #3498db;
+  
+  // 阴影（深色模式下更深）
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.4);
+  
+  // 透明度
+  --opacity-disabled: 0.6;
+  --opacity-hover: 0.8;
+}
+
+// 兼容 prefers-color-scheme（用于自动模式）
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg-color: #303133;
+    --text-color: #fff;
+    --card-bg: #2d2d2d;
+    --border-color: #404040;
+    --scrollbar-track: #303133;
+    --scrollbar-thumb: #666;
+    
+    // 扩展主题变量
+    --primary-color: rgb(88, 164, 246);
+    --success-color: #27ae60;
+    --error-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #3498db;
+    
+    // 阴影
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.4);
+    
+    // 透明度
+    --opacity-disabled: 0.6;
+    --opacity-hover: 0.8;
+  }
+}
+

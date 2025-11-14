@@ -1,0 +1,31 @@
+// 排版元素样式
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+p {
+  margin: 0;
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+

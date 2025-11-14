@@ -1,0 +1,27 @@
+// 按钮元素样式
+
+button {
+  border: none;
+  background: none var(--blue);
+  color: var(--light);
+  line-height: 2.5;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button:disabled {
+  filter: grayscale(1);
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+button:not(:disabled):active {
+  opacity: 0.6;
+}
+
+button:not(:disabled):hover {
+  opacity: var(--opacity-hover);
+}
+

@@ -1,0 +1,737 @@
+---
+description: "样式组织规范 - ITCSS架构与样式管理规范"
+globs: "src/styles/**"
+---
+
+# 样式组织规范（ITCSS架构）
+
+## 架构概述
+
+本项目采用**ITCSS（Inverted Triangle CSS）**架构组织样式代码，结合**Tailwind CSS**作为工具类补充。
+
+**核心原则**：
+- Vue文件不写CSS，所有样式统一放在`src/styles/`目录
+- 按ITCSS层次组织，从通用到具体
+- 支持主题/暗黑模式，使用CSS变量
+- 业务样式与通用组件样式分离
+
+## ITCSS目录结构
+
+```
+src/styles/
+├── 01-settings/          # 变量和配置
+│   ├── _variables.scss   # 基础CSS变量
+│   ├── _theme.scss       # 主题变量（light/dark）
+│   └── _index.scss
+├── 02-tools/             # 混入和函数
+│   ├── _mixins.scss      # Sass混入
+│   ├── _functions.scss   # Sass函数
+│   └── _index.scss
+├── 03-generic/           # 重置和规范化
+│   ├── _reset.scss       # CSS重置
+│   ├── _normalize.scss   # 规范化样式
+│   └── _index.scss
+├── 04-elements/          # 基础HTML元素
+│   ├── _typography.scss  # 排版元素
+│   ├── _buttons.scss     # 按钮元素
+│   ├── _forms.scss       # 表单元素
+│   └── _index.scss
+├── 05-objects/           # 布局对象（OOCSS）
+│   ├── _layout.scss      # 布局对象
+│   ├── _grid.scss        # 网格系统
+│   └── _index.scss
+├── 06-components/        # 项目级通用组件样式
+│   ├── _cu-button.scss   # 通用按钮组件
+│   └── _index.scss
+├── 07-pages/             # 业务页面样式（新增层）
+│   ├── _login.scss       # Login页面样式
+│   ├── _topic-list.scss  # TopicList页面样式
+│   └── _index.scss
+├── 08-utilities/         # 工具类
+│   ├── _helpers.scss     # 辅助工具类
+│   └── _index.scss
+├── tailwind.css          # Tailwind CSS入口
+└── main.scss             # 主入口文件（按ITCSS顺序导入）
+```
+
+## 各层职责说明
+
+### 01. Settings（变量和配置）
+
+**职责**：定义全局CSS变量和主题配置
+
+**文件**：
+- `_variables.scss`：基础CSS变量（颜色、间距等）
+- `_theme.scss`：主题变量（light/dark模式）
+
+**规范**：
+- 所有颜色、背景、文本颜色必须使用CSS变量
+- 主题变量支持`[data-theme='dark']`和`.dark`选择器
+- 兼容`prefers-color-scheme`用于自动模式
+
+**示例**：
+```scss
+// _theme.scss
+:root {
+  --bg-color: #f4f4f4;
+  --text-color: #333;
+}
+
+[data-theme='dark'],
+.dark {
+  --bg-color: #303133;
+  --text-color: #fff;
+}
+```
+
+### 02. Tools（混入和函数）
+
+**职责**：定义Sass混入和函数，供其他层使用
+
+**文件**：
+- `_mixins.scss`：响应式、主题切换、过渡等混入
+- `_functions.scss`：工具函数
+
+**规范**：
+- 混入和函数应该是通用的、可复用的
+- 使用`@mixin`定义混入，使用`@function`定义函数
+
+**示例**：
+```scss
+// _mixins.scss
+@mixin theme-aware($property, $light-value, $dark-value) {
+  #{$property}: $light-value;
+  [data-theme='dark'] &,
+  .dark & {
+    #{$property}: $dark-value;
+  }
+}
+```
+
+### 03. Generic（重置和规范化）
+
+**职责**：CSS重置和基础规范化样式
+
+**文件**：
+- `_reset.scss`：CSS重置（margin、padding、box-sizing等）
+- `_normalize.scss`：规范化样式（body、滚动条等）
+
+**规范**：
+- 重置样式应该是最低优先级的
+- 规范化样式使用CSS变量支持主题
+
+### 04. Elements（基础HTML元素）
+
+**职责**：定义基础HTML元素的默认样式
+
+**文件**：
+- `_typography.scss`：标题、段落等排版元素
+- `_buttons.scss`：按钮元素的基础样式
+- `_forms.scss`：表单元素的基础样式
+
+**规范**：
+- 只定义元素选择器，不定义类选择器
+- 使用CSS变量支持主题切换
+- 保持样式简洁，避免过度设计
+
+**示例**：
+```scss
+// _buttons.scss
+button {
+  border: none;
+  background: var(--primary-color);
+  color: var(--light);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+```
+
+### 05. Objects（布局对象）
+
+**职责**：定义布局相关的OOCSS对象
+
+**文件**：
+- `_layout.scss`：容器、弹性布局等布局对象
+- `_grid.scss`：网格系统
+
+**规范**：
+- 使用`.o-`前缀（Object）
+- 应该是无样式的布局类，不包含颜色、字体等
+- 可复用、组合使用
+
+**示例**：
+```scss
+// _layout.scss
+.o-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.o-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+### 06. Components（项目级通用组件）
+
+**职责**：定义项目级通用组件的样式
+
+**文件**：
+- `_cu-button.scss`：通用按钮组件样式
+- 其他通用组件样式文件
+
+**规范**：
+- 使用`.c-`前缀（Component）或组件特定前缀（如`cu-`）
+- 只包含项目级通用组件，可在多个页面复用
+- 使用CSS变量支持主题
+
+**与Pages层区别**：
+- Components：项目级通用组件，可在多个页面复用
+- Pages：业务页面特定样式，只在一个页面使用
+
+### 07. Pages（业务页面样式）⭐ 新增层
+
+**职责**：定义业务页面的特定样式
+
+**文件**：
+- `_login.scss`：Login页面样式
+- `_topic-list.scss`：TopicList页面样式
+- 其他业务页面样式文件
+
+**规范**：
+- **必须使用`.p-`前缀**（Page）
+- 每个页面一个文件，文件名与页面名称对应
+- 只包含该页面特定的样式，不包含通用组件样式
+- 使用CSS变量支持主题切换
+- 使用BEM命名规范或保持类名语义化
+
+**示例**：
+```scss
+// _login.scss
+.p-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--bg-color);
+}
+
+.p-login-content {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: var(--shadow-md);
+}
+```
+
+**使用场景**：
+- 页面特定的布局和样式
+- 页面特定的交互效果
+- 页面特定的颜色和间距
+
+### 08. Utilities（工具类）
+
+**职责**：定义辅助工具类
+
+**文件**：
+- `_helpers.scss`：文本对齐、显示隐藏、间距等工具类
+
+**规范**：
+- 使用`.u-`前缀（Utility）
+- 应该是单一职责的工具类
+- 注意与Tailwind CSS的配合，避免重复定义
+- 优先使用Tailwind CSS，只在需要时定义自定义工具类
+
+**示例**：
+```scss
+// _helpers.scss
+.u-text-center {
+  text-align: center;
+}
+
+.u-hidden {
+  display: none !important;
+}
+```
+
+## 命名规范
+
+### 类名前缀
+
+| 层级 | 前缀 | 示例 |
+|-----|------|------|
+| Objects | `.o-` | `.o-container`, `.o-flex-center` |
+| Components | `.c-` 或组件特定前缀 | `.c-button`, `.cu-button` |
+| Pages | `.p-` | `.p-login-container`, `.p-topic-item` |
+| Utilities | `.u-` | `.u-text-center`, `.u-hidden` |
+
+### 文件命名
+
+- 使用`kebab-case`（短横线命名）
+- 部分文件使用下划线前缀`_`（Sass部分文件）
+- 入口文件使用`_index.scss`
+
+**示例**：
+- `_login.scss` ✅
+- `_topic-list.scss` ✅
+- `login.scss` ❌
+- `TopicList.scss` ❌
+
+## Vue文件样式规范
+
+### 禁止在Vue文件中写样式
+
+**规则**：
+- ❌ **禁止**在Vue文件的`<style>`标签中写任何CSS
+- ✅ **必须**将所有样式提取到`src/styles/`目录的对应层级
+- ✅ 页面样式放在`07-pages/`层
+- ✅ 通用组件样式放在`06-components/`层
+
+### 类名使用
+
+**规则**：
+- 使用对应的前缀类名（`.p-`、`.c-`、`.o-`、`.u-`）
+- 保持类名语义化，与样式文件中的类名一致
+- 可以组合使用多个类名
+
+**示例**：
+```vue
+<template>
+  <!-- ✅ 正确：使用p-前缀的页面样式 -->
+  <div class="p-login-container">
+    <div class="p-login-content">
+      <h1 class="p-login-title">登录</h1>
+    </div>
+  </div>
+</template>
+
+<!-- ❌ 错误：在Vue文件中写样式 -->
+<style scoped>
+.login-container {
+  /* ... */
+}
+</style>
+```
+
+## 主题支持规范
+
+### CSS变量使用
+
+**规则**：
+- 所有颜色、背景、文本颜色必须使用CSS变量
+- 在`01-settings/_theme.scss`中定义主题变量
+- 支持`light`、`dark`、`auto`三种模式
+
+**常用变量**：
+```scss
+--bg-color          // 背景色
+--text-color        // 文本颜色
+--card-bg           // 卡片背景
+--border-color      // 边框颜色
+--primary-color     // 主色
+--success-color     // 成功色
+--error-color       // 错误色
+--warning-color     // 警告色
+--info-color        // 信息色
+--shadow-sm         // 小阴影
+--shadow-md         // 中等阴影
+--shadow-lg         // 大阴影
+```
+
+### 主题切换
+
+**实现方式**：
+- 使用`useTheme` composable管理主题
+- 通过`data-theme`属性和`.dark`类切换主题
+- CSS变量自动响应主题变化
+
+**示例**：
+```scss
+// 自动支持主题切换
+.element {
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+// 特定主题下的样式
+[data-theme='dark'] .element,
+.dark .element {
+  box-shadow: var(--shadow-md);
+}
+```
+
+## 与Tailwind CSS的配合
+
+### 使用原则
+
+1. **Tailwind CSS**：用于布局和常用工具类（优先使用）
+2. **ITCSS Utilities层**：用于自定义工具类（补充）
+3. **ITCSS其他层**：用于组件和页面样式
+
+### 避免重复
+
+- 优先使用Tailwind CSS的工具类
+- 只在需要自定义工具类时在`08-utilities/`层定义
+- 避免在utilities层重复定义Tailwind已有的工具类
+
+**示例**：
+```vue
+<template>
+  <!-- ✅ 优先使用Tailwind -->
+  <div class="flex items-center justify-between p-4">
+    <!-- ✅ 使用自定义工具类 -->
+    <span class="u-text-truncate">文本</span>
+  </div>
+</template>
+```
+
+## 样式导入顺序
+
+在`main.scss`中按ITCSS顺序导入：
+
+```scss
+// 01. Settings
+@use './01-settings';
+
+// 02. Tools
+@use './02-tools';
+
+// 03. Generic
+@use './03-generic';
+
+// 04. Elements
+@use './04-elements';
+
+// 05. Objects
+@use './05-objects';
+
+// 06. Components
+@use './06-components';
+
+// 07. Pages
+@use './07-pages';
+
+// 08. Utilities
+@use './08-utilities';
+```
+
+**注意**：`tailwind.css`在`main.ts`中独立导入，不包含在`main.scss`中。
+
+## 最佳实践
+
+### 1. 样式组织
+
+- ✅ 按ITCSS层次组织样式
+- ✅ 页面样式放在`07-pages/`层
+- ✅ 通用组件样式放在`06-components/`层
+- ❌ 不要在Vue文件中写样式
+
+### 2. 命名规范
+
+- ✅ 使用对应的前缀（`.p-`、`.c-`、`.o-`、`.u-`）
+- ✅ 使用`kebab-case`命名
+- ✅ 保持类名语义化
+
+### 3. 主题支持
+
+- ✅ 所有颜色使用CSS变量
+- ✅ 在`01-settings/_theme.scss`中定义主题变量
+- ✅ 支持light/dark/auto三种模式
+
+### 4. 代码复用
+
+- ✅ 通用样式放在Elements、Objects、Components层
+- ✅ 页面特定样式放在Pages层
+- ✅ 使用混入和函数提高代码复用
+
+### 5. 性能优化
+
+- ✅ 避免过度嵌套
+- ✅ 使用CSS变量减少重复
+- ✅ 合理使用工具类
+
+## 常见问题
+
+### Q: 页面样式应该放在哪一层？
+
+A: 业务页面特定样式放在`07-pages/`层，使用`.p-`前缀。通用组件样式放在`06-components/`层。
+
+### Q: 如何区分Components层和Pages层？
+
+A: 
+- **Components层**：项目级通用组件，可在多个页面复用（如`cu-button`）
+- **Pages层**：业务页面特定样式，只在一个页面使用（如`p-login-container`）
+
+### Q: 可以在Vue文件中写样式吗？
+
+A: ❌ **不可以**。所有样式必须放在`src/styles/`目录的对应层级。
+
+### Q: 如何支持主题切换？
+
+A: 使用CSS变量，在`01-settings/_theme.scss`中定义主题变量，通过`useTheme` composable切换主题。
+
+### Q: Tailwind CSS和ITCSS如何配合？
+
+A: Tailwind CSS用于布局和常用工具类（优先使用），ITCSS用于组件和页面样式，utilities层用于自定义工具类（补充）。
+
+## 开发规范
+
+### 创建新页面样式
+
+**步骤**：
+
+1. 在`07-pages/`目录创建样式文件，命名格式：`_页面名.scss`（kebab-case）
+2. 使用`.p-`前缀定义所有类名
+3. 在`07-pages/_index.scss`中导入新文件
+4. 在Vue文件中使用对应的类名，**不要**写`<style>`标签
+
+**示例**：
+
+```scss
+// src/styles/07-pages/_user-profile.scss
+.p-user-profile-container {
+  padding: 20px;
+  background: var(--bg-color);
+}
+
+.p-user-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+```
+
+```scss
+// src/styles/07-pages/_index.scss
+@forward './login';
+@forward './topic-list';
+@forward './user-profile'; // 新增
+```
+
+```vue
+<!-- src/views/UserProfile.vue -->
+<template>
+  <div class="p-user-profile-container">
+    <div class="p-user-profile-header">
+      <!-- ... -->
+    </div>
+  </div>
+</template>
+<!-- 不要写 <style> 标签 -->
+```
+
+### 创建新通用组件样式
+
+**步骤**：
+
+1. 在`06-components/`目录创建样式文件，命名格式：`_组件名.scss`
+2. 使用`.c-`前缀或组件特定前缀（如`cu-`）
+3. 在`06-components/_index.scss`中导入新文件
+4. 在组件Vue文件中使用对应的类名，**不要**写`<style>`标签
+
+**示例**：
+
+```scss
+// src/styles/06-components/_cu-card.scss
+.cu-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cu-card-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+```
+
+```scss
+// src/styles/06-components/_index.scss
+@forward './cu-button';
+@forward './cu-card'; // 新增
+```
+
+### 添加新的主题变量
+
+**步骤**：
+
+1. 在`01-settings/_theme.scss`中添加变量
+2. 同时定义light和dark模式的值
+3. 在样式中使用`var(--变量名)`
+
+**示例**：
+
+```scss
+// src/styles/01-settings/_theme.scss
+:root {
+  // ... 现有变量
+  --sidebar-width: 240px;
+  --header-height: 64px;
+}
+
+[data-theme='dark'],
+.dark {
+  // ... 现有变量
+  --sidebar-width: 240px;
+  --header-height: 64px;
+}
+```
+
+### 添加新的工具类
+
+**步骤**：
+
+1. 在`08-utilities/_helpers.scss`中添加工具类
+2. 使用`.u-`前缀
+3. 确保不与Tailwind CSS重复
+4. 优先使用Tailwind CSS，只在需要时添加自定义工具类
+
+**示例**：
+
+```scss
+// src/styles/08-utilities/_helpers.scss
+// ... 现有工具类
+
+.u-flex-1 {
+  flex: 1;
+}
+
+.u-cursor-pointer {
+  cursor: pointer;
+}
+```
+
+### 添加新的混入或函数
+
+**步骤**：
+
+1. 在`02-tools/_mixins.scss`或`_functions.scss`中添加
+2. 确保是通用的、可复用的
+3. 在其他层中使用`@use`导入
+
+**示例**：
+
+```scss
+// src/styles/02-tools/_mixins.scss
+// ... 现有混入
+
+@mixin card-shadow {
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.3s;
+  
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
+```
+
+```scss
+// src/styles/07-pages/_xxx.scss
+@use '../02-tools/mixins' as *;
+
+.p-card {
+  @include card-shadow;
+}
+```
+
+### 代码编写流程
+
+**开发新页面/组件时的流程**：
+
+1. ✅ **创建Vue文件**，编写模板和逻辑
+2. ✅ **创建样式文件**（`07-pages/_xxx.scss` 或 `06-components/_xxx.scss`）
+3. ✅ **在样式文件中编写样式**，使用正确的前缀和CSS变量
+4. ✅ **在对应的`_index.scss`中导入**新样式文件
+5. ✅ **在Vue文件中使用类名**，**不要**写`<style>`标签
+6. ✅ **测试主题切换**，确保light/dark模式正常
+
+**检查清单**：
+
+- [ ] 样式文件已创建在正确的层级
+- [ ] 使用了正确的前缀（`.p-`、`.c-`、`.o-`、`.u-`）
+- [ ] 所有颜色使用CSS变量
+- [ ] 在`_index.scss`中已导入
+- [ ] Vue文件中没有`<style>`标签
+- [ ] 类名与样式文件中的类名一致
+- [ ] 主题切换功能正常
+
+### 样式编写示例
+
+**页面样式示例**：
+
+```scss
+// src/styles/07-pages/_dashboard.scss
+.p-dashboard-container {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  background: var(--bg-color);
+}
+
+.p-dashboard-sidebar {
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+  padding: 16px;
+}
+
+.p-dashboard-content {
+  padding: 24px;
+}
+
+.p-dashboard-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s, background-color 0.3s;
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+[data-theme='dark'] .p-dashboard-card,
+.dark .p-dashboard-card {
+  box-shadow: var(--shadow-sm);
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+```
+
+**通用组件样式示例**：
+
+```scss
+// src/styles/06-components/_cu-modal.scss
+.cu-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.cu-modal-content {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+}
+```

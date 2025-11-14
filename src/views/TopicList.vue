@@ -37,158 +37,42 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="topic-list-wrap">
-    <div class="topic-list-header">
+  <div class="p-topic-list-wrap">
+    <div class="p-topic-list-header">
       <h2>{{ t('topic.title') }}</h2>
       <button @click="loadTopics" :disabled="loading">
         {{ loading ? t('common.loading') : t('topic.refresh') }}
       </button>
     </div>
 
-    <div v-if="loading && topics.length === 0" class="loading">
+    <div v-if="loading && topics.length === 0" class="p-loading">
       {{ t('common.loading') }}
     </div>
 
-    <div v-else-if="error" class="error">
+    <div v-else-if="error" class="p-error">
       <p>{{ error }}</p>
       <button @click="loadTopics">{{ t('login.retry') }}</button>
     </div>
 
-    <div v-else-if="topics.length === 0" class="empty">
+    <div v-else-if="topics.length === 0" class="p-empty">
       {{ t('topic.empty') }}
     </div>
 
-    <ul v-else class="topic-list">
-      <li v-for="topic in topics" :key="topic.id" class="topic-item">
-        <div class="topic-header">
-          <h3 class="topic-name">
-            <span v-if="topic.top > 0" class="top-badge">{{ t('topic.top') }}</span>
+    <ul v-else class="p-topic-list">
+      <li v-for="topic in topics" :key="topic.id" class="p-topic-item">
+        <div class="p-topic-header">
+          <h3 class="p-topic-name">
+            <span v-if="topic.top > 0" class="p-top-badge">{{ t('topic.top') }}</span>
             {{ topic.topicName }}
           </h3>
-          <span class="topic-time">
+          <span class="p-topic-time">
             {{ timestampToChineseDateTime(topic.createTime) }}
           </span>
         </div>
-        <p v-if="topic.description" class="topic-description">
+        <p v-if="topic.description" class="p-topic-description">
           {{ topic.description }}
         </p>
       </li>
     </ul>
   </div>
 </template>
-
-<style scoped>
-.topic-list-wrap {
-  padding: 16px;
-}
-
-.topic-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.topic-list-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.loading,
-.error,
-.empty {
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
-}
-
-.error {
-  color: #f56c6c;
-}
-
-.error button {
-  margin-top: 12px;
-}
-
-.topic-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.topic-item {
-  background: var(--card-bg);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s, background-color 0.3s;
-}
-
-[data-theme='dark'] .topic-item,
-.dark .topic-item {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.topic-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-[data-theme='dark'] .topic-item:hover,
-.dark .topic-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-}
-
-.topic-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-
-.topic-name {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-color);
-  transition: color 0.3s;
-}
-
-.top-badge {
-  display: inline-block;
-  background: #f56c6c;
-  color: #fff;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: normal;
-}
-
-.topic-time {
-  font-size: 12px;
-  color: #999;
-  white-space: nowrap;
-  margin-left: 12px;
-}
-
-.topic-description {
-  margin: 0;
-  color: var(--text-color);
-  font-size: 14px;
-  line-height: 1.5;
-  word-break: break-word;
-  opacity: 0.8;
-  transition: color 0.3s, opacity 0.3s;
-}
-
-.topic-time {
-  color: var(--text-color);
-  opacity: 0.6;
-  transition: color 0.3s, opacity 0.3s;
-}
-</style>

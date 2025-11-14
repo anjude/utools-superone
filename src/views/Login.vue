@@ -66,31 +66,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-content">
-      <h1 class="login-title">{{ t('login.title') }}</h1>
+  <div class="p-login-container">
+    <div class="p-login-content">
+      <h1 class="p-login-title">{{ t('login.title') }}</h1>
 
-      <div v-if="loginStatus === 'idle' || loginStatus === 'scanning'" class="login-status">
-        <div v-if="loginStatus === 'scanning'" class="loading-spinner"></div>
+      <div v-if="loginStatus === 'idle' || loginStatus === 'scanning'" class="p-login-status">
+        <div v-if="loginStatus === 'scanning'" class="p-loading-spinner"></div>
         <p v-if="loginStatus === 'scanning'">{{ t('login.scanning') }}</p>
         <p v-else>{{ t('login.clickToLogin') }}</p>
       </div>
 
-      <div v-if="loginStatus === 'success'" class="login-success">
-        <p class="success-message">✓ {{ t('login.loginSuccess') }}</p>
-        <p class="success-tip">{{ t('login.redirecting') }}</p>
+      <div v-if="loginStatus === 'success'" class="p-login-success">
+        <p class="p-success-message">✓ {{ t('login.loginSuccess') }}</p>
+        <p class="p-success-tip">{{ t('login.redirecting') }}</p>
       </div>
 
-      <div v-if="loginStatus === 'error'" class="login-error">
-        <p class="error-message">✗ {{ errorMessage }}</p>
-        <button class="retry-button" @click="handleLogin" :disabled="isLoggingIn">
+      <div v-if="loginStatus === 'error'" class="p-login-error">
+        <p class="p-error-message">✗ {{ errorMessage }}</p>
+        <button class="p-retry-button" @click="handleLogin" :disabled="isLoggingIn">
           {{ isLoggingIn ? t('login.loggingIn') : t('login.retry') }}
         </button>
       </div>
 
       <button
         v-if="loginStatus === 'idle'"
-        class="login-button"
+        class="p-login-button"
         @click="handleLogin"
         :disabled="isLoggingIn"
       >
@@ -99,115 +99,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  background: var(--bg-color);
-  transition: background-color 0.3s;
-}
-
-.login-content {
-  background: var(--card-bg);
-  border-radius: 8px;
-  padding: 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-[data-theme='dark'] .login-content,
-.dark .login-content {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.login-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 30px;
-  color: var(--text-color);
-  transition: color 0.3s;
-}
-
-.login-status {
-  margin: 20px 0;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.login-success {
-  margin: 20px 0;
-}
-
-.success-message {
-  color: #27ae60;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.success-tip {
-  color: var(--text-color);
-  opacity: 0.7;
-  font-size: 14px;
-  transition: color 0.3s, opacity 0.3s;
-}
-
-.login-error {
-  margin: 20px 0;
-}
-
-.error-message {
-  color: #e74c3c;
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-.login-button,
-.retry-button {
-  width: 100%;
-  padding: 12px 24px;
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.login-button:hover:not(:disabled),
-.retry-button:hover:not(:disabled) {
-  background: #2980b9;
-}
-
-.login-button:disabled,
-.retry-button:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-}
-</style>

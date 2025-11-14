@@ -1,0 +1,36 @@
+// 表单元素样式
+
+textarea {
+  display: block;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+

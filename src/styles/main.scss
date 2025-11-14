@@ -1,0 +1,27 @@
+// ITCSS主入口文件
+// 按ITCSS层次顺序导入各层样式
+
+// 01. Settings - 变量和配置
+@use './01-settings';
+
+// 02. Tools - 混入和函数
+@use './02-tools';
+
+// 03. Generic - 重置和规范化
+@use './03-generic';
+
+// 04. Elements - 基础HTML元素
+@use './04-elements';
+
+// 05. Objects - 布局对象（OOCSS）
+@use './05-objects';
+
+// 06. Components - 项目级通用组件样式
+@use './06-components';
+
+// 07. Pages - 业务页面样式
+@use './07-pages';
+
+// 08. Utilities - 工具类
+@use './08-utilities';
+

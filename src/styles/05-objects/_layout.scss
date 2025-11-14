@@ -1,0 +1,45 @@
+// 布局对象（OOCSS）
+
+// 容器对象
+.o-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+// 弹性布局对象
+.o-flex {
+  display: flex;
+}
+
+.o-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.o-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.o-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// 间距对象
+.o-spacing-sm {
+  padding: 8px;
+}
+
+.o-spacing-md {
+  padding: 16px;
+}
+
+.o-spacing-lg {
+  padding: 24px;
+}
+

@@ -1,0 +1,12 @@
+// Sass函数定义
+
+// 颜色透明度函数
+@function rgba-color($color, $opacity) {
+  @return rgba($color, $opacity);
+}
+
+// 计算rem值
+@function rem($pixels, $base: 16) {
+  @return ($pixels / $base) * 1rem;
+}
+

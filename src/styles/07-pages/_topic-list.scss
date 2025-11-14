@@ -1,0 +1,113 @@
+// TopicList页面样式
+
+.p-topic-list-wrap {
+  padding: 16px;
+}
+
+.p-topic-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.p-topic-list-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.p-loading,
+.p-error,
+.p-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+.p-error {
+  color: var(--error-color);
+}
+
+.p-error button {
+  margin-top: 12px;
+}
+
+.p-topic-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.p-topic-item {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, background-color 0.3s;
+}
+
+[data-theme='dark'] .p-topic-item,
+.dark .p-topic-item {
+  box-shadow: var(--shadow-sm);
+}
+
+.p-topic-item:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme='dark'] .p-topic-item:hover,
+.dark .p-topic-item:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.p-topic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.p-topic-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+
+.p-top-badge {
+  display: inline-block;
+  background: var(--error-color);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: normal;
+}
+
+.p-topic-time {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.6;
+  white-space: nowrap;
+  margin-left: 12px;
+  transition: color 0.3s, opacity 0.3s;
+}
+
+.p-topic-description {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  opacity: 0.8;
+  transition: color 0.3s, opacity 0.3s;
+}
+

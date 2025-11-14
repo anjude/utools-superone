@@ -1,0 +1,57 @@
+// 辅助工具类
+
+// 文本工具类
+.u-text-center {
+  text-align: center;
+}
+
+.u-text-left {
+  text-align: left;
+}
+
+.u-text-right {
+  text-align: right;
+}
+
+.u-text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 显示/隐藏工具类
+.u-hidden {
+  display: none !important;
+}
+
+.u-visible {
+  display: block !important;
+}
+
+// 间距工具类
+.u-mt-sm {
+  margin-top: 8px;
+}
+
+.u-mt-md {
+  margin-top: 16px;
+}
+
+.u-mt-lg {
+  margin-top: 24px;
+}
+
+.u-mb-sm {
+  margin-bottom: 8px;
+}
+
+.u-mb-md {
+  margin-bottom: 16px;
+}
+
+.u-mb-lg {
+  margin-bottom: 24px;
+}
+
+// 注意：与Tailwind CSS配合使用，避免重复定义工具类
+

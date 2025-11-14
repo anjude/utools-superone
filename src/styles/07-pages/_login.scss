@@ -1,0 +1,112 @@
+// Login页面样式
+
+.p-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--bg-color);
+  transition: background-color 0.3s;
+}
+
+.p-login-content {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: var(--shadow-md);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+[data-theme='dark'] .p-login-content,
+.dark .p-login-content {
+  box-shadow: var(--shadow-md);
+}
+
+.p-login-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+
+.p-login-status {
+  margin: 20px 0;
+}
+
+.p-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--info-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.p-login-success {
+  margin: 20px 0;
+}
+
+.p-success-message {
+  color: var(--success-color);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.p-success-tip {
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 14px;
+  transition: color 0.3s, opacity 0.3s;
+}
+
+.p-login-error {
+  margin: 20px 0;
+}
+
+.p-error-message {
+  color: var(--error-color);
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.p-login-button,
+.p-retry-button {
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--info-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.p-login-button:hover:not(:disabled),
+.p-retry-button:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.p-login-button:disabled,
+.p-retry-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+

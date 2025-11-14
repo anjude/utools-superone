@@ -50,9 +50,3 @@ onMounted(() => {
 <template>
   <router-view />
 </template>
-
-<style scoped>
-.basic-wrap {
-  padding: 16px;
-}
-</style>
