@@ -40,7 +40,12 @@ onMounted(() => {
   <div class="p-topic-list-wrap">
     <div class="p-topic-list-header">
       <h2>{{ t('topic.title') }}</h2>
-      <button @click="loadTopics" :disabled="loading">
+      <button 
+        class="cu-button cu-button--secondary" 
+        @click="loadTopics" 
+        :disabled="loading"
+        :class="{ 'cu-button--loading': loading }"
+      >
         {{ loading ? t('common.loading') : t('topic.refresh') }}
       </button>
     </div>
@@ -51,7 +56,12 @@ onMounted(() => {
 
     <div v-else-if="error" class="p-error">
       <p>{{ error }}</p>
-      <button @click="loadTopics">{{ t('login.retry') }}</button>
+      <button 
+        class="cu-button cu-button--primary" 
+        @click="loadTopics"
+      >
+        {{ t('login.retry') }}
+      </button>
     </div>
 
     <div v-else-if="topics.length === 0" class="p-empty">

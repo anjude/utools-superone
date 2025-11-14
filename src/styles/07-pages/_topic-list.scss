@@ -63,32 +63,8 @@
     }
   }
 
-  button {
-    @include glass-soft;
-    padding: 10px 24px;
-    border-radius: var(--radius-base);
-    color: var(--primary-color);
-    font-weight: 500;
-    font-size: 14px;
-    transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
-    cursor: pointer;
-
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.15);
-      border-color: var(--glass-border-light);
-      box-shadow: 0 4px 12px rgba(1, 194, 96, 0.2);
-    }
-
-    &:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    &:disabled {
-      opacity: var(--opacity-disabled);
-      cursor: not-allowed;
-    }
-  }
+  // 按钮样式已迁移到通用组件 cu-button
+  // 使用 cu-button cu-button--secondary 等类名
 }
 
 // 加载、错误、空状态
@@ -119,28 +95,8 @@
     font-weight: 500;
   }
 
-  button {
-    @include glass-soft;
-    padding: 10px 24px;
-    border-radius: var(--radius-base);
-    background: rgba(231, 76, 60, 0.1);
-    border: 1px solid rgba(231, 76, 60, 0.2);
-    color: var(--error-color);
-    font-weight: 500;
-    font-size: 14px;
-    transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
-    cursor: pointer;
-
-    &:hover {
-      transform: translateY(-1px);
-      background: rgba(231, 76, 60, 0.15);
-      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
+  // 按钮样式已迁移到通用组件 cu-button
+  // 使用 cu-button cu-button--primary 等类名
 }
 
 // 主题列表

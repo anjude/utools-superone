@@ -1,3 +1,613 @@
-// 通用按钮组件样式
-// 项目级通用组件样式将在此定义
+// ============================================
+// 通用按钮组件样式系统 (cu-button)
+// 项目的唯一button标准，通过样式类组合适应不同场景
+// ============================================
 
+@use '../02-tools/mixins' as *;
+
+// ============================================
+// 基础按钮样式
+// ============================================
+
+.cu-button {
+  // 基础样式
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  
+  // 过渡效果
+  transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+  
+  // 基础尺寸（medium）
+  padding: 10px 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: var(--radius-base);
+  min-height: 36px;
+  
+  // 禁用状态基础样式
+  &:disabled {
+    cursor: not-allowed;
+    opacity: var(--opacity-disabled);
+    pointer-events: none;
+  }
+  
+  // 加载状态
+  &.cu-button--loading {
+    pointer-events: none;
+    cursor: default;
+  }
+  
+  // 移除默认按钮样式
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+  
+  // 焦点样式（键盘导航）
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+// ============================================
+// 尺寸变体 (Size Variants)
+// ============================================
+
+// 小尺寸
+.cu-button--small {
+  padding: 6px 16px;
+  font-size: 12px;
+  min-height: 28px;
+  border-radius: var(--radius-sm);
+  gap: 6px;
+}
+
+// 大尺寸
+.cu-button--large {
+  padding: 14px 28px;
+  font-size: 16px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  gap: 10px;
+}
+
+// ============================================
+// 主要变体 (Primary Variant)
+// ============================================
+
+.cu-button--primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-hover) 100%);
+  color: var(--light);
+  box-shadow: 0 4px 12px rgba(1, 194, 96, 0.3);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(1, 194, 96, 0.4);
+    background: linear-gradient(135deg, var(--primary-color-hover) 0%, var(--primary-color-active) 100%);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(1, 194, 96, 0.3);
+    background: linear-gradient(135deg, var(--primary-color-active) 0%, var(--primary-color-active) 100%);
+  }
+  
+  &:disabled {
+    background: linear-gradient(135deg, #BDC3C7 0%, #95A5A6 100%);
+    box-shadow: none;
+  }
+}
+
+// ============================================
+// 次要变体 (Secondary Variant - 液态玻璃风格)
+// ============================================
+
+.cu-button--secondary {
+  @include glass-standard;
+  color: var(--primary-color);
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border-light);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: var(--shadow-lg),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  &:disabled {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    opacity: var(--opacity-disabled);
+  }
+  
+  // 暗色模式优化
+  [data-theme='dark'] &,
+  .dark & {
+    color: var(--primary-color);
+    
+    &:hover:not(:disabled):not(.cu-button--loading) {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 成功变体 (Success Variant)
+// ============================================
+
+.cu-button--success {
+  background: linear-gradient(135deg, var(--success-color) 0%, #229954 100%);
+  color: var(--light);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(39, 174, 96, 0.4);
+    background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+  }
+  
+  &:disabled {
+    background: linear-gradient(135deg, #BDC3C7 0%, #95A5A6 100%);
+    box-shadow: none;
+  }
+}
+
+// ============================================
+// 警告变体 (Warning Variant)
+// ============================================
+
+.cu-button--warning {
+  background: linear-gradient(135deg, var(--warning-color) 0%, #e67e22 100%);
+  color: var(--light);
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(243, 156, 18, 0.4);
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+  }
+  
+  &:disabled {
+    background: linear-gradient(135deg, #BDC3C7 0%, #95A5A6 100%);
+    box-shadow: none;
+  }
+}
+
+// ============================================
+// 危险变体 (Danger Variant)
+// ============================================
+
+.cu-button--danger {
+  background: linear-gradient(135deg, var(--error-color) 0%, #c0392b 100%);
+  color: var(--light);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+  }
+  
+  &:disabled {
+    background: linear-gradient(135deg, #BDC3C7 0%, #95A5A6 100%);
+    box-shadow: none;
+  }
+}
+
+// ============================================
+// 信息变体 (Info Variant)
+// ============================================
+
+.cu-button--info {
+  background: linear-gradient(135deg, var(--info-color) 0%, #2980b9 100%);
+  color: var(--light);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+  }
+  
+  &:disabled {
+    background: linear-gradient(135deg, #BDC3C7 0%, #95A5A6 100%);
+    box-shadow: none;
+  }
+}
+
+// ============================================
+// 文本变体 (Text Variant)
+// ============================================
+
+.cu-button--text {
+  background: transparent;
+  color: var(--primary-color);
+  box-shadow: none;
+  padding: 8px 16px;
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    background: rgba(1, 194, 96, 0.1);
+    color: var(--primary-color-hover);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    background: rgba(1, 194, 96, 0.15);
+  }
+  
+  &:disabled {
+    color: var(--text-color);
+    opacity: var(--opacity-disabled);
+  }
+  
+  // 暗色模式优化
+  [data-theme='dark'] &,
+  .dark & {
+    color: var(--primary-color);
+    
+    &:hover:not(:disabled):not(.cu-button--loading) {
+      background: rgba(1, 194, 96, 0.15);
+    }
+  }
+}
+
+// ============================================
+// 幽灵变体 (Ghost Variant)
+// ============================================
+
+.cu-button--ghost {
+  background: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    background: var(--bg-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    background: var(--card-bg);
+  }
+  
+  &:disabled {
+    border-color: var(--border-color);
+    color: var(--text-color);
+    opacity: var(--opacity-disabled);
+  }
+}
+
+// ============================================
+// 液态玻璃变体 (Glass Variant)
+// ============================================
+
+.cu-button--glass {
+  @include glass-card;
+  color: var(--text-color);
+  
+  &:hover:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: var(--glass-shadow-card);
+  }
+  
+  &:active:not(:disabled):not(.cu-button--loading) {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  &:disabled {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.05);
+    opacity: var(--opacity-disabled);
+  }
+  
+  // 暗色模式优化
+  [data-theme='dark'] &,
+  .dark & {
+    color: var(--text-color);
+    
+    &:hover:not(:disabled):not(.cu-button--loading) {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 形状变体 (Shape Variants)
+// ============================================
+
+// 圆角按钮
+.cu-button--round {
+  border-radius: var(--radius-lg);
+}
+
+// 圆形按钮（用于图标按钮）
+.cu-button--circle {
+  border-radius: 50%;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  
+  &.cu-button--small {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+  
+  &.cu-button--large {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+// ============================================
+// 加载状态 (Loading State)
+// ============================================
+
+.cu-button--loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: cu-button-spin 0.6s linear infinite;
+  }
+  
+  // 不同变体的加载指示器颜色
+  &.cu-button--primary::before,
+  &.cu-button--success::before,
+  &.cu-button--warning::before,
+  &.cu-button--danger::before,
+  &.cu-button--info::before {
+    border-color: var(--light);
+    border-top-color: transparent;
+  }
+  
+  &.cu-button--secondary::before,
+  &.cu-button--text::before,
+  &.cu-button--ghost::before,
+  &.cu-button--glass::before {
+    border-color: var(--text-color);
+    border-top-color: transparent;
+  }
+}
+
+@keyframes cu-button-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// 块级按钮 (Block Button)
+// ============================================
+
+.cu-button--block {
+  display: flex;
+  width: 100%;
+}
+
+// ============================================
+// 图标按钮 (Icon Button)
+// ============================================
+
+.cu-button--icon {
+  padding: 8px;
+  min-width: auto;
+  
+  &.cu-button--small {
+    padding: 6px;
+  }
+  
+  &.cu-button--large {
+    padding: 12px;
+  }
+}
+
+// ============================================
+// 按钮组 (Button Group) - 可选功能
+// ============================================
+
+.cu-button-group {
+  display: inline-flex;
+  vertical-align: middle;
+  
+  .cu-button {
+    position: relative;
+    z-index: 1;
+    
+    &:not(:first-child) {
+      margin-left: -1px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    
+    &:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    
+    &:hover,
+    &:focus {
+      z-index: 2;
+    }
+    
+    &:active {
+      z-index: 3;
+    }
+  }
+  
+  // 垂直按钮组
+  &.cu-button-group--vertical {
+    flex-direction: column;
+    
+    .cu-button {
+      &:not(:first-child) {
+        margin-left: 0;
+        margin-top: -1px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: var(--radius-base);
+      }
+      
+      &:not(:last-child) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-right-radius: var(--radius-base);
+      }
+    }
+  }
+}
+
+// ============================================
+// 响应式优化
+// ============================================
+
+@include respond-to('sm') {
+  .cu-button {
+    // 移动端触摸目标最小尺寸
+    min-height: 44px;
+    min-width: 44px;
+    
+    &.cu-button--small {
+      min-height: 36px;
+      min-width: 36px;
+    }
+  }
+}
+
+// ============================================
+// 暗色模式优化
+// ============================================
+
+[data-theme='dark'] .cu-button,
+.dark .cu-button {
+  // 暗色模式下的通用调整
+  box-shadow: var(--shadow-md);
+  
+  &.cu-button--primary,
+  &.cu-button--success,
+  &.cu-button--warning,
+  &.cu-button--danger,
+  &.cu-button--info {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    
+    &:hover:not(:disabled):not(.cu-button--loading) {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    }
+  }
+  
+  &.cu-button--ghost {
+    border-color: var(--border-color);
+    
+    &:hover:not(:disabled):not(.cu-button--loading) {
+      background: var(--card-bg);
+    }
+  }
+}
+
+// ============================================
+// 无障碍优化 (A11y)
+// ============================================
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .cu-button {
+    border: 2px solid currentColor;
+    
+    &.cu-button--primary,
+    &.cu-button--success,
+    &.cu-button--warning,
+    &.cu-button--danger,
+    &.cu-button--info {
+      border: 2px solid transparent;
+    }
+  }
+}
+
+// 减少动画模式支持
+@media (prefers-reduced-motion: reduce) {
+  .cu-button {
+    transition: none;
+    
+    &:hover:not(:disabled):not(.cu-button--loading) {
+      transform: none;
+    }
+    
+    &:active:not(:disabled):not(.cu-button--loading) {
+      transform: none;
+    }
+  }
+  
+  @keyframes cu-button-spin {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+  }
+}

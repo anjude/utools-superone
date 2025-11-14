@@ -83,16 +83,22 @@ onMounted(() => {
 
       <div v-if="loginStatus === 'error'" class="p-login-error">
         <p class="p-error-message">{{ errorMessage }}</p>
-        <button class="p-retry-button" @click="handleLogin" :disabled="isLoggingIn">
+        <button 
+          class="cu-button cu-button--primary cu-button--block" 
+          @click="handleLogin" 
+          :disabled="isLoggingIn"
+          :class="{ 'cu-button--loading': isLoggingIn }"
+        >
           {{ isLoggingIn ? t('login.loggingIn') : t('login.retry') }}
         </button>
       </div>
 
       <button
         v-if="loginStatus === 'idle'"
-        class="p-login-button"
+        class="cu-button cu-button--primary cu-button--block"
         @click="handleLogin"
         :disabled="isLoggingIn"
+        :class="{ 'cu-button--loading': isLoggingIn }"
       >
         {{ isLoggingIn ? t('login.loggingIn') : t('login.startLogin') }}
       </button>
