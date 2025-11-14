@@ -51,6 +51,23 @@
   // 透明度
   --opacity-disabled: 0.6;
   --opacity-hover: 0.8;
+  
+  // 液态玻璃主题变量（深色模式）
+  --glass-bg-light: rgba(0, 0, 0, 0.3);
+  --glass-bg-soft: rgba(0, 0, 0, 0.15);
+  --glass-border-light: rgba(255, 255, 255, 0.15);
+  --glass-border-soft: rgba(255, 255, 255, 0.08);
+  --glass-shadow-card: 0 12px 40px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+  --glass-shadow-soft: 0 4px 16px 0 rgba(0, 0, 0, 0.3);
+  
+  // 圆角（与浅色模式相同）
+  --radius-sm: 4px;
+  --radius-base: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 }
 
 // 兼容 prefers-color-scheme（用于自动模式）
