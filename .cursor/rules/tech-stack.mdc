@@ -1,0 +1,459 @@
+---
+description: "技术栈推荐 - 提升扩展性、开发效率、可复用性和可迁移能力"
+---
+
+# 技术栈推荐
+
+## 核心原则
+
+- **轻量级优先**：uTools插件需要控制体积，优先选择轻量级方案
+- **按需引入**：支持Tree-shaking，避免打包体积过大
+- **类型安全**：全面TypeScript支持
+- **易于迁移**：标准化的技术选型，便于迁移到其他平台
+
+## 一、状态管理
+
+### Pinia（必需）
+```bash
+npm install pinia
+```
+
+**理由**：
+- Vue 3官方推荐的状态管理库
+- 轻量级（约1KB），支持TypeScript
+- 支持DevTools，开发体验好
+- 模块化设计，易于扩展
+
+**使用场景**：
+- 全局状态管理（用户信息、主题配置等）
+- 跨组件数据共享
+- 缓存管理
+
+## 二、UI组件库与样式方案（按需选择，可组合使用）
+
+### UI组件库选择
+
+#### 方案A1：Naive UI（推荐）
+```bash
+npm install naive-ui
+```
+
+**优势**：
+- 完整的TypeScript支持
+- 按需引入，Tree-shaking友好
+- 主题定制能力强
+- 组件丰富（80+组件）
+- 体积适中（按需引入后约50-100KB）
+
+**适用场景**：需要完整UI组件库的项目
+
+#### 方案A2：Element Plus
+```bash
+npm install element-plus
+```
+
+**优势**：
+- 生态成熟，文档完善
+- 组件丰富
+- 企业级应用广泛使用
+
+**劣势**：
+- 体积相对较大（按需引入后约100-200KB）
+
+#### 方案A3：无UI库（完全自建）
+- 自建基础组件库
+- 最大灵活性，最小体积
+- 需要更多开发时间
+
+### 样式方案选择
+
+#### 方案B1：UnoCSS（推荐）
+```bash
+npm install -D unocss @unocss/preset-uno @unocss/preset-icons
+```
+
+**优势**：
+- 极小的运行时体积（几乎为0）
+- 开发效率高（工具类）
+- 高度可定制
+- 易于迁移
+- 按需生成CSS
+
+#### 方案B2：Tailwind CSS
+```bash
+npm install -D tailwindcss postcss autoprefixer
+```
+
+**优势**：
+- 生态成熟，文档完善
+- 工具类丰富
+- 社区支持好
+
+**劣势**：
+- 体积相对较大（需要配置purge）
+
+#### 方案B3：Sass/SCSS + CSS变量
+```bash
+npm install -D sass
+```
+
+**优势**：
+- 传统方案，学习成本低
+- 变量、嵌套、混入等特性
+- 完全控制样式
+
+### 推荐组合方案
+
+**方案A和B可以组合使用，不是互斥的！**
+
+#### 组合1：Naive UI + UnoCSS（推荐，最佳平衡）
+```bash
+npm install naive-ui
+npm install -D unocss @unocss/preset-uno @unocss/preset-icons
+```
+
+**优势**：
+- UI组件库提供复杂组件（Table、Form、Dialog等）
+- UnoCSS提供快速布局和样式工具类
+- 开发效率高，体积可控
+- 适合大多数项目
+
+**使用场景**：
+- 复杂组件用Naive UI（Table、Form、DatePicker等）
+- 布局和简单样式用UnoCSS工具类
+- 自定义组件用UnoCSS快速构建
+
+#### 组合2：Element Plus + Tailwind CSS
+```bash
+npm install element-plus
+npm install -D tailwindcss postcss autoprefixer
+```
+
+**优势**：
+- 企业级UI组件库
+- 成熟的样式方案
+- 适合大型项目
+
+#### 组合3：自建组件 + UnoCSS（最轻量）
+```bash
+npm install -D unocss @unocss/preset-uno @unocss/preset-icons
+```
+
+**优势**：
+- 最小体积
+- 完全控制
+- 适合简单项目或对体积要求极高的场景
+
+#### 组合4：Naive UI + Sass（传统方案）
+```bash
+npm install naive-ui
+npm install -D sass
+```
+
+**优势**：
+- UI组件库 + 传统CSS预处理器
+- 适合不熟悉原子化CSS的团队
+
+### 选择建议
+
+| 项目类型 | 推荐组合 | 说明 |
+|---------|---------|------|
+| 中小型项目 | Naive UI + UnoCSS | 最佳平衡，开发效率高 |
+| 大型项目 | Element Plus + Tailwind CSS | 生态成熟，组件丰富 |
+| 简单项目 | 自建组件 + UnoCSS | 最小体积，完全控制 |
+| 传统团队 | Naive UI + Sass | 学习成本低，易于上手 |
+
+### 注意事项
+
+1. **可以组合使用**：UI组件库和原子化CSS不冲突，可以同时使用
+2. **按需选择**：根据项目需求选择组合，不必全部安装
+3. **样式优先级**：注意UI组件库样式和原子化CSS的优先级问题
+4. **体积控制**：使用按需引入和Tree-shaking控制最终体积
+
+## 三、工具库
+
+### 1. 日期处理 - Day.js（必需）
+```bash
+npm install dayjs
+```
+
+**理由**：
+- 极轻量（2KB），API与Moment.js兼容
+- 支持Tree-shaking
+- 易于迁移（替换Moment.js只需改import）
+
+### 2. HTTP客户端 - Axios（必需）
+```bash
+npm install axios
+```
+
+**理由**：
+- 标准化的HTTP客户端
+- 支持拦截器、请求/响应转换
+- 易于迁移到其他项目
+
+### 3. 工具函数 - lodash-es（按需）
+```bash
+npm install lodash-es
+npm install -D @types/lodash-es
+```
+
+**理由**：
+- 丰富的工具函数
+- ES模块版本，支持Tree-shaking
+- 按需引入，不影响体积
+
+**替代方案**：自建工具函数库（更轻量）
+
+### 4. 表单验证 - VeeValidate + Yup（推荐）
+```bash
+npm install vee-validate yup
+```
+
+**理由**：
+- Vue 3专用表单验证库
+- 类型安全，支持TypeScript
+- 灵活的验证规则
+- 易于复用和迁移
+
+### 5. 路由管理 - Vue Router（可选，uTools可能不需要）
+```bash
+npm install vue-router@4
+```
+
+**说明**：uTools使用自己的路由机制，但如果需要更复杂的路由管理，可以考虑
+
+## 四、开发工具
+
+### 1. 代码质量
+
+#### ESLint
+```bash
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+npm install -D eslint-plugin-vue
+```
+
+#### Prettier
+```bash
+npm install -D prettier eslint-config-prettier eslint-plugin-prettier
+```
+
+**配置**：统一代码风格，提升可维护性
+
+### 2. Git Hooks - Husky + lint-staged
+```bash
+npm install -D husky lint-staged
+```
+
+**用途**：
+- 提交前自动检查代码
+- 自动格式化
+- 确保代码质量
+
+### 3. 构建优化
+
+#### Vite插件
+```bash
+# 自动导入（减少import语句）
+npm install -D unplugin-auto-import unplugin-vue-components
+
+# 图标自动导入
+npm install -D unplugin-icons
+
+# 压缩优化
+npm install -D vite-plugin-compression
+```
+
+### 4. 类型工具
+
+#### Vue类型增强
+```bash
+npm install -D @vueuse/core  # Vue工具库，包含大量composables
+```
+
+## 五、样式方案
+
+### 1. CSS预处理器 - Sass/SCSS（推荐）
+```bash
+npm install -D sass
+```
+
+**优势**：
+- 变量、嵌套、混入等特性
+- 提升样式可维护性
+- 易于迁移
+
+### 2. CSS变量 + PostCSS
+```bash
+npm install -D postcss autoprefixer
+```
+
+**优势**：
+- 原生CSS变量，无需编译
+- 浏览器兼容性自动处理
+
+### 3. 原子化CSS（可选）
+- UnoCSS（推荐）
+- Tailwind CSS
+
+## 六、测试框架（为未来准备）
+
+### Vitest（推荐）
+```bash
+npm install -D vitest @vue/test-utils happy-dom
+```
+
+**理由**：
+- Vite原生支持，配置简单
+- 速度快
+- 与Vite构建工具链一致
+
+## 七、其他工具库
+
+### 1. 状态持久化 - pinia-plugin-persistedstate
+```bash
+npm install pinia-plugin-persistedstate
+```
+
+**用途**：自动持久化Pinia状态到localStorage
+
+### 2. 防抖节流 - @vueuse/core（已包含）
+```bash
+npm install @vueuse/core
+```
+
+**优势**：
+- 大量实用的composables
+- 类型安全
+- 按需引入
+
+### 3. 国际化 - vue-i18n（如需要）
+```bash
+npm install vue-i18n
+```
+
+### 4. Markdown渲染 - marked + highlight.js（如需要）
+```bash
+npm install marked highlight.js
+```
+
+## 八、推荐的最小化技术栈（轻量级方案）
+
+```json
+{
+  "dependencies": {
+    "vue": "^3.5.13",
+    "pinia": "^2.1.7",
+    "axios": "^1.6.0",
+    "dayjs": "^1.11.10",
+    "@vueuse/core": "^10.7.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.11",
+    "vue-tsc": "^2.1.10",
+    "sass": "^1.69.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.0",
+    "unplugin-auto-import": "^0.17.0",
+    "unplugin-vue-components": "^0.26.0"
+  }
+}
+```
+
+## 九、完整技术栈（功能完整方案）
+
+```json
+{
+  "dependencies": {
+    "vue": "^3.5.13",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "naive-ui": "^2.38.0",
+    "axios": "^1.6.0",
+    "dayjs": "^1.11.10",
+    "@vueuse/core": "^10.7.0",
+    "vee-validate": "^4.12.0",
+    "yup": "^1.3.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.11",
+    "vue-tsc": "^2.1.10",
+    "sass": "^1.69.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "eslint-plugin-vue": "^9.20.0",
+    "prettier": "^3.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "unplugin-auto-import": "^0.17.0",
+    "unplugin-vue-components": "^0.26.0",
+    "unplugin-icons": "^0.18.0",
+    "vite-plugin-compression": "^0.5.1",
+    "vitest": "^1.1.0",
+    "@vue/test-utils": "^2.4.4"
+  }
+}
+```
+
+## 十、迁移能力考虑
+
+### 1. 避免平台特定依赖
+- ❌ 避免：直接使用Node.js API（已通过window.services封装）
+- ✅ 推荐：使用标准Web API
+
+### 2. 抽象平台差异
+- 创建平台适配层（`src/utils/platform.ts`）
+- 统一API接口，便于迁移
+
+### 3. 配置外部化
+- 环境变量管理（`.env`文件）
+- 配置文件集中管理
+
+### 4. 构建配置标准化
+- 使用标准Vite配置
+- 避免自定义构建工具
+
+## 十一、实施建议
+
+### 阶段1：核心基础（立即实施）
+1. Pinia - 状态管理
+2. Day.js - 日期处理
+3. Axios - HTTP客户端
+4. @vueuse/core - 工具库
+
+### 阶段2：开发体验（1-2周内）
+1. ESLint + Prettier
+2. Husky + lint-staged
+3. unplugin-auto-import
+4. Sass
+
+### 阶段3：UI增强（按需）
+1. UI组件库（Naive UI或自建）
+2. 表单验证（VeeValidate）
+3. 样式方案完善
+
+### 阶段4：质量保障（未来）
+1. Vitest测试框架
+2. 代码覆盖率
+3. E2E测试（如需要）
+
+## 十二、注意事项
+
+1. **体积控制**：uTools插件需要控制体积，优先选择支持Tree-shaking的库
+2. **按需引入**：避免全量引入，使用按需引入插件
+3. **类型安全**：所有库都应支持TypeScript
+4. **兼容性**：考虑uTools的浏览器环境兼容性
+5. **迁移性**：选择标准化的技术栈，避免小众库
+
+## 十三、参考项目
+
+- **Vue 3官方示例**：https://github.com/vuejs/core
+- **Pinia示例**：https://github.com/vuejs/pinia
+- **Vite模板**：https://github.com/vitejs/vite/tree/main/packages/create-vite

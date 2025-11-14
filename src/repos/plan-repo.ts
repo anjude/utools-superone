@@ -1,5 +1,5 @@
 import { logger } from '@/utils/logger'
-import { planApi } from '@/apis/plan'
+import { planApi } from '@/api/plan'
 import type { 
   RecentTask, 
   Goal, 
@@ -7,7 +7,7 @@ import type {
   GoalForm 
 } from '@/types/plan'
 import { TaskEnums, OKREnums } from '@/types/plan'
-import { ScheduleEnums } from '@/types/enums'
+import { ScheduleEnums } from '@/constants/enums'
 
 /**
  * 近期任务仓储层

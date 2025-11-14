@@ -1,5 +1,5 @@
 import type { BaseEntity, BaseFormData } from '@/types/base'
-import { TopicEnums } from '@/types/enums'
+import { TopicEnums } from '@/constants/enums'
 
 /**
  * 主题类型枚举

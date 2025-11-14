@@ -1,4 +1,4 @@
-import { topicApi } from '@/apis/topic'
+import { topicApi } from '@/api/topic'
 import { logger } from '@/utils/logger'
 import type { ITopic, ITopicFormData, TopicListItem } from '@/types/topic'
 import { validateTopic } from '@/types/topic'

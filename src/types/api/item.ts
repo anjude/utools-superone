@@ -7,7 +7,7 @@ import type {
   Item, 
   ItemCategory
 } from '@/types/item-management';
-import type { ItemManagementEnums } from '@/types/enums';
+import type { ItemManagementEnums } from '@/constants/enums';
 
 // 物品管理API命名空间
 export namespace ItemApi {

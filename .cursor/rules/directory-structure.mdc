@@ -1,0 +1,262 @@
+---
+description: "目录结构规范 - 中小型Vue项目目录组织与文件命名规范"
+globs: "src/**"
+---
+
+# 目录结构规范
+
+## 设计原则
+
+本项目采用**混合组织方式**，适用于中小型Vue项目：
+
+- **通用层**：按技术层次组织（components、composables、utils等）
+- **业务层**：按功能模块组织（composables按模块子目录，stores按功能命名）
+
+## 完整目录结构
+
+```
+src/
+├── api/                    # API接口层
+│   ├── user.ts            # 用户相关API
+│   ├── topic.ts           # 主题相关API
+│   ├── item.ts            # 物品相关API
+│   └── index.ts           # 统一导出
+│
+├── assets/                # 静态资源
+│   ├── images/           # 图片资源
+│   └── icons/             # 图标资源
+│
+├── components/            # 可复用组件（通用UI组件）
+│   ├── cu-*.vue          # 通用组件（如cu-button.vue）
+│   └── index.ts          # 组件统一导出
+│
+├── composables/          # 组合式函数
+│   ├── use-*.ts          # 通用composables（如useAuth.ts、useNotification.ts）
+│   ├── topic/            # 业务composables按功能模块组织（可选）
+│   │   └── use-*.ts
+│   ├── item/
+│   │   └── use-*.ts
+│   └── index.ts          # 统一导出
+│
+├── constants/            # 常量定义
+│   ├── colors.ts         # 颜色常量
+│   ├── config.ts         # 配置常量
+│   ├── enums.ts          # 枚举常量
+│   └── index.ts          # 统一导出
+│
+├── plugins/              # 插件配置
+│   ├── pinia.ts          # Pinia配置
+│   └── index.ts          # 统一导出
+│
+├── repos/                # 数据仓库层
+│   ├── item-repo.ts      # 物品数据仓库
+│   ├── topic-repo.ts     # 主题数据仓库
+│   └── ...
+│
+├── stores/               # Pinia状态管理（扁平化）
+│   ├── user.ts           # 用户状态
+│   ├── topic.ts          # 主题状态
+│   ├── cache.ts          # 缓存相关
+│   └── index.ts          # Store统一导出
+│
+├── styles/               # 样式文件
+│   ├── variables.scss    # 样式变量
+│   └── index.scss        # 样式入口
+│
+├── types/                # 全局类型定义
+│   ├── api/              # API类型定义
+│   │   ├── base.ts       # API基础类型
+│   │   ├── user.ts       # 用户API类型
+│   │   └── ...
+│   ├── base.ts           # 基础类型
+│   ├── components.ts     # 组件类型
+│   ├── platform.d.ts     # 平台类型（utools等）
+│   └── index.ts          # 类型统一导出
+│
+├── utils/                # 工具函数
+│   ├── request/          # 请求工具
+│   │   ├── index.ts
+│   │   └── ...
+│   ├── cache-manager.ts  # 缓存管理
+│   ├── logger.ts         # 日志工具
+│   └── ...
+│
+├── views/                # 页面级组件（与路由/功能入口对应）
+│   ├── Login.vue         # 登录页面
+│   ├── TopicList.vue     # 主题列表页面
+│   └── ...
+│
+├── App.vue               # 根组件
+├── main.ts               # 入口文件
+└── env.d.ts              # 环境类型定义
+```
+
+## 目录职责说明
+
+### api/
+- **职责**：API接口调用层，封装所有HTTP请求
+- **文件命名**：按业务模块命名（如`user.ts`、`topic.ts`）
+- **导出方式**：通过`index.ts`统一导出
+
+### assets/
+- **职责**：存放静态资源文件（图片、图标、字体等）
+- **组织方式**：按资源类型分目录
+
+### components/
+- **职责**：存放可复用的通用UI组件
+- **命名规范**：使用`cu-`前缀（如`cu-button.vue`、`cu-input.vue`）
+- **使用场景**：跨模块复用的通用组件
+
+### composables/
+- **职责**：存放组合式函数（Composables）
+- **组织方式**：
+  - **通用composables**：直接放在根目录（如`useAuth.ts`、`useNotification.ts`）
+  - **业务composables**：按功能模块组织子目录（如`topic/useTopicManagement.ts`）
+- **命名规范**：使用`use`前缀（如`useAuth.ts`）
+
+### constants/
+- **职责**：存放常量定义（颜色、配置、枚举等）
+- **文件组织**：按类型分文件（`colors.ts`、`config.ts`、`enums.ts`）
+
+### plugins/
+- **职责**：存放插件配置（Pinia、Vue插件等）
+- **文件组织**：每个插件一个文件，通过`index.ts`统一导出
+
+### repos/
+- **职责**：数据仓库层，封装数据访问逻辑
+- **命名规范**：使用`Repo`后缀（如`item-repo.ts`、`topic-repo.ts`）
+
+### stores/
+- **职责**：Pinia状态管理，存放全局状态
+- **组织方式**：扁平化，所有stores直接放在`stores/`目录
+- **命名规范**：按功能命名（如`user.ts`、`topic.ts`），使用`use`前缀的store名称（如`useUserStore`）
+
+### styles/
+- **职责**：存放全局样式文件
+- **文件组织**：`variables.scss`存放变量，`index.scss`作为入口
+
+### types/
+- **职责**：存放TypeScript类型定义
+- **组织方式**：
+  - `api/`子目录存放API相关类型
+  - 根目录存放全局类型定义
+
+### utils/
+- **职责**：存放工具函数
+- **组织方式**：按功能分目录或文件
+
+### views/
+- **职责**：存放页面级组件，与路由/功能入口对应
+- **命名规范**：使用PascalCase（如`Login.vue`、`TopicList.vue`）
+- **与components区别**：views是完整页面，components是可复用组件
+
+## 文件命名规范
+
+### 组件文件
+- **通用组件**：`cu-*.vue`（如`cu-button.vue`）
+- **页面组件**：`PascalCase.vue`（如`Login.vue`、`TopicList.vue`）
+
+### TypeScript文件
+- **Composables**：`use*.ts`（如`useAuth.ts`、`useTopicManagement.ts`）
+- **Stores**：`*.ts`，store名称使用`use*Store`（如`user.ts`中定义`useUserStore`）
+- **Repos**：`*-repo.ts`（如`item-repo.ts`）
+- **API**：`*.ts`，按业务模块命名（如`user.ts`、`topic.ts`）
+- **Utils**：`kebab-case.ts`或按功能分目录（如`cache-manager.ts`、`request/index.ts`）
+- **Types**：`kebab-case.ts`（如`base.ts`、`components.ts`）
+
+### 常量文件
+- **常量文件**：`kebab-case.ts`（如`colors.ts`、`config.ts`、`enums.ts`）
+
+## 导入导出规范
+
+### 统一导出
+每个目录应提供`index.ts`文件统一导出，便于使用：
+
+```typescript
+// src/api/index.ts
+export * from './user'
+export * from './topic'
+export * from './item'
+
+// src/composables/index.ts
+export * from './useAuth'
+export * from './useNotification'
+export * from './topic/useTopicManagement'
+```
+
+### 导入路径
+- **统一使用**：`@/`别名导入
+- **示例**：
+  ```typescript
+  import { useUserStore } from '@/stores/user'
+  import { useAuth } from '@/composables/useAuth'
+  import { Login } from '@/views/Login.vue'
+  import { CuButton } from '@/components/cu-button.vue'
+  ```
+
+### 导入顺序
+1. Vue相关导入
+2. 第三方库导入
+3. 类型导入（`type`关键字）
+4. 项目内部导入（按目录层级）
+5. 相对路径导入
+
+```typescript
+// ✅ 正确示例
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import type { User } from '@/types/base'
+import { useUserStore } from '@/stores/user'
+import { useAuth } from '@/composables/useAuth'
+import { CuButton } from '@/components/cu-button.vue'
+```
+
+## 目录使用指南
+
+### 何时使用views vs components
+- **views/**：页面级组件，对应路由或功能入口，包含完整的页面逻辑
+- **components/**：可复用组件，可在多个views或组件中使用
+
+### 何时使用composables子目录
+- **通用composables**：跨多个模块使用的composables放在根目录
+- **业务composables**：特定业务模块的composables放在对应子目录
+
+### 何时创建新目录
+- 当某个目录下文件超过10个时，考虑按功能分目录
+- 当某个功能模块足够复杂时，考虑在composables下创建子目录
+
+## 迁移指南
+
+### 现有文件迁移
+1. **Login/index.vue** → `views/Login.vue`
+2. **components/TopicList.vue** → `views/TopicList.vue`（如果是页面级组件）
+3. **apis/** → `api/`
+4. **constant/** → `constants/`
+5. **types/enums.ts** → `constants/enums.ts`（枚举常量）
+
+### 逐步迁移
+- 新功能按新规范创建
+- 现有功能逐步迁移，不强制一次性迁移
+- 保持向后兼容
+
+## 最佳实践
+
+1. **保持扁平**：中小型项目不需要过度嵌套，保持目录结构扁平
+2. **命名清晰**：文件名和目录名要清晰表达其用途
+3. **统一导出**：每个目录提供`index.ts`统一导出
+4. **职责分离**：views存放页面，components存放可复用组件
+5. **按需组织**：composables按通用/业务分类，stores扁平化
+
+## 常见问题
+
+### Q: 页面组件应该放在views还是components？
+A: 页面级组件（对应路由/功能入口）放在`views/`，可复用组件放在`components/`。
+
+### Q: 业务composables什么时候需要子目录？
+A: 当某个业务模块的composables超过3个时，建议创建子目录组织。
+
+### Q: stores为什么不分子目录？
+A: 中小型项目stores数量通常不多，扁平化更便于管理。如果超过10个stores，可以考虑按模块分目录。
+
+### Q: 如何区分通用组件和业务组件？
+A: 通用组件使用`cu-`前缀，可在多个模块复用。业务组件如果只在一个模块使用，可以放在对应模块目录（如果有modules目录）或直接放在components下。

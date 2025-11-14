@@ -3,7 +3,7 @@
  * 符合数据模型规范：统一时间戳、用户标识、枚举类型
  */
 
-import { ItemManagementEnums } from '@/types/enums'
+import { ItemManagementEnums } from '@/constants/enums'
 
 // 基础实体接口 - 符合数据模型规范
 export interface BaseEntity {

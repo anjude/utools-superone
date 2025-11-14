@@ -2,7 +2,7 @@
  * 用户权限相关工具函数
  */
 
-import { UserEnums } from '@/types/enums'
+import { UserEnums } from '@/constants/enums'
 
 /**
  * 检查用户是否具有免广告权限

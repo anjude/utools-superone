@@ -1,5 +1,5 @@
 import { logger } from '@/utils/logger'
-import { stockApi } from '@/apis/stock'
+import { stockApi } from '@/api/stock'
 import type { IStock, IStockFormData, StockType } from '@/types/stock'
 import { validateStock } from '@/types/stock'
 

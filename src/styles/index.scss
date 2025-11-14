@@ -1,7 +1,5 @@
-:root {
-  --blue: rgb(88, 164, 246);
-  --light: #fff;
-}
+// 样式入口文件
+@import './variables';
 
 html,
 body {
@@ -47,11 +45,11 @@ textarea {
 }
 
 @media (prefers-color-scheme: dark) {
-  &::-webkit-scrollbar-track-piece {
+  ::-webkit-scrollbar-track-piece {
     background-color: #303133;
   }
 
-  &::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     background-color: #666;
     border-color: #303133;
   }
@@ -61,3 +59,4 @@ textarea {
     color: #fff;
   }
 }
+

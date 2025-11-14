@@ -12,7 +12,7 @@ import type {
   GoalForm
 } from '@/types/plan';
 import type { TaskEnums, OKREnums } from '@/types/plan';
-import type { ScheduleEnums } from '@/types/enums';
+import type { ScheduleEnums } from '@/constants/enums';
 
 // 计划API命名空间
 export namespace PlanApi {

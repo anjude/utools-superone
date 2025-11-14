@@ -1,5 +1,5 @@
 import { logger } from '@/utils/logger'
-import { commonApi } from '@/apis/common'
+import { commonApi } from '@/api/common'
 
 /**
  * 图片上传工具类

@@ -11,10 +11,13 @@
 
 本项目的 Cursor 规则按主题拆分为多个文件，便于维护和使用：
 
-- [代码风格](code-style.mdc) - 代码风格规范
+- [目录结构](directory-structure.mdc) - 目录组织与文件命名规范
+- [技术栈推荐](tech-stack.mdc) - 技术选型、框架和工具库推荐
 - [架构规范](architecture.mdc) - 分层架构和架构约定
 - [数据管理](data-management.mdc) - 数据存储和缓存管理
+- [数据模型](data-model.mdc) - 数据模型规范
 - [API 使用](api-usage.mdc) - API 使用规范（为未来对接后端准备）
+- [代码风格](code-style.mdc) - 代码风格规范
 - [组件开发](component-development.mdc) - 组件开发规范
 - [错误处理](error-handling.mdc) - 错误处理规范
 - [类型安全](type-safety.mdc) - 类型安全规范

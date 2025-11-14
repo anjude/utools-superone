@@ -1,7 +1,7 @@
-import { topicApi } from '@/apis/topic'
+import { topicApi } from '@/api/topic'
 import { logger } from '@/utils/logger'
 import type { ITopicLog, ITopicLogFormData, TopicLogListItem, TopicType } from '@/types/topic'
-import { TopicEnums } from '@/types/enums'
+import { TopicEnums } from '@/constants/enums'
 
 /**
  * 主题日志仓储层 - 基于API实现

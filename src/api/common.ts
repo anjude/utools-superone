@@ -3,7 +3,7 @@ import {
   ApiResponse 
 } from '@/types/api'
 import request from '@/utils/request'
-import CONFIG from '@/constant/config'
+import CONFIG from '@/constants/config'
 import { CacheManager } from '@/utils/cache-manager'
 import { CACHE_KEYS } from '@/stores/cache'
 

@@ -1,7 +1,7 @@
 import { logger } from '@/utils/logger'
-import { itemApi } from '@/apis/item'
+import { itemApi } from '@/api/item'
 import type { Item } from '@/types/item-management'
-import { ItemManagementEnums } from '@/types/enums'
+import { ItemManagementEnums } from '@/constants/enums'
 
 /**
  * 物品仓储层 - 纯API调用，无本地缓存

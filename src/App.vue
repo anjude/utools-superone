@@ -1,15 +1,20 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import type { PluginEnterAction } from './types/utools'
-import Login from './Login/index.vue'
-import TopicList from './components/TopicList.vue'
+import { useUserStore } from './stores'
+import Login from './views/Login.vue'
+import TopicList from './views/TopicList.vue'
 
 type GenericEnterAction = PluginEnterAction<unknown, unknown>
 
 const route = ref<string>('')
 const enterAction = ref<GenericEnterAction | null>(null)
+const userStore = useUserStore()
 
 onMounted(() => {
+  // 初始化用户 store（加载缓存数据）
+  userStore.init()
+
   window.utools.onPluginEnter((action) => {
     route.value = action.code
     enterAction.value = action as GenericEnterAction

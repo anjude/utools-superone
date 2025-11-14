@@ -1,5 +1,5 @@
 import type { BaseEntity, BaseFormData } from '@/types/base'
-import { StockEnums } from '@/types/enums'
+import { StockEnums } from '@/constants/enums'
 
 /**
  * 标的类型枚举（使用数字枚举）

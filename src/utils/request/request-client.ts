@@ -1,4 +1,4 @@
-import CONFIG from '@/constant/config'
+import CONFIG from '@/constants/config'
 import type { BusinessResponse, RequestConfig, Response, Interceptors } from './types'
 import { ParamConverter } from './param-converter'
 import { CacheManager } from '@/utils/cache-manager'

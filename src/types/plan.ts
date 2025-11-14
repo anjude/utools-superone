@@ -3,7 +3,7 @@
  * 符合数据模型规范：统一时间字段、用户标识等
  */
 
-import { ScheduleEnums } from '@/types/enums';
+import { ScheduleEnums } from '@/constants/enums';
 
 // 基础实体接口 - 包含通用字段
 export interface BaseEntity {
