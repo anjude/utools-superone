@@ -1,22 +1,21 @@
 // 计划管理相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { BaseEntity } from '@/types/base';
-import type { PaginationData } from './base';
-import type { 
-  RecentTask, 
-  Goal, 
+import type { BaseEntity } from '@/types/base'
+import type { PaginationData } from './base'
+import type {
+  RecentTask,
+  Goal,
   KeyResult,
   RecentTaskForm,
   KeyResultForm,
-  GoalForm
-} from '@/types/plan';
-import type { TaskEnums, OKREnums } from '@/types/plan';
-import type { ScheduleEnums } from '@/constants/enums';
+  GoalForm,
+} from '@/types/plan'
+import type { TaskEnums, OKREnums } from '@/types/plan'
+import type { ScheduleEnums } from '@/constants/enums'
 
 // 计划API命名空间
 export namespace PlanApi {
-
   // ==================== 近期任务接口 ====================
 
   // 获取近期任务列表请求 - 对齐后端GetRecentTaskListReq
@@ -138,6 +137,4 @@ export namespace PlanApi {
   export interface DeleteGoalResp {
     success: boolean
   }
-
-
 }

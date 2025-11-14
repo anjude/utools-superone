@@ -1,12 +1,11 @@
 // 流程相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { BaseEntity } from '@/types/plan';
-import { FlowEnums } from '@/constants/enums';
+import type { BaseEntity } from '@/types/plan'
+import { FlowEnums } from '@/constants/enums'
 
 // 流程API命名空间
 export namespace FlowApi {
-
   // 信息视图 - 继承基础实体
   export interface InfoView extends BaseEntity {
     linkId: number

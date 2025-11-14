@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import type { PluginEnterAction } from '@/types/utools'
 import { LoginManager } from '@/utils/request/login-manager'
 import request from '@/utils/request'
 
-const props = defineProps<{
-  enterAction: PluginEnterAction
-}>()
+// 从 window 获取 enterAction，如果没有则使用空对象作为默认值
+const enterAction = computed<PluginEnterAction>(() => {
+  return (
+    (window as any).__utoolsEnterAction ||
+    ({
+      code: 'login',
+      type: 'text',
+      payload: '',
+    } as PluginEnterAction)
+  )
+})
 
 const loginManager = new LoginManager(request)
 const isLoggingIn = ref(false)
@@ -58,7 +66,7 @@ onMounted(() => {
   <div class="login-container">
     <div class="login-content">
       <h1 class="login-title">登录</h1>
-      
+
       <div v-if="loginStatus === 'idle' || loginStatus === 'scanning'" class="login-status">
         <div v-if="loginStatus === 'scanning'" class="loading-spinner"></div>
         <p v-if="loginStatus === 'scanning'">正在获取登录二维码...</p>
@@ -77,9 +85,9 @@ onMounted(() => {
         </button>
       </div>
 
-      <button 
-        v-if="loginStatus === 'idle'" 
-        class="login-button" 
+      <button
+        v-if="loginStatus === 'idle'"
+        class="login-button"
         @click="handleLogin"
         :disabled="isLoggingIn"
       >
@@ -131,8 +139,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .login-success {
@@ -186,4 +198,3 @@ onMounted(() => {
   cursor: not-allowed;
 }
 </style>
-

@@ -4,5 +4,3 @@ export default request
 export { request }
 export { Request, LoginManager, ParamConverter } from './request/index'
 export type { BusinessResponse, RequestConfig, Response, Interceptors } from './request/index'
-
-

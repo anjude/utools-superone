@@ -1,8 +1,4 @@
-import { 
-  StockApi, 
-  ApiResponse, 
-  PaginationData 
-} from '@/types/api'
+import { StockApi, ApiResponse, PaginationData } from '@/types/api'
 import request from '@/utils/request'
 
 // 标的和思考记录相关API接口
@@ -13,7 +9,9 @@ export const stockApi = {
    * 获取标的列表
    * @param params 请求参数
    */
-  async getStockList(params: StockApi.GetStockListReq): Promise<ApiResponse<StockApi.GetStockListResp>> {
+  async getStockList(
+    params: StockApi.GetStockListReq
+  ): Promise<ApiResponse<StockApi.GetStockListResp>> {
     const response = await request.post('/api/so/stock/list', params)
     return response.data
   },
@@ -22,7 +20,9 @@ export const stockApi = {
    * 获取标的详情
    * @param params 请求参数
    */
-  async getStockDetail(params: StockApi.GetStockDetailReq): Promise<ApiResponse<StockApi.GetStockDetailResp>> {
+  async getStockDetail(
+    params: StockApi.GetStockDetailReq
+  ): Promise<ApiResponse<StockApi.GetStockDetailResp>> {
     const response = await request.post('/api/so/stock/detail', params)
     return response.data
   },
@@ -53,5 +53,4 @@ export const stockApi = {
     const response = await request.post('/api/so/stock/delete', data)
     return response.data
   },
-
 }

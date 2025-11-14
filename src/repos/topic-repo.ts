@@ -16,7 +16,7 @@ export class TopicRepo {
       openid: item.openid || '', // 使用API返回的openid，如果没有则使用空字符串
       createTime: item.createTime ?? 0,
       updateTime: item.updateTime ?? 0,
-      top: item.top ?? 0
+      top: item.top ?? 0,
     }
   }
 
@@ -27,7 +27,7 @@ export class TopicRepo {
     try {
       const reqId = logger.logRequestStart('TopicRepo.getAll', 'GET')
       const response = await topicApi.getTopicList({ offset: 0, size: 1000 })
-      
+
       if (response.errCode === 0) {
         // 将TopicListItem转换为ITopic
         const topics = (response.data.list || []).map(this.convertTopicListItem)
@@ -49,7 +49,7 @@ export class TopicRepo {
     try {
       const reqId = logger.logRequestStart(`TopicRepo.getById(${id})`, 'GET')
       const response = await topicApi.getTopicDetail({ id })
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 200, { found: true })
         return response.data
@@ -69,15 +69,15 @@ export class TopicRepo {
   static async create(data: ITopicFormData): Promise<ITopic> {
     try {
       const reqId = logger.logRequestStart('TopicRepo.create', 'POST')
-      
+
       // 数据验证
       const validation = validateTopic(data)
       if (!validation.valid) {
         throw new Error(`数据验证失败: ${validation.errors.join(', ')}`)
       }
-      
+
       const response = await topicApi.createTopic(data)
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 201, { id: response.data.id })
         return response.data
@@ -96,7 +96,7 @@ export class TopicRepo {
   static async update(id: number, data: Partial<ITopicFormData>): Promise<ITopic> {
     try {
       const reqId = logger.logRequestStart(`TopicRepo.update(${id})`, 'PUT')
-      
+
       // 数据验证（仅验证提供的字段）
       if (Object.keys(data).length > 0) {
         const validation = validateTopic(data as ITopicFormData)
@@ -104,14 +104,14 @@ export class TopicRepo {
           throw new Error(`数据验证失败: ${validation.errors.join(', ')}`)
         }
       }
-      
+
       // 过滤掉undefined值
       const updateData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined)
       ) as unknown as ITopicFormData
-      
+
       const response = await topicApi.updateTopic({ id, ...updateData })
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 200, { id })
         return response.data
@@ -131,7 +131,7 @@ export class TopicRepo {
     try {
       const reqId = logger.logRequestStart(`TopicRepo.delete(${id})`, 'DELETE')
       const response = await topicApi.deleteTopic({ id })
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 200, { id })
       } else {
@@ -150,12 +150,12 @@ export class TopicRepo {
     try {
       const reqId = logger.logRequestStart('TopicRepo.saveAll', 'POST')
       let successCount = 0
-      
+
       for (const topic of topics) {
         try {
           const response = await topicApi.createTopic({
             topicName: topic.topicName,
-            description: topic.description
+            description: topic.description,
           })
           if (response.errCode === 0) {
             successCount++
@@ -164,7 +164,7 @@ export class TopicRepo {
           logger.warn('批量保存主题失败', { topicId: topic.id, error })
         }
       }
-      
+
       logger.logRequestSuccess(reqId, 200, { count: successCount })
       return { success: successCount > 0, count: successCount }
     } catch (error) {
@@ -187,5 +187,4 @@ export class TopicRepo {
       return false
     }
   }
-
 }

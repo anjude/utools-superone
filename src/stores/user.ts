@@ -134,7 +134,6 @@ export const useUserStore = defineStore('user', () => {
     fetchUserInfo,
     login,
     logout,
-    updateUserInfo
+    updateUserInfo,
   }
 })
-

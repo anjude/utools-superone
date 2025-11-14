@@ -1,12 +1,11 @@
 // 标的和思考记录相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { PaginationData } from './base';
-import type { IStock, IStockFormData, StockType } from '@/types/stock';
+import type { PaginationData } from './base'
+import type { IStock, IStockFormData, StockType } from '@/types/stock'
 
 // 标的API命名空间
 export namespace StockApi {
-
   // ==================== 标的管理接口 ====================
 
   // 获取标的列表请求
@@ -71,5 +70,4 @@ export namespace StockApi {
   export interface DeleteStockResp {
     success: boolean
   }
-
 }

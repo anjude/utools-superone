@@ -18,19 +18,29 @@ export class TopicLogRepo {
       createTime: item.createTime,
       updateTime: item.updateTime,
       extraData: item.extraData,
-      mark: item.mark ?? 0 // 标记位，默认值为 0
+      mark: item.mark ?? 0, // 标记位，默认值为 0
     }
   }
-
 
   /**
    * 根据主题ID列表和类型获取日志（批量查询）
    */
-  static async getByTopicIdsAndTypes(topicIds: number[], topicTypes: TopicType[]): Promise<ITopicLog[]> {
+  static async getByTopicIdsAndTypes(
+    topicIds: number[],
+    topicTypes: TopicType[]
+  ): Promise<ITopicLog[]> {
     try {
-      const reqId = logger.logRequestStart(`TopicLogRepo.getByTopicIdsAndTypes(${topicIds.join(',')})`, 'GET')
-      const response = await topicApi.getTopicLogList({ topicIds, topicTypes, offset: 0, size: 1000 })
-      
+      const reqId = logger.logRequestStart(
+        `TopicLogRepo.getByTopicIdsAndTypes(${topicIds.join(',')})`,
+        'GET'
+      )
+      const response = await topicApi.getTopicLogList({
+        topicIds,
+        topicTypes,
+        offset: 0,
+        size: 1000,
+      })
+
       if (response.errCode === 0) {
         // 将TopicLogListItem转换为ITopicLog
         const logs = (response.data.list || []).map(this.convertTopicLogListItem)
@@ -98,7 +108,7 @@ export class TopicLogRepo {
     try {
       const reqId = logger.logRequestStart(`TopicLogRepo.getById(${id})`, 'GET')
       const response = await topicApi.getTopicLogDetail({ id })
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 200, { found: true })
         return response.data
@@ -119,7 +129,7 @@ export class TopicLogRepo {
     try {
       const reqId = logger.logRequestStart('TopicLogRepo.create', 'POST')
       const response = await topicApi.createTopicLog(data)
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 201, { id: response.data.id })
         return response.data
@@ -142,9 +152,9 @@ export class TopicLogRepo {
       const updateData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined)
       ) as unknown as ITopicLogFormData
-      
+
       const response = await topicApi.updateTopicLog({ id, ...updateData })
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 200, { id })
         return response.data
@@ -164,7 +174,7 @@ export class TopicLogRepo {
     try {
       const reqId = logger.logRequestStart(`TopicLogRepo.delete(${id})`, 'DELETE')
       const response = await topicApi.deleteTopicLog({ id })
-      
+
       if (response.errCode === 0) {
         logger.logRequestSuccess(reqId, 200, { id })
       } else {
@@ -175,5 +185,4 @@ export class TopicLogRepo {
       throw error
     }
   }
-
 }

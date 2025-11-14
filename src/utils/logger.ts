@@ -4,11 +4,13 @@
  */
 
 // Node.js process 类型声明
-declare const process: {
-  env?: {
-    NODE_ENV?: string
-  }
-} | undefined
+declare const process:
+  | {
+      env?: {
+        NODE_ENV?: string
+      }
+    }
+  | undefined
 
 interface LogManager {
   info(...args: any[]): void
@@ -22,7 +24,7 @@ export enum LogLevel {
   DEBUG = 'debug',
   INFO = 'info',
   WARN = 'warn',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 interface LogConfig {
@@ -41,14 +43,18 @@ class Logger {
     this.config = {
       enableDebugLog: true,
       enableRealtimeLog: false,
-      maxLogLength: 5000
+      maxLogLength: 5000,
     }
   }
 
   /**
    * 获取环境信息
    */
-  private getEnvironmentDetails(): { isDevelopment: boolean; envVersion?: string; platform?: string } {
+  private getEnvironmentDetails(): {
+    isDevelopment: boolean
+    envVersion?: string
+    platform?: string
+  } {
     let isDevelopment = false
     let platform: string | undefined
 
@@ -90,7 +96,7 @@ class Logger {
   private formatMessage(level: LogLevel, message: string, ...args: any[]): string {
     const timestamp = new Date().toISOString()
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`
-    
+
     if (args.length > 0) {
       try {
         const dataStr = JSON.stringify(args, null, 2)
@@ -106,7 +112,7 @@ class Logger {
         return `${prefix} ${message} ${safeArgs.join(' ')}`
       }
     }
-    
+
     return `${prefix} ${message}`
   }
 
@@ -220,7 +226,7 @@ class Logger {
   private safeExecuteLogManagerMethod(methodName: string, ...args: any[]): void {
     if (this.logManager && (this.logManager as any)[methodName]) {
       try {
-        (this.logManager as any)[methodName](...args)
+        ;(this.logManager as any)[methodName](...args)
       } catch (error) {
         console.warn(`Failed to execute ${methodName}:`, error)
       }
@@ -247,14 +253,14 @@ class Logger {
   logRequestStart(url: string, method: string = 'GET', data?: any): string {
     const requestId = this.generateRequestId()
     this.setFilterMsg(`request_${requestId}`)
-    
+
     this.info(`[Request ${requestId}] 开始请求`, {
       url,
       method,
       data: data ? this.sanitizeData(data) : undefined,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
-    
+
     return requestId
   }
 
@@ -265,7 +271,7 @@ class Logger {
     this.info(`[Request ${requestId}] 请求成功`, {
       statusCode,
       data: data ? this.sanitizeData(data) : undefined,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   }
 
@@ -277,7 +283,7 @@ class Logger {
       error: error.message || error,
       stack: error.stack,
       config: config ? this.sanitizeData(config) : undefined,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   }
 
@@ -287,7 +293,7 @@ class Logger {
   logBusinessOperation(operation: string, data?: any): void {
     this.info(`[Business] ${operation}`, {
       data: data ? this.sanitizeData(data) : undefined,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   }
 
@@ -298,7 +304,7 @@ class Logger {
     this.info(`[UserAction] ${action}`, {
       page,
       data: data ? this.sanitizeData(data) : undefined,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   }
 

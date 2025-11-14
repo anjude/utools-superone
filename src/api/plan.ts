@@ -1,8 +1,4 @@
-import { 
-  PlanApi, 
-  ApiResponse, 
-  PaginationData 
-} from '@/types/api'
+import { PlanApi, ApiResponse, PaginationData } from '@/types/api'
 import request from '@/utils/request'
 
 /**
@@ -17,7 +13,9 @@ export const planApi = {
    * 获取近期任务列表
    * @param params 请求参数
    */
-  async getRecentTaskList(params: PlanApi.GetRecentTaskListReq): Promise<ApiResponse<PlanApi.GetRecentTaskListResp>> {
+  async getRecentTaskList(
+    params: PlanApi.GetRecentTaskListReq
+  ): Promise<ApiResponse<PlanApi.GetRecentTaskListResp>> {
     const response = await request.post('/api/so/plan/recent_task/list', params)
     return response.data
   },
@@ -26,7 +24,9 @@ export const planApi = {
    * 获取近期任务详情
    * @param params 请求参数
    */
-  async getRecentTaskDetail(params: PlanApi.GetRecentTaskDetailReq): Promise<ApiResponse<PlanApi.GetRecentTaskDetailResp>> {
+  async getRecentTaskDetail(
+    params: PlanApi.GetRecentTaskDetailReq
+  ): Promise<ApiResponse<PlanApi.GetRecentTaskDetailResp>> {
     const response = await request.get('/api/so/plan/recent_task/detail', params)
     return response.data
   },
@@ -35,7 +35,9 @@ export const planApi = {
    * 创建近期任务
    * @param data 请求数据
    */
-  async createRecentTask(data: PlanApi.CreateRecentTaskReq): Promise<ApiResponse<PlanApi.CreateRecentTaskResp>> {
+  async createRecentTask(
+    data: PlanApi.CreateRecentTaskReq
+  ): Promise<ApiResponse<PlanApi.CreateRecentTaskResp>> {
     const response = await request.post('/api/so/plan/recent_task/create', data)
     return response.data
   },
@@ -44,7 +46,9 @@ export const planApi = {
    * 更新近期任务
    * @param data 请求数据
    */
-  async updateRecentTask(data: PlanApi.UpdateRecentTaskReq): Promise<ApiResponse<PlanApi.UpdateRecentTaskResp>> {
+  async updateRecentTask(
+    data: PlanApi.UpdateRecentTaskReq
+  ): Promise<ApiResponse<PlanApi.UpdateRecentTaskResp>> {
     const response = await request.post('/api/so/plan/recent_task/update', data)
     return response.data
   },
@@ -53,7 +57,9 @@ export const planApi = {
    * 删除近期任务
    * @param data 请求数据
    */
-  async deleteRecentTask(data: PlanApi.DeleteRecentTaskReq): Promise<ApiResponse<PlanApi.DeleteRecentTaskResp>> {
+  async deleteRecentTask(
+    data: PlanApi.DeleteRecentTaskReq
+  ): Promise<ApiResponse<PlanApi.DeleteRecentTaskResp>> {
     const response = await request.post('/api/so/plan/recent_task/delete', data)
     return response.data
   },
@@ -73,7 +79,9 @@ export const planApi = {
    * 获取目标详情
    * @param params 请求参数
    */
-  async getGoalDetail(params: PlanApi.GetGoalDetailReq): Promise<ApiResponse<PlanApi.GetGoalDetailResp>> {
+  async getGoalDetail(
+    params: PlanApi.GetGoalDetailReq
+  ): Promise<ApiResponse<PlanApi.GetGoalDetailResp>> {
     const response = await request.get('/api/so/plan/goal/detail', params)
     return response.data
   },
@@ -104,5 +112,4 @@ export const planApi = {
     const response = await request.post('/api/so/plan/goal/delete', data)
     return response.data
   },
-
 }

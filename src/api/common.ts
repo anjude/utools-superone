@@ -1,7 +1,4 @@
-import { 
-  CommonApi, 
-  ApiResponse 
-} from '@/types/api'
+import { CommonApi, ApiResponse } from '@/types/api'
 import request from '@/utils/request'
 import CONFIG from '@/constants/config'
 import { CacheManager } from '@/utils/cache-manager'
@@ -10,12 +7,14 @@ import { CACHE_KEYS } from '@/stores/cache'
 // 通用相关API接口
 export const commonApi = {
   // ==================== 微信相关接口 ====================
-  
+
   /**
    * 微信自动回复
    * @param data 请求数据
    */
-  async wxAutoReply(data: CommonApi.WxAutoReplyReq): Promise<ApiResponse<CommonApi.WxAutoReplyResp>> {
+  async wxAutoReply(
+    data: CommonApi.WxAutoReplyReq
+  ): Promise<ApiResponse<CommonApi.WxAutoReplyResp>> {
     const response = await request.post('/api/so/common/wx_auto_reply', data)
     return response.data
   },
@@ -40,16 +39,16 @@ export const commonApi = {
       }
 
       const base64Data = window.services.readFileBuffer(filePath)
-      
+
       // 获取文件扩展名，确定 MIME 类型
       const ext = filePath.split('.').pop()?.toLowerCase() || 'jpg'
       const mimeTypes: Record<string, string> = {
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'png': 'image/png',
-        'gif': 'image/gif',
-        'bmp': 'image/bmp',
-        'webp': 'image/webp'
+        jpg: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        png: 'image/png',
+        gif: 'image/gif',
+        bmp: 'image/bmp',
+        webp: 'image/webp',
       }
       const mimeType = mimeTypes[ext] || 'image/jpeg'
 
@@ -70,7 +69,7 @@ export const commonApi = {
       // 准备请求头
       const token = CacheManager.get(CACHE_KEYS.TOKEN)
       const headers: Record<string, string> = {}
-      
+
       if (token) {
         headers.Authorization = `Bearer ${token}`
       }
@@ -79,7 +78,7 @@ export const commonApi = {
       const response = await fetch(CONFIG.baseURL + '/api/so/common/wx_upload', {
         method: 'POST',
         headers,
-        body: formData
+        body: formData,
       })
 
       if (!response.ok) {
@@ -87,7 +86,7 @@ export const commonApi = {
       }
 
       const data = await response.json()
-      
+
       if (data.err_code === 0) {
         return data.data.url
       } else {
@@ -110,7 +109,9 @@ export const commonApi = {
    * 生成小程序二维码
    * @param data 请求数据
    */
-  async generateMpQrcode(data: CommonApi.MpQrcodeReq): Promise<ApiResponse<CommonApi.MpQrcodeResp>> {
+  async generateMpQrcode(
+    data: CommonApi.MpQrcodeReq
+  ): Promise<ApiResponse<CommonApi.MpQrcodeResp>> {
     const response = await request.post('/api/so/common/mp_qrcode', data)
     return response.data
   },
@@ -119,7 +120,9 @@ export const commonApi = {
    * 生成小程序二维码(JSON格式)
    * @param data 请求数据
    */
-  async generateMpQrcodeJson(data: CommonApi.MpQrcodeReq): Promise<ApiResponse<CommonApi.MpQrcodeResp>> {
+  async generateMpQrcodeJson(
+    data: CommonApi.MpQrcodeReq
+  ): Promise<ApiResponse<CommonApi.MpQrcodeResp>> {
     const response = await request.post('/api/so/common/mp_qrcode_json', data)
     return response.data
   },
@@ -128,7 +131,9 @@ export const commonApi = {
    * 根据AppID和AppSecret获取访问令牌
    * @param params 请求参数
    */
-  async getAccessTokenByIdSecret(params: CommonApi.GetAccessTokenByIdSecretReq): Promise<ApiResponse<CommonApi.GetAccessTokenByIdSecretResp>> {
+  async getAccessTokenByIdSecret(
+    params: CommonApi.GetAccessTokenByIdSecretReq
+  ): Promise<ApiResponse<CommonApi.GetAccessTokenByIdSecretResp>> {
     const response = await request.get('/api/so/common/get_access_token_by_id_secret', params)
     return response.data
   },
@@ -142,7 +147,7 @@ export const commonApi = {
   },
 
   // ==================== 系统相关接口 ====================
-  
+
   /**
    * 获取系统信息
    */
@@ -161,7 +166,7 @@ export const commonApi = {
   },
 
   // ==================== CSDN相关接口 ====================
-  
+
   /**
    * CSDN热门文章评论
    * @param data 请求数据
@@ -197,7 +202,7 @@ export const commonApi = {
   },
 
   // ==================== AI相关接口 ====================
-  
+
   /**
    * AI回复
    * @param data 请求数据
@@ -211,7 +216,9 @@ export const commonApi = {
    * AI回复记忆擦除
    * @param params 请求参数
    */
-  async aiReplyMemoryErasure(params: CommonApi.AiReplyMemoryErasureReq): Promise<ApiResponse<CommonApi.AiReplyMemoryErasureResp>> {
+  async aiReplyMemoryErasure(
+    params: CommonApi.AiReplyMemoryErasureReq
+  ): Promise<ApiResponse<CommonApi.AiReplyMemoryErasureResp>> {
     const response = await request.get('/api/so/common/ai/reply/memory_erasure', params)
     return response.data
   },
@@ -220,7 +227,9 @@ export const commonApi = {
    * AI微信文章回复
    * @param data 请求数据
    */
-  async getAiWechatArticleReply(data: CommonApi.AiWechatArticleReq): Promise<ApiResponse<CommonApi.AiWechatArticleResp>> {
+  async getAiWechatArticleReply(
+    data: CommonApi.AiWechatArticleReq
+  ): Promise<ApiResponse<CommonApi.AiWechatArticleResp>> {
     const response = await request.post('/api/so/common/ai/wechat_article', data)
     return response.data
   },
@@ -235,34 +244,40 @@ export const commonApi = {
   },
 
   // ==================== 网页解析相关接口 ====================
-  
+
   /**
    * 解析网页视图
    * @param params 请求参数
    */
-  async parseWebView(params: CommonApi.ParseWebViewReq): Promise<ApiResponse<CommonApi.ParseWebViewResp>> {
+  async parseWebView(
+    params: CommonApi.ParseWebViewReq
+  ): Promise<ApiResponse<CommonApi.ParseWebViewResp>> {
     const response = await request.get('/api/so/common/web_view/parse', params)
     return response.data
   },
 
   // ==================== 热门数据相关接口 ====================
-  
+
   /**
    * 获取热门数据
    * @param params 请求参数
    */
-  async getHotData(params: CommonApi.GetHotDataReq): Promise<ApiResponse<CommonApi.GetHotDataResp>> {
+  async getHotData(
+    params: CommonApi.GetHotDataReq
+  ): Promise<ApiResponse<CommonApi.GetHotDataResp>> {
     const response = await request.get('/api/so/common/hot_data/get', params)
     return response.data
   },
 
   // ==================== Redis相关接口 ====================
-  
+
   /**
    * 获取前端Redis数据
    * @param params 请求参数
    */
-  async getFeRedis(params: CommonApi.GetFeRedisReq): Promise<ApiResponse<CommonApi.GetFeRedisResp>> {
+  async getFeRedis(
+    params: CommonApi.GetFeRedisReq
+  ): Promise<ApiResponse<CommonApi.GetFeRedisResp>> {
     const response = await request.get('/api/so/common/fe_redis/get', params)
     return response.data
   },
@@ -290,15 +305,17 @@ export const commonApi = {
    * 生成全局唯一ID（按 服务/模块/实体 维度）
    * @param data 请求数据
    */
-  async generateGlobalId(data: CommonApi.GenerateGlobalIdReq): Promise<ApiResponse<CommonApi.GenerateGlobalIdResp>> {
+  async generateGlobalId(
+    data: CommonApi.GenerateGlobalIdReq
+  ): Promise<ApiResponse<CommonApi.GenerateGlobalIdResp>> {
     // 临时兼容，使用时间戳作为id，并减去一个较大的随机数
     const RANDOM_OFFSET = Math.floor(Math.random() * 1e8) + 1e8 // 生成一个 1e8~2e8 之间的随机数
     if (!data.count || data.count === 1) {
       // 单个ID，当前时间戳减去随机数
       return Promise.resolve({
         data: {
-          id: Date.now() - RANDOM_OFFSET
-        }
+          id: Date.now() - RANDOM_OFFSET,
+        },
       } as ApiResponse<CommonApi.GenerateGlobalIdResp>)
     } else {
       // 批量ID，生成 count 个递增时间戳并减去随机数
@@ -306,11 +323,11 @@ export const commonApi = {
       const ids = Array.from({ length: data.count }, (_, i) => now + i)
       return Promise.resolve({
         data: {
-          ids
-        }
+          ids,
+        },
       } as ApiResponse<CommonApi.GenerateGlobalIdResp>)
     }
     const response = await request.post('/api/so/common/global_id/generate', data)
     return response.data
-  }
+  },
 }

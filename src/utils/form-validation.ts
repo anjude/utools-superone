@@ -22,25 +22,25 @@ export const validateTextField = (
   } = {}
 ): { isValid: boolean; message?: string } => {
   const { required = false, minLength = 1, maxLength = 50, trim = true } = options
-  
+
   const trimmedValue = trim ? value?.trim() : value
-  
+
   // 必填验证
   if (required && (!trimmedValue || trimmedValue.length === 0)) {
     return {
       isValid: false,
-      message: `请输入${fieldName}`
+      message: `请输入${fieldName}`,
     }
   }
-  
+
   // 长度验证
   if (trimmedValue && (trimmedValue.length < minLength || trimmedValue.length > maxLength)) {
     return {
       isValid: false,
-      message: `${fieldName}长度应在${minLength}-${maxLength}个字符之间`
+      message: `${fieldName}长度应在${minLength}-${maxLength}个字符之间`,
     }
   }
-  
+
   return { isValid: true }
 }
 
@@ -56,10 +56,10 @@ export const validatePriority = (
   if (!priority) {
     return {
       isValid: false,
-      message: `请选择${fieldName}`
+      message: `请选择${fieldName}`,
     }
   }
-  
+
   return { isValid: true }
 }
 
@@ -73,26 +73,26 @@ export const validateKeyResults = (
   if (!keyResults || keyResults.length === 0) {
     return {
       isValid: false,
-      message: '至少需要添加一个关键结果'
+      message: '至少需要添加一个关键结果',
     }
   }
-  
+
   for (let i = 0; i < keyResults.length; i++) {
     const kr = keyResults[i]
     const titleValidation = validateTextField(kr.title, `第${i + 1}个关键结果的标题`, {
       required: true,
       minLength: 1,
-      maxLength: 50
+      maxLength: 50,
     })
-    
+
     if (!titleValidation.isValid) {
       return {
         isValid: false,
-        message: titleValidation.message
+        message: titleValidation.message,
       }
     }
   }
-  
+
   return { isValid: true }
 }
 
@@ -113,13 +113,15 @@ export const showValidationError = (message: string): void => {
  * 通用表单验证函数
  * @param validations 验证结果数组
  */
-export const validateForm = (validations: Array<{ isValid: boolean; message?: string }>): boolean => {
+export const validateForm = (
+  validations: Array<{ isValid: boolean; message?: string }>
+): boolean => {
   const failedValidation = validations.find(v => !v.isValid)
-  
+
   if (failedValidation) {
     showValidationError(failedValidation.message!)
     return false
   }
-  
+
   return true
 }

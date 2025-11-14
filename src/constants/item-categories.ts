@@ -18,68 +18,68 @@ export const ITEM_CATEGORIES: readonly ItemCategory[] = [
     id: 0,
     name: '默认分类',
     icon: 'cuIcon-tag',
-    color: '#999999'
+    color: '#999999',
   },
   {
     id: 1,
     name: '电子产品',
     icon: 'cuIcon-mobile',
-    color: '#007AFF'
+    color: '#007AFF',
   },
   {
     id: 2,
     name: '服装配饰',
     icon: 'cuIcon-clothes',
-    color: '#34C759'
+    color: '#34C759',
   },
   {
     id: 3,
     name: '家居用品',
     icon: 'cuIcon-home',
-    color: '#FF9500'
+    color: '#FF9500',
   },
   {
     id: 4,
     name: '美妆护肤',
     icon: 'cuIcon-beauty',
-    color: '#FF3B30'
+    color: '#FF3B30',
   },
   {
     id: 5,
     name: '食品饮料',
     icon: 'cuIcon-food',
-    color: '#AF52DE'
+    color: '#AF52DE',
   },
   {
     id: 6,
     name: '运动健身',
     icon: 'cuIcon-sport',
-    color: '#FF2D92'
+    color: '#FF2D92',
   },
   {
     id: 7,
     name: '图书文具',
     icon: 'cuIcon-book',
-    color: '#5AC8FA'
+    color: '#5AC8FA',
   },
   {
     id: 8,
     name: '汽车用品',
     icon: 'cuIcon-car',
-    color: '#FFCC00'
+    color: '#FFCC00',
   },
   {
     id: 9,
     name: '礼品玩具',
     icon: 'cuIcon-gift',
-    color: '#FF6B6B'
+    color: '#FF6B6B',
   },
   {
     id: 10,
     name: '其他',
     icon: 'cuIcon-tag',
-    color: '#4ECDC4'
-  }
+    color: '#4ECDC4',
+  },
 ] as const
 
 /**
@@ -109,6 +109,6 @@ export function getAllCategories(): readonly ItemCategory[] {
 export function getCategoryOptions(): Array<{ label: string; value: number }> {
   return ITEM_CATEGORIES.map(category => ({
     label: category.name,
-    value: category.id
+    value: category.id,
   }))
 }

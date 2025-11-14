@@ -1,8 +1,4 @@
-import { 
-  UserApi, 
-  ApiResponse, 
-  PaginationData 
-} from '@/types/api'
+import { UserApi, ApiResponse, PaginationData } from '@/types/api'
 import request, { Response } from '@/utils/request'
 
 // 用户相关API接口
@@ -55,7 +51,9 @@ export const userApi = {
    * 根据OpenID获取用户信息
    * @param params 请求参数
    */
-  async getUserByOpenid(params: UserApi.GetByOpenidReq): Promise<ApiResponse<UserApi.GetByOpenidResp>> {
+  async getUserByOpenid(
+    params: UserApi.GetByOpenidReq
+  ): Promise<ApiResponse<UserApi.GetByOpenidResp>> {
     const response = await request.get('/api/so/user/get_by_openid', params)
     return response.data
   },
@@ -112,5 +110,5 @@ export const userApi = {
   async subscribeMessage(data: UserApi.SubscribeMsgReq): Promise<ApiResponse<any>> {
     const response = await request.post('/api/so/user/message/sub', data)
     return response.data
-  }
+  },
 }

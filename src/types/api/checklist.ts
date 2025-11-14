@@ -1,22 +1,21 @@
 // 清单相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { BaseEntity } from '@/types/base';
-import type { PaginationData } from './base';
-import type { 
-  ChecklistEntity, 
-  ChecklistItemEntity, 
+import type { BaseEntity } from '@/types/base'
+import type { PaginationData } from './base'
+import type {
+  ChecklistEntity,
+  ChecklistItemEntity,
   ChecklistExecutionRecordEntity,
   ChecklistExecutionStepEntity,
   ChecklistEditForm,
   ChecklistExecutionForm,
   ChecklistSearchFilter,
-  ExecutionMode
-} from '../checklist';
+  ExecutionMode,
+} from '../checklist'
 
 // 清单API命名空间
 export namespace ChecklistApi {
-
   // 获取清单列表请求
   export interface GetChecklistListReq {
     offset?: number
@@ -113,7 +112,6 @@ export namespace ChecklistApi {
   // 搜索清单响应
   export interface SearchChecklistsResp extends PaginationData<ChecklistEntity> {}
 
-
   // 获取清单执行历史请求
   export interface GetExecutionHistoryReq {
     checklistId: number
@@ -125,5 +123,4 @@ export namespace ChecklistApi {
 
   // 获取清单执行历史响应
   export interface GetExecutionHistoryResp extends PaginationData<ChecklistExecutionRecordEntity> {}
-
 }

@@ -4,10 +4,10 @@
 export namespace CommonApi {
   // 热门数据平台
   export enum HotDataPlatform {
-    ZhiHu = 1,    // 知乎
-    WeiBo = 2,    // 微博
-    BaiDu = 3,    // 百度
-    XueQiu = 4    // 雪球
+    ZhiHu = 1, // 知乎
+    WeiBo = 2, // 微博
+    BaiDu = 3, // 百度
+    XueQiu = 4, // 雪球
   }
 
   // 微信相关接口类型

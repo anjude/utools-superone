@@ -4,70 +4,70 @@
 
 export interface EditorFormats {
   /** 标题级别 */
-  header?: number;
+  header?: number
   /** 是否粗体 */
-  bold?: boolean;
+  bold?: boolean
   /** 是否斜体 */
-  italic?: boolean;
+  italic?: boolean
   /** 背景颜色 */
-  backgroundColor?: string;
+  backgroundColor?: string
   /** 列表类型 */
-  list?: 'ordered' | 'bullet' | 'check';
+  list?: 'ordered' | 'bullet' | 'check'
   /** 缩进级别 */
-  indent?: string;
+  indent?: string
   /** 图片 */
-  image?: boolean;
+  image?: boolean
 }
 
 export interface EditorEvent {
   /** 事件详情 */
   detail: {
     /** 文本内容 */
-    text?: string;
+    text?: string
     /** 格式信息 */
-    formats?: EditorFormats;
-  };
+    formats?: EditorFormats
+  }
 }
 
 export interface CuMdEditorProps {
   /** 初始HTML内容 */
-  htmlContent?: string;
+  htmlContent?: string
   /** 占位符文本 */
-  placeholder?: string;
+  placeholder?: string
   /** 编辑器高度 */
-  height?: string | number;
+  height?: string | number
   /** 是否禁用 */
-  disabled?: boolean;
+  disabled?: boolean
 }
 
 export interface CuMdEditorEmits {
   /** 输入事件 */
-  (event: 'input', value: string): void;
+  (event: 'input', value: string): void
   /** 内容变化事件 */
-  (event: 'change', value: string): void;
+  (event: 'change', value: string): void
   /** 失焦事件 */
-  (event: 'blur', value: string): void;
+  (event: 'blur', value: string): void
   /** 错误事件 */
-  (event: 'error', error: string): void;
+  (event: 'error', error: string): void
 }
 
 export interface CuMdEditorInstance {
   /** 获取内容 */
-  getContent(): string;
+  getContent(): string
   /** 设置内容 */
-  setContent(content: string): void;
+  setContent(content: string): void
   /** 清空内容 */
-  clear(): void;
+  clear(): void
   /** 聚焦 */
-  focus(): void;
+  focus(): void
   /** 失焦 */
-  blur(): void;
+  blur(): void
   /** 撤销 */
-  undo(): void;
+  undo(): void
   /** 重做 */
-  redo(): void;
+  redo(): void
   /** 重置内容 */
-  resetContent(): void;
+  resetContent(): void
   /** 移除格式 */
-  removeFormat(): void;
+  removeFormat(): void
 }

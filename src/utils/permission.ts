@@ -21,4 +21,3 @@ export function hasAdFreePermission(permission: UserEnums.UserPermission): boole
 export function convertPermissionToEnum(permission: number): UserEnums.UserPermission {
   return permission as UserEnums.UserPermission
 }
-

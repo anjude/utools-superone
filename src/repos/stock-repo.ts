@@ -16,13 +16,13 @@ export class StockRepo {
       const response = await stockApi.getStockList({
         offset: 0,
         size: 1000, // 获取所有数据
-        type // 传递类型参数到后端
+        type, // 传递类型参数到后端
       })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '获取标的列表失败')
       }
-      
+
       const stocks = (response.data?.list || []).map(stock => ({
         ...stock,
         top: stock.top ?? 0,
@@ -42,7 +42,7 @@ export class StockRepo {
     try {
       const reqId = logger.logRequestStart(`StockRepo.getById(${id})`, 'GET')
       const response = await stockApi.getStockDetail({ stockId: id })
-      
+
       if (response.errCode !== 0) {
         if (response.errCode === 404) {
           logger.logRequestSuccess(reqId, 404, { found: false })
@@ -50,7 +50,7 @@ export class StockRepo {
         }
         throw new Error(response.msg || '获取标的详情失败')
       }
-      
+
       const stock = response.data?.stock
       logger.logRequestSuccess(reqId, 200, { found: true })
       return stock ? { ...stock, top: stock.top ?? 0 } : null
@@ -66,22 +66,22 @@ export class StockRepo {
   static async create(data: IStockFormData): Promise<IStock> {
     try {
       const reqId = logger.logRequestStart('StockRepo.create', 'POST')
-      
+
       // 数据验证
       const validation = validateStock(data)
       if (!validation.valid) {
         throw new Error(`数据验证失败: ${validation.errors.join(', ')}`)
       }
-      
+
       const response = await stockApi.createStock(data)
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '创建标的失败')
       }
-      
+
       const newStockId = response.data?.stockId
       logger.logRequestSuccess(reqId, 201, { id: newStockId })
-      
+
       // 创建成功后需要重新获取完整的标的信息
       if (newStockId) {
         const newStock = await this.getById(newStockId)
@@ -103,7 +103,7 @@ export class StockRepo {
   static async update(id: number, data: Partial<IStockFormData>): Promise<IStock> {
     try {
       const reqId = logger.logRequestStart(`StockRepo.update(${id})`, 'PUT')
-      
+
       // 数据验证（仅验证提供的字段）
       if (Object.keys(data).length > 0) {
         const validation = validateStock(data, { partial: true })
@@ -111,16 +111,16 @@ export class StockRepo {
           throw new Error(`数据验证失败: ${validation.errors.join(', ')}`)
         }
       }
-      
+
       const response = await stockApi.updateStock({ stockId: id, ...data } as any)
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '更新标的失败')
       }
-      
+
       const success = response.data?.success
       logger.logRequestSuccess(reqId, 200, { id })
-      
+
       if (success) {
         // 更新成功后重新获取完整的标的信息
         const updatedStock = await this.getById(id)
@@ -143,11 +143,11 @@ export class StockRepo {
     try {
       const reqId = logger.logRequestStart(`StockRepo.delete(${id})`, 'DELETE')
       const response = await stockApi.deleteStock({ stockId: id })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '删除标的失败')
       }
-      
+
       logger.logRequestSuccess(reqId, 200, { id })
     } catch (error) {
       logger.logRequestError(`StockRepo.delete(${id})`, error)
@@ -165,13 +165,13 @@ export class StockRepo {
         keyword,
         type: type as any,
         offset: 0,
-        size: 1000
+        size: 1000,
       })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '搜索标的失败')
       }
-      
+
       const stocks = (response.data?.list || []).map(stock => ({
         ...stock,
         top: stock.top ?? 0,
@@ -183,5 +183,4 @@ export class StockRepo {
       throw error
     }
   }
-
 }

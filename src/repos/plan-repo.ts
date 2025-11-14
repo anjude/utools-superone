@@ -1,11 +1,6 @@
 import { logger } from '@/utils/logger'
 import { planApi } from '@/api/plan'
-import type { 
-  RecentTask, 
-  Goal, 
-  RecentTaskForm,
-  GoalForm 
-} from '@/types/plan'
+import type { RecentTask, Goal, RecentTaskForm, GoalForm } from '@/types/plan'
 import { TaskEnums, OKREnums } from '@/types/plan'
 import { ScheduleEnums } from '@/constants/enums'
 
@@ -29,13 +24,13 @@ export class RecentTaskRepo {
       const response = await planApi.getRecentTaskList({
         offset: 0,
         size: 1000,
-        ...params
+        ...params,
       })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '获取近期任务列表失败')
       }
-      
+
       const tasks = response.data?.list || []
       logger.logRequestSuccess(reqId, 200, { count: tasks.length })
       return tasks
@@ -52,7 +47,7 @@ export class RecentTaskRepo {
     try {
       const reqId = logger.logRequestStart(`RecentTaskRepo.getById(${id})`, 'GET')
       const response = await planApi.getRecentTaskDetail({ id })
-      
+
       if (response.errCode !== 0) {
         if (response.errCode === 404) {
           logger.logRequestSuccess(reqId, 404, { found: false })
@@ -60,7 +55,7 @@ export class RecentTaskRepo {
         }
         throw new Error(response.msg || '获取近期任务详情失败')
       }
-      
+
       const task = response.data
       logger.logRequestSuccess(reqId, 200, { found: true })
       return task || null
@@ -76,13 +71,13 @@ export class RecentTaskRepo {
   static async create(data: RecentTaskForm): Promise<RecentTask> {
     try {
       const reqId = logger.logRequestStart('RecentTaskRepo.create', 'POST')
-      
+
       const response = await planApi.createRecentTask(data)
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '创建近期任务失败')
       }
-      
+
       const newTask = response.data
       logger.logRequestSuccess(reqId, 201, { id: newTask.id })
       return newTask
@@ -98,13 +93,13 @@ export class RecentTaskRepo {
   static async update(id: number, data: Partial<RecentTaskForm>): Promise<RecentTask> {
     try {
       const reqId = logger.logRequestStart(`RecentTaskRepo.update(${id})`, 'PUT')
-      
+
       const response = await planApi.updateRecentTask({ id, ...data })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '更新近期任务失败')
       }
-      
+
       const updatedTask = response.data
       logger.logRequestSuccess(reqId, 200, { id })
       return updatedTask
@@ -121,11 +116,11 @@ export class RecentTaskRepo {
     try {
       const reqId = logger.logRequestStart(`RecentTaskRepo.delete(${id})`, 'DELETE')
       const response = await planApi.deleteRecentTask({ id })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '删除近期任务失败')
       }
-      
+
       logger.logRequestSuccess(reqId, 200, { id })
     } catch (error) {
       logger.logRequestError(`RecentTaskRepo.delete(${id})`, error)
@@ -155,13 +150,13 @@ export class GoalRepo {
       const response = await planApi.getGoalList({
         offset: 0,
         size: 1000,
-        ...params
+        ...params,
       })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '获取目标列表失败')
       }
-      
+
       const goals = response.data?.list || []
       logger.logRequestSuccess(reqId, 200, { count: goals.length })
       return goals
@@ -178,7 +173,7 @@ export class GoalRepo {
     try {
       const reqId = logger.logRequestStart(`GoalRepo.getById(${id})`, 'GET')
       const response = await planApi.getGoalDetail({ id })
-      
+
       if (response.errCode !== 0) {
         if (response.errCode === 404) {
           logger.logRequestSuccess(reqId, 404, { found: false })
@@ -186,7 +181,7 @@ export class GoalRepo {
         }
         throw new Error(response.msg || '获取目标详情失败')
       }
-      
+
       const goal = response.data
       logger.logRequestSuccess(reqId, 200, { found: true })
       return goal || null
@@ -202,13 +197,13 @@ export class GoalRepo {
   static async create(data: GoalForm): Promise<Goal> {
     try {
       const reqId = logger.logRequestStart('GoalRepo.create', 'POST')
-      
+
       const response = await planApi.createGoal(data)
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '创建目标失败')
       }
-      
+
       const newGoal = response.data
       logger.logRequestSuccess(reqId, 201, { id: newGoal.id })
       return newGoal
@@ -224,16 +219,16 @@ export class GoalRepo {
   static async update(id: number, data: Partial<GoalForm>): Promise<Goal> {
     try {
       const reqId = logger.logRequestStart(`GoalRepo.update(${id})`, 'PUT')
-      
+
       const response = await planApi.updateGoal({
         id,
-        ...data
+        ...data,
       })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '更新目标失败')
       }
-      
+
       const updatedGoal = response.data
       logger.logRequestSuccess(reqId, 200, { id })
       return updatedGoal
@@ -250,11 +245,11 @@ export class GoalRepo {
     try {
       const reqId = logger.logRequestStart(`GoalRepo.delete(${id})`, 'DELETE')
       const response = await planApi.deleteGoal({ id })
-      
+
       if (response.errCode !== 0) {
         throw new Error(response.msg || '删除目标失败')
       }
-      
+
       logger.logRequestSuccess(reqId, 200, { id })
     } catch (error) {
       logger.logRequestError(`GoalRepo.delete(${id})`, error)

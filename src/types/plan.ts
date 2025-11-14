@@ -3,7 +3,7 @@
  * 符合数据模型规范：统一时间字段、用户标识等
  */
 
-import { ScheduleEnums } from '@/constants/enums';
+import { ScheduleEnums } from '@/constants/enums'
 
 // 基础实体接口 - 包含通用字段
 export interface BaseEntity {
@@ -42,20 +42,19 @@ export function isQuarterlyGoal(goal: Goal): goal is Goal & { quarter: ScheduleE
   return goal.type === OKREnums.Type.Quarterly && goal.quarter !== undefined
 }
 
-
 // 任务优先级枚举 - 对齐后端常量
 export namespace TaskEnums {
   export enum Priority {
-    Low = 1,      // 低优先级
-    Medium = 2,   // 中优先级
-    High = 3      // 高优先级
+    Low = 1, // 低优先级
+    Medium = 2, // 中优先级
+    High = 3, // 高优先级
   }
 
   export enum Status {
-    Pending = 1,      // 待处理
-    InProgress = 2,   // 进行中
-    Completed = 3,    // 已完成
-    Cancelled = 4     // 已取消
+    Pending = 1, // 待处理
+    InProgress = 2, // 进行中
+    Completed = 3, // 已完成
+    Cancelled = 4, // 已取消
   }
 }
 
@@ -79,7 +78,6 @@ export interface RecentTask extends BaseEntity {
   top: number // 置顶权重
 }
 
-
 // 统一目标表单数据 - 对齐后端CreateGoalReq
 export interface GoalForm {
   title: string
@@ -91,7 +89,6 @@ export interface GoalForm {
   deadline?: number // 截止日期，Unix时间戳
   top?: number // 置顶权重
 }
-
 
 export interface RecentTaskForm {
   title: string
@@ -128,21 +125,21 @@ export interface PaginatedResponse<T> {
 // 目标相关枚举 - 对齐后端常量
 export namespace OKREnums {
   export enum Status {
-    NotStarted = 1,    // 未开始
-    InProgress = 2,    // 进行中
-    Completed = 3,     // 已完成
-    AtRisk = 4         // 有风险
+    NotStarted = 1, // 未开始
+    InProgress = 2, // 进行中
+    Completed = 3, // 已完成
+    AtRisk = 4, // 有风险
   }
 
   export enum Priority {
-    Low = 1,      // 低优先级
-    Medium = 2,   // 中优先级
-    High = 3      // 高优先级
+    Low = 1, // 低优先级
+    Medium = 2, // 中优先级
+    High = 3, // 高优先级
   }
 
   export enum Type {
-    Quarterly = 1,  // 季度目标
-    Annual = 2      // 年度目标
+    Quarterly = 1, // 季度目标
+    Annual = 2, // 年度目标
   }
 }
 

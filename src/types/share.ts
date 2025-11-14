@@ -22,13 +22,13 @@ export interface ShareOptions {
   showPopup?: boolean
 }
 
-export type ShareType = 
-  | 'checklist-summary'  // 清单总结
+export type ShareType =
+  | 'checklist-summary' // 清单总结
   | 'checklist-execution' // 清单执行
   | 'checklist-template' // 清单模板
   | 'general' // 通用分享
 
-export type ShareMethod = 
+export type ShareMethod =
   | 'wechat' // 微信分享
   | 'copy-link' // 复制链接
   | 'save-image' // 保存图片

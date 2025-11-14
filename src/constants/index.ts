@@ -5,4 +5,3 @@ export * from './enums'
 export * from './item-categories'
 export * from './static-data'
 export * from './tool-config'
-

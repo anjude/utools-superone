@@ -18,8 +18,8 @@ export interface ChecklistEntity extends BaseEntity {
 
 // 执行模式枚举 - 与 ChecklistEnums.ExecutionMode 保持一致
 export enum ExecutionMode {
-  Overview = 1,  // 执行
-  Step = 2       // 分步执行
+  Overview = 1, // 执行
+  Step = 2, // 分步执行
 }
 
 // 清单执行步骤实体
@@ -43,8 +43,8 @@ export interface ChecklistExecutionRecordEntity extends BaseEntity {
 
 // 清单执行状态枚举 - 与 ChecklistEnums.ExecutionStatus 保持一致
 export enum ChecklistExecutionStatus {
-  InProgress = 1,  // 进行中
-  Completed = 2    // 已完成
+  InProgress = 1, // 进行中
+  Completed = 2, // 已完成
 }
 
 // 清单编辑表单数据
@@ -95,4 +95,3 @@ export interface ChecklistExecutionDraft {
   stepSummaries: { itemId: number; summary: string }[]
   overallSummary: string
 }
-

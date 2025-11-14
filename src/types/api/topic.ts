@@ -1,13 +1,22 @@
 // 主题相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { BaseEntity } from '@/types/base';
-import type { PaginationData } from './base';
-import type { ITopic, ITopicLog, ITopicFormData, ITopicLogFormData, TopicListItem, TopicLogListItem, TopicType, TopicLogExtraData, TopicLogMark } from '@/types/topic';
+import type { BaseEntity } from '@/types/base'
+import type { PaginationData } from './base'
+import type {
+  ITopic,
+  ITopicLog,
+  ITopicFormData,
+  ITopicLogFormData,
+  TopicListItem,
+  TopicLogListItem,
+  TopicType,
+  TopicLogExtraData,
+  TopicLogMark,
+} from '@/types/topic'
 
 // 主题API命名空间
 export namespace TopicApi {
-
   // 获取主题列表请求
   export interface GetTopicListReq {
     offset?: number
@@ -52,8 +61,8 @@ export namespace TopicApi {
 
   // 获取主题日志列表请求
   export interface GetTopicLogListReq {
-    topicIds: number[]           // 必填，至少1个
-    topicTypes: TopicType[]      // 必填，至少1个
+    topicIds: number[] // 必填，至少1个
+    topicTypes: TopicType[] // 必填，至少1个
     offset?: number
     size?: number
   }
@@ -95,5 +104,4 @@ export namespace TopicApi {
   export interface DeleteTopicLogResp {
     // 空响应
   }
-
 }

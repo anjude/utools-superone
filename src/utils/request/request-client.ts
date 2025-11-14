@@ -7,21 +7,23 @@ import { logger } from '@/utils/logger'
 
 export class Request {
   public interceptors: Interceptors
-  private requestHandlers: Array<(config: RequestConfig) => RequestConfig | Promise<RequestConfig>> = []
+  private requestHandlers: Array<
+    (config: RequestConfig) => RequestConfig | Promise<RequestConfig>
+  > = []
   private responseHandlers: Array<(response: Response) => Response | Promise<Response>> = []
 
   constructor() {
     this.interceptors = {
       request: {
-        use: (handler) => {
+        use: handler => {
           this.requestHandlers.push(handler)
-        }
+        },
       },
       response: {
-        use: (handler) => {
+        use: handler => {
           this.responseHandlers.push(handler)
-        }
-      }
+        },
+      },
     }
   }
 
@@ -40,27 +42,34 @@ export class Request {
       return url.startsWith('http') ? url : `${CONFIG.baseURL}${url}`
     }
     const queryString = Object.keys(params)
-      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
       .join('&')
     const separator = url.includes('?') ? '&' : '?'
-    return url.startsWith('http') ? `${url}${separator}${queryString}` : `${CONFIG.baseURL}${url}${separator}${queryString}`
+    return url.startsWith('http')
+      ? `${url}${separator}${queryString}`
+      : `${CONFIG.baseURL}${url}${separator}${queryString}`
   }
 
   /**
    * 原始请求方法，绕过所有拦截器和业务逻辑
    * 专门用于登录请求，避免循环依赖和拦截器干扰
    */
-  async rawRequest<T = any>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET', data?: any, customHeaders?: Record<string, string>): Promise<Response<T>> {
+  async rawRequest<T = any>(
+    url: string,
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
+    data?: any,
+    customHeaders?: Record<string, string>
+  ): Promise<Response<T>> {
     const fullUrl = url.startsWith('http') ? url : `${CONFIG.baseURL}${url}`
-    
+
     try {
       const response = await fetch(fullUrl, {
         method,
         headers: {
           'Content-Type': 'application/json',
-          ...customHeaders
+          ...customHeaders,
         },
-        body: data ? JSON.stringify(data) : null
+        body: data ? JSON.stringify(data) : null,
       })
 
       if (!response.ok) {
@@ -69,17 +78,17 @@ export class Request {
 
       const jsonData = await response.json()
       const convertedData = ParamConverter.toCamelCase(jsonData)
-      
+
       const responseHeaders: Record<string, string> = {}
       response.headers.forEach((value, key) => {
         responseHeaders[key] = value
       })
-      
+
       return {
         data: convertedData,
         statusCode: response.status,
         header: responseHeaders,
-        cookies: []
+        cookies: [],
       }
     } catch (error) {
       throw error
@@ -120,8 +129,12 @@ export class Request {
   }
 
   private async request<T = any>(config: RequestConfig): Promise<Response<T>> {
-    const requestId = logger.logRequestStart(config.url, config.method || 'GET', config.data || config.params)
-    
+    const requestId = logger.logRequestStart(
+      config.url,
+      config.method || 'GET',
+      config.data || config.params
+    )
+
     try {
       const interceptedConfig = await this.executeRequestInterceptors(config)
 
@@ -146,9 +159,9 @@ export class Request {
           method: interceptedConfig.method || 'GET',
           headers: {
             'Content-Type': 'application/json',
-            ...interceptedConfig.headers
+            ...interceptedConfig.headers,
           },
-          body: finalData ? JSON.stringify(finalData) : null
+          body: finalData ? JSON.stringify(finalData) : null,
         })
 
         if (!response.ok) {
@@ -157,17 +170,17 @@ export class Request {
 
         const jsonData = await response.json()
         const convertedData = ParamConverter.toCamelCase(jsonData)
-        
+
         const headers: Record<string, string> = {}
         response.headers.forEach((value, key) => {
           headers[key] = value
         })
-        
+
         const convertedResponse: Response = {
           data: convertedData,
           statusCode: response.status,
           header: headers,
-          cookies: []
+          cookies: [],
         }
 
         const interceptedResponse = await this.executeResponseInterceptors(convertedResponse)
@@ -176,7 +189,7 @@ export class Request {
           const businessData = interceptedResponse.data as BusinessResponse
           // 兼容处理：支持 errCode 和 err_code 两种格式
           const errCode = businessData?.errCode ?? (businessData as any)?.err_code
-          
+
           if (businessData && errCode === 0) {
             logger.logRequestSuccess(requestId, interceptedResponse.statusCode, businessData.data)
             return interceptedResponse
@@ -205,35 +218,48 @@ export class Request {
     }
   }
 
-
-  async get<T = any>(url: string, params?: any, config?: Partial<RequestConfig>): Promise<Response<T>> {
+  async get<T = any>(
+    url: string,
+    params?: any,
+    config?: Partial<RequestConfig>
+  ): Promise<Response<T>> {
     return this.request<T>({ url, method: 'GET', params, ...config })
   }
 
-  async post<T = any>(url: string, data?: any, config?: Partial<RequestConfig>): Promise<Response<T>> {
+  async post<T = any>(
+    url: string,
+    data?: any,
+    config?: Partial<RequestConfig>
+  ): Promise<Response<T>> {
     return this.request<T>({ url, method: 'POST', data, ...config })
   }
 
-  async put<T = any>(url: string, data?: any, config?: Partial<RequestConfig>): Promise<Response<T>> {
+  async put<T = any>(
+    url: string,
+    data?: any,
+    config?: Partial<RequestConfig>
+  ): Promise<Response<T>> {
     return this.request<T>({ url, method: 'PUT', data, ...config })
   }
 
-  async delete<T = any>(url: string, params?: any, config?: Partial<RequestConfig>): Promise<Response<T>> {
+  async delete<T = any>(
+    url: string,
+    params?: any,
+    config?: Partial<RequestConfig>
+  ): Promise<Response<T>> {
     return this.request<T>({ url, method: 'DELETE', params, ...config })
   }
-
 }
 
 const request = new Request()
 
 // 请求拦截器：自动添加token
-request.interceptors.request.use((config) => {
+request.interceptors.request.use(config => {
   const token = CacheManager.get(CACHE_KEYS.TOKEN)
   if (token) {
     // 确保 token 不包含 "Bearer " 前缀，避免重复添加
-    const cleanToken = typeof token === 'string' && token.startsWith('Bearer ') 
-      ? token.substring(7) 
-      : token
+    const cleanToken =
+      typeof token === 'string' && token.startsWith('Bearer ') ? token.substring(7) : token
     config.headers = { ...config.headers, Authorization: `Bearer ${cleanToken}` }
   }
   return config

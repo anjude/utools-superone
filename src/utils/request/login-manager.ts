@@ -53,7 +53,10 @@ export class LoginManager {
     try {
       this.isLoggingIn = true
       const uniqueId = String(idGenerator.generateId())
-      const codeResp = await this.requestInstance.rawRequest(`/api/so/user/code?uniqueId=${encodeURIComponent(uniqueId)}`, 'GET')
+      const codeResp = await this.requestInstance.rawRequest(
+        `/api/so/user/code?uniqueId=${encodeURIComponent(uniqueId)}`,
+        'GET'
+      )
       if (codeResp.statusCode !== 200 || !codeResp.data || (codeResp.data as any).errCode !== 0) {
         throw new Error('获取登录二维码失败')
       }
@@ -67,8 +70,11 @@ export class LoginManager {
       const start = Date.now()
       const timeout = 60 * 1000
       while (Date.now() - start < timeout) {
-        await new Promise((r) => setTimeout(r, 1500))
-        const jwtResp = await this.requestInstance.rawRequest(`/api/so/user/get_jwt?code=${encodeURIComponent(code)}`, 'GET')
+        await new Promise(r => setTimeout(r, 1500))
+        const jwtResp = await this.requestInstance.rawRequest(
+          `/api/so/user/get_jwt?code=${encodeURIComponent(code)}`,
+          'GET'
+        )
         if (jwtResp.statusCode === 200 && jwtResp.data && (jwtResp.data as any).errCode === 0) {
           const jwtPayload = (jwtResp.data as any).data || {}
           if (jwtPayload.jwtToken) {

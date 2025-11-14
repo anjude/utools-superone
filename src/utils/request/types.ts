@@ -33,5 +33,3 @@ export interface Interceptors {
     use: (handler: (response: Response) => Response | Promise<Response>) => void
   }
 }
-
-

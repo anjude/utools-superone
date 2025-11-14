@@ -42,18 +42,14 @@ onMounted(() => {
       </button>
     </div>
 
-    <div v-if="loading && topics.length === 0" class="loading">
-      加载中...
-    </div>
+    <div v-if="loading && topics.length === 0" class="loading">加载中...</div>
 
     <div v-else-if="error" class="error">
       <p>{{ error }}</p>
       <button @click="loadTopics">重试</button>
     </div>
 
-    <div v-else-if="topics.length === 0" class="empty">
-      暂无主题
-    </div>
+    <div v-else-if="topics.length === 0" class="empty">暂无主题</div>
 
     <ul v-else class="topic-list">
       <li v-for="topic in topics" :key="topic.id" class="topic-item">
@@ -192,4 +188,3 @@ onMounted(() => {
   }
 }
 </style>
-

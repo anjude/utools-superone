@@ -15,21 +15,21 @@ export class ImageUploadUtils {
       if (window.utools && typeof window.utools.showNotification === 'function') {
         window.utools.showNotification('上传中...')
       }
-      
+
       const imageUrl = await commonApi.uploadImg(filePath)
-      
+
       if (window.utools && typeof window.utools.showNotification === 'function') {
         window.utools.showNotification('上传成功')
       }
-      
+
       return imageUrl
     } catch (error) {
       logger.error('图片上传失败', { error })
-      
+
       if (window.utools && typeof window.utools.showNotification === 'function') {
         window.utools.showNotification('上传失败')
       }
-      
+
       throw error
     }
   }
@@ -50,11 +50,9 @@ export class ImageUploadUtils {
       try {
         const filePaths = window.utools.showOpenDialog({
           title: '选择图片',
-          filters: [
-            { name: '图片', extensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'] }
-          ],
+          filters: [{ name: '图片', extensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'] }],
           properties: ['openFile'],
-          defaultPath: window.utools.getPath('pictures')
+          defaultPath: window.utools.getPath('pictures'),
         })
 
         if (!filePaths || filePaths.length === 0) {
@@ -63,9 +61,7 @@ export class ImageUploadUtils {
         }
 
         const filePath = filePaths[0]
-        this.uploadImage(filePath)
-          .then(resolve)
-          .catch(reject)
+        this.uploadImage(filePath).then(resolve).catch(reject)
       } catch (error) {
         logger.error('选择图片失败', { error })
         reject(error)

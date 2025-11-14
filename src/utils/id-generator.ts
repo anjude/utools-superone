@@ -2,7 +2,7 @@
  * ID生成器
  * 使用秒级时间戳 + 4位随机数的方式生成唯一ID
  * 支持高并发场景，每秒可生成10000个不重复ID
- * 
+ *
  * ID格式：秒级时间戳(10位) + 4位随机数 = 14位数字
  * 示例：17031234561234
  */
@@ -37,12 +37,11 @@ export const idGenerator = {
    */
   generateIds(count: number): number[] {
     if (count <= 0) return []
-    
+
     const ids: number[] = []
     for (let i = 0; i < count; i++) {
       ids.push(generateId())
     }
     return ids
-  }
+  },
 }
-

@@ -54,7 +54,7 @@ export interface ITopicLog extends BaseEntity {
  */
 export interface ITopicFormData extends BaseFormData {
   /** 主题名称 */
-  topicName?: string  // 改为可选，支持部分更新
+  topicName?: string // 改为可选，支持部分更新
   /** 主题描述（可选，支持 Markdown 格式） */
   description?: string
   /** 置顶权重，仅用于部分更新 */
@@ -85,8 +85,8 @@ export interface TopicListItem {
   openid?: string // 用户标识，用于权限判断
   topicName: string
   description: string
-  createTime: number  // 新增：创建时间戳
-  updateTime: number  // 新增：更新时间戳
+  createTime: number // 新增：创建时间戳
+  updateTime: number // 新增：更新时间戳
   top: number
 }
 
@@ -107,7 +107,8 @@ export interface TopicLogListItem {
  * 类型守卫函数
  */
 export const isTopic = (obj: any): obj is ITopic => {
-  return obj && 
+  return (
+    obj &&
     typeof obj.id === 'number' &&
     typeof obj.openid === 'string' &&
     typeof obj.topicName === 'string' &&
@@ -115,10 +116,12 @@ export const isTopic = (obj: any): obj is ITopic => {
     typeof obj.top === 'number' &&
     typeof obj.createTime === 'number' &&
     typeof obj.updateTime === 'number'
+  )
 }
 
 export const isTopicLog = (obj: any): obj is ITopicLog => {
-  return obj &&
+  return (
+    obj &&
     typeof obj.id === 'number' &&
     typeof obj.openid === 'string' &&
     typeof obj.topicType === 'number' &&
@@ -128,19 +131,24 @@ export const isTopicLog = (obj: any): obj is ITopicLog => {
     typeof obj.updateTime === 'number' &&
     typeof obj.mark === 'number' &&
     (obj.extraData === undefined || (typeof obj.extraData === 'object' && obj.extraData !== null))
+  )
 }
 
 export const isTopicFormData = (obj: any): obj is ITopicFormData => {
-  return obj &&
+  return (
+    obj &&
     typeof obj.topicName === 'string' &&
     (obj.description === undefined || typeof obj.description === 'string')
+  )
 }
 
 export const isTopicLogFormData = (obj: any): obj is ITopicLogFormData => {
-  return obj &&
+  return (
+    obj &&
     typeof obj.topicType === 'number' &&
     typeof obj.topicId === 'number' &&
     typeof obj.content === 'string'
+  )
 }
 
 /**
@@ -148,7 +156,7 @@ export const isTopicLogFormData = (obj: any): obj is ITopicLogFormData => {
  */
 export const validateTopic = (data: ITopicFormData): { valid: boolean; errors: string[] } => {
   const errors: string[] = []
-  
+
   if (Object.prototype.hasOwnProperty.call(data, 'topicName')) {
     if (!data.topicName?.trim()) {
       errors.push('主题名称不能为空')
@@ -157,11 +165,15 @@ export const validateTopic = (data: ITopicFormData): { valid: boolean; errors: s
       errors.push('主题名称不能超过50个字符')
     }
   }
-  
-  if (Object.prototype.hasOwnProperty.call(data, 'description') && data.description && data.description.length > 2000) {
+
+  if (
+    Object.prototype.hasOwnProperty.call(data, 'description') &&
+    data.description &&
+    data.description.length > 2000
+  ) {
     errors.push('主题描述不能超过2000个字符')
   }
-  
+
   return { valid: errors.length === 0, errors }
 }
 
@@ -170,18 +182,18 @@ export const validateTopic = (data: ITopicFormData): { valid: boolean; errors: s
  */
 export const validateTopicLog = (data: ITopicLogFormData): { valid: boolean; errors: string[] } => {
   const errors: string[] = []
-  
+
   if (!data.topicType || !Object.values(TopicEnums.TopicType).includes(data.topicType)) {
     errors.push('主题类型无效')
   }
-  
+
   if (!data.topicId || data.topicId <= 0) {
     errors.push('主题ID无效')
   }
-  
+
   if (!data.content?.trim()) {
     errors.push('日志内容不能为空')
   }
-  
+
   return { valid: errors.length === 0, errors }
 }

@@ -1,7 +1,4 @@
-import { 
-  ItemApi, 
-  ApiResponse
-} from '@/types/api'
+import { ItemApi, ApiResponse } from '@/types/api'
 import request from '@/utils/request'
 
 // 物品管理相关API接口
@@ -22,8 +19,10 @@ export const itemApi = {
    * 获取物品详情
    * @param params 请求参数
    */
-  async getItemDetail(params: ItemApi.GetItemDetailReq): Promise<ApiResponse<ItemApi.GetItemDetailResp>> {
-    const response = await request.get('/api/so/item/detail',  params )
+  async getItemDetail(
+    params: ItemApi.GetItemDetailReq
+  ): Promise<ApiResponse<ItemApi.GetItemDetailResp>> {
+    const response = await request.get('/api/so/item/detail', params)
     return response.data
   },
 
@@ -58,7 +57,9 @@ export const itemApi = {
    * 更新物品状态
    * @param data 请求数据
    */
-  async updateItemStatus(data: ItemApi.UpdateItemStatusReq): Promise<ApiResponse<ItemApi.UpdateItemStatusResp>> {
+  async updateItemStatus(
+    data: ItemApi.UpdateItemStatusReq
+  ): Promise<ApiResponse<ItemApi.UpdateItemStatusResp>> {
     const response = await request.post('/api/so/item/update_status', data)
     return response.data
   },
@@ -69,9 +70,10 @@ export const itemApi = {
    * 获取物品分类列表
    * @param params 请求参数
    */
-  async getItemCategoryList(params: ItemApi.GetItemCategoryListReq): Promise<ApiResponse<ItemApi.GetItemCategoryListResp>> {
-    const response = await request.get('/api/so/item/category/list',  params )
+  async getItemCategoryList(
+    params: ItemApi.GetItemCategoryListReq
+  ): Promise<ApiResponse<ItemApi.GetItemCategoryListResp>> {
+    const response = await request.get('/api/so/item/category/list', params)
     return response.data
   },
-
 }

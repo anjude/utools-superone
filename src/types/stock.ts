@@ -82,7 +82,8 @@ export interface StockMetrics {
  * 类型守卫函数
  */
 export const isStock = (obj: any): obj is IStock => {
-  return obj && 
+  return (
+    obj &&
     typeof obj.id === 'number' &&
     typeof obj.openid === 'string' &&
     typeof obj.name === 'string' &&
@@ -90,13 +91,16 @@ export const isStock = (obj: any): obj is IStock => {
     typeof obj.type === 'number' &&
     typeof obj.createTime === 'number' &&
     typeof obj.updateTime === 'number'
+  )
 }
 
 export const isStockFormData = (obj: any): obj is IStockFormData => {
-  return obj &&
+  return (
+    obj &&
     typeof obj.name === 'string' &&
     typeof obj.code === 'string' &&
     typeof obj.type === 'number'
+  )
 }
 
 /**
@@ -128,38 +132,38 @@ export function validateStock(
       errors.push('标的名称不能为空')
     }
   }
-  
+
   if (!isPartial || 'code' in data) {
     if (!data.code?.trim()) {
       errors.push('标的代码不能为空')
     }
   }
-  
+
   if (!isPartial || 'type' in data) {
     if (data.type === undefined || !Object.values(StockEnums.StockType).includes(data.type)) {
       errors.push('标的类型无效')
     }
   }
-  
+
   if (data.pe !== undefined && data.pe < 0) {
     errors.push('市盈率不能为负数')
   }
-  
+
   if (data.pb !== undefined && data.pb < 0) {
     errors.push('市净率不能为负数')
   }
-  
+
   if (data.dividendYield !== undefined && data.dividendYield < 0) {
     errors.push('股息率不能为负数')
   }
-  
+
   if (data.currentPrice !== undefined && data.currentPrice <= 0) {
     errors.push('当前价格必须大于0')
   }
-  
+
   if (data.watchPrice !== undefined && data.watchPrice <= 0) {
     errors.push('关注价格必须大于0')
   }
-  
+
   return { valid: errors.length === 0, errors }
 }

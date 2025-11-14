@@ -1,12 +1,11 @@
 // 用户相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { BaseEntity } from '@/types/plan';
-import { UserEnums } from '@/constants/enums';
+import type { BaseEntity } from '@/types/plan'
+import { UserEnums } from '@/constants/enums'
 
 // 用户API命名空间
 export namespace UserApi {
-
   // 获取验证码请求
   export interface GetCodeReq {
     uniqueId: string
@@ -59,9 +58,9 @@ export namespace UserApi {
     avatarUrl: string
     hasSub: boolean
     verified: UserEnums.VerifyType
-    permission: UserEnums.UserPermission  // 权限标记位
-    invitationCount: number  // 邀请人数
-    inviterOpenid?: string  // 邀请人OpenID（可选）
+    permission: UserEnums.UserPermission // 权限标记位
+    invitationCount: number // 邀请人数
+    inviterOpenid?: string // 邀请人OpenID（可选）
   }
 
   // 获取用户信息响应
@@ -85,7 +84,7 @@ export namespace UserApi {
   export interface UpdateUserReq {
     nickName?: string
     avatarUrl?: string
-    inviterOpenid?: string  // 邀请人OpenID（可选）
+    inviterOpenid?: string // 邀请人OpenID（可选）
   }
 
   // 根据OpenID获取用户请求

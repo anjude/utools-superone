@@ -7,4 +7,3 @@ export interface PluginEnterAction<TPayload = unknown, TOption = unknown> {
   option: TOption
   from?: PluginEnterFrom
 }
-

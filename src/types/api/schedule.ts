@@ -1,12 +1,11 @@
 // 计划相关接口类型定义
 // 符合数据模型规范：统一时间字段、用户标识等
 
-import type { BaseEntity } from '@/types/plan';
-import { ScheduleEnums } from '@/constants/enums';
+import type { BaseEntity } from '@/types/plan'
+import { ScheduleEnums } from '@/constants/enums'
 
 // 计划API命名空间
 export namespace ScheduleApi {
-
   // 计划信息 - 继承基础实体
   export interface ScheduleInfo extends BaseEntity {
     title: string
