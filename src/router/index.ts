@@ -11,6 +11,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/topic/:id',
+    name: 'TopicDetail',
+    component: () => import('@/views/TopicDetail.vue'),
+    meta: {
+      title: '主题详情',
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
