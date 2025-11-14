@@ -77,12 +77,12 @@ onMounted(() => {
       </div>
 
       <div v-if="loginStatus === 'success'" class="p-login-success">
-        <p class="p-success-message">✓ {{ t('login.loginSuccess') }}</p>
+        <p class="p-success-message">{{ t('login.loginSuccess') }}</p>
         <p class="p-success-tip">{{ t('login.redirecting') }}</p>
       </div>
 
       <div v-if="loginStatus === 'error'" class="p-login-error">
-        <p class="p-error-message">✗ {{ errorMessage }}</p>
+        <p class="p-error-message">{{ errorMessage }}</p>
         <button class="p-retry-button" @click="handleLogin" :disabled="isLoggingIn">
           {{ isLoggingIn ? t('login.loggingIn') : t('login.retry') }}
         </button>

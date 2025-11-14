@@ -1,113 +1,283 @@
-// TopicList页面样式
+// TopicList页面样式 - 液态玻璃主题
+@use '../02-tools/mixins' as *;
 
 .p-topic-list-wrap {
-  padding: 16px;
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--bg-color);
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(1, 194, 96, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(52, 213, 128, 0.06) 0%, transparent 50%);
+  transition: background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  // 添加微妙的背景装饰
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.01) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  @include respond-to('sm') {
+    padding: 32px;
+  }
+
+  @include respond-to('md') {
+    padding: 40px;
+  }
 }
 
 .p-topic-list-header {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  @include glass-card;
+  border-radius: var(--radius-md);
+
+  @include respond-to('sm') {
+    padding: 24px 32px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    letter-spacing: -0.5px;
+
+    @include respond-to('sm') {
+      font-size: 28px;
+    }
+  }
+
+  button {
+    @include glass-soft;
+    padding: 10px 24px;
+    border-radius: var(--radius-base);
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--glass-border-light);
+      box-shadow: 0 4px 12px rgba(1, 194, 96, 0.2);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: var(--opacity-disabled);
+      cursor: not-allowed;
+    }
+  }
 }
 
-.p-topic-list-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
+// 加载、错误、空状态
 .p-loading,
 .p-error,
 .p-empty {
+  position: relative;
+  z-index: 1;
   text-align: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
   color: var(--text-color);
-  opacity: 0.6;
+  opacity: 0.7;
+  font-size: 16px;
+  transition: color 0.3s ease, opacity 0.3s ease;
+
+  @include respond-to('sm') {
+    padding: 80px 20px;
+    font-size: 18px;
+  }
 }
 
 .p-error {
   color: var(--error-color);
+  opacity: 0.9;
+
+  p {
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+
+  button {
+    @include glass-soft;
+    padding: 10px 24px;
+    border-radius: var(--radius-base);
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    color: var(--error-color);
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-1px);
+      background: rgba(231, 76, 60, 0.15);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
-.p-error button {
-  margin-top: 12px;
-}
-
+// 主题列表
 .p-topic-list {
+  position: relative;
+  z-index: 1;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+// 主题卡片
 .p-topic-item {
-  background: var(--card-bg);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s, background-color 0.3s;
+  @include glass-card;
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  cursor: pointer;
+
+  @include respond-to('sm') {
+    padding: 24px 32px;
+    margin-bottom: 20px;
+  }
+
+  // 悬停效果
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 16px 48px 0 rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+
+    .p-topic-name {
+      color: var(--primary-color);
+    }
+  }
+
+  // 点击效果
+  &:active {
+    transform: translateY(0);
+  }
 }
 
+// 暗色模式优化
 [data-theme='dark'] .p-topic-item,
 .dark .p-topic-item {
-  box-shadow: var(--shadow-sm);
+  &:hover {
+    box-shadow: 
+      0 16px 48px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  }
 }
 
-.p-topic-item:hover {
-  box-shadow: var(--shadow-lg);
-}
-
-[data-theme='dark'] .p-topic-item:hover,
-.dark .p-topic-item:hover {
-  box-shadow: var(--shadow-lg);
-}
-
+// 主题头部
 .p-topic-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  gap: 16px;
 }
 
+// 主题名称
 .p-topic-name {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   flex: 1;
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--text-color);
-  transition: color 0.3s;
+  transition: color 0.3s ease;
+  line-height: 1.4;
+
+  @include respond-to('sm') {
+    font-size: 20px;
+  }
 }
 
+// 置顶徽章
 .p-top-badge {
-  display: inline-block;
-  background: var(--error-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--error-color) 0%, #C0392B 100%);
   color: #fff;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: normal;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+// 主题时间
 .p-topic-time {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-color);
   opacity: 0.6;
   white-space: nowrap;
-  margin-left: 12px;
-  transition: color 0.3s, opacity 0.3s;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  flex-shrink: 0;
+
+  @include respond-to('sm') {
+    font-size: 14px;
+  }
 }
 
+// 主题描述
 .p-topic-description {
   margin: 0;
   color: var(--text-color);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   word-break: break-word;
   opacity: 0.8;
-  transition: color 0.3s, opacity 0.3s;
+  transition: color 0.3s ease, opacity 0.3s ease;
+
+  @include respond-to('sm') {
+    font-size: 15px;
+    line-height: 1.7;
+  }
 }
 
+// 暗色模式优化
+[data-theme='dark'] .p-topic-list-wrap,
+.dark .p-topic-list-wrap {
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(1, 194, 96, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(52, 213, 128, 0.08) 0%, transparent 50%);
+
+  &::before {
+    background: 
+      radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
+  }
+}

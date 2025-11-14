@@ -55,3 +55,40 @@
   overflow: hidden;
 }
 
+// 液态玻璃效果混入
+// 基础玻璃效果
+@mixin glass($opacity: 0.15, $blur: 20px, $saturate: 180%) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur) saturate($saturate);
+  -webkit-backdrop-filter: blur($blur) saturate($saturate);
+  border: 1px solid rgba(255, 255, 255, $opacity + 0.1);
+}
+
+// 高强度玻璃（卡片、面板）
+@mixin glass-card {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: var(--glass-shadow-card);
+}
+
+// 低强度玻璃（悬浮提示、菜单）
+@mixin glass-soft {
+  background: var(--glass-bg-soft);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1px solid var(--glass-border-soft);
+  box-shadow: var(--glass-shadow-soft);
+}
+
+// 标准玻璃效果
+@mixin glass-standard {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: var(--shadow-md),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
