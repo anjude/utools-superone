@@ -1,0 +1,56 @@
+---
+description: "数据模型规范 - 类型定义/时间戳/枚举/BaseEntity"
+globs: "src/types/**"
+---
+
+# 数据模型规范
+
+## 核心要求
+
+### 1. 时间字段
+- **统一秒级时间戳**：`number` 类型，UTC 时间
+- **字段命名**：`createTime` / `updateTime`
+- **禁止**：时间字符串、毫秒时间戳
+
+### 2. 用户标识
+- **必须包含 openid**：所有业务数据必须有 `openid: string`
+
+### 3. 枚举类型
+- **集中管理**：统一在 `src/types/enums.ts`
+- **数字枚举**：禁用字符串枚举
+- **命名空间**：按模块组织（如 `namespace ItemCategory`）
+
+## 基础接口
+
+```typescript
+export interface BaseEntity {
+  id: number          // 主键，使用src\utils\id-generator.ts生成
+  openid: string      // 用户标识
+  createTime: number  // 创建时间（秒）
+  updateTime: number  // 更新时间（秒）
+}
+```
+
+## 设计原则
+
+### 类型安全
+- TypeScript 严格模式
+- `interface` 定义对象，`type` 定义联合
+- 禁用 `any`
+
+### 向后兼容
+- 新字段用可选类型（`?`）
+- 保持现有字段不变
+- 提供迁移策略
+
+### 存储兼容
+- 支持本地/云端双存储
+- 考虑序列化/反序列化
+- 版本兼容处理
+
+## 最佳实践
+
+1. **验证**：提供验证函数，校验必填/类型/格式
+2. **转换**：前后端数据转换工具
+3. **错误处理**：统一错误处理 + 日志
+4. **性能**：分页加载、缓存策略

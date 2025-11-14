@@ -1,123 +1,126 @@
-# 数据管理
+---
+description: "数据管理规范 - Store/Repo/Composable 分层架构与缓存管理"
+globs: "src/stores/**,src/repos/**,src/composables/**"
+---
 
-## 本地数据存储
+# 数据管理规范（基于业内最佳实践）
 
-- 优先使用 uTools 的 `dbStorage` API 进行数据持久化（`window.utools.dbStorage`）。
-- 复杂数据结构可通过 `window.services` 封装文件读写操作。
-- 禁止直接使用 `localStorage`，统一通过封装层访问。
+## 架构分层
+
+```
+页面/组件 → Composable（可选）→ Store → Repo → CacheManager → window.utools.dbStorage
+```
+
+## 分层职责
+
+| 层级 | 职责 | ✅ 允许 | ❌ 禁止 |
+|-----|------|---------|---------|
+| **页面/组件** | UI 展示与交互 | 调用 Composable/Store | 直接访问 Repo/Cache，包含业务逻辑 |
+| **Composable** | 页面级业务逻辑 | 封装复杂交互，组合多个 Store，UI 逻辑 | 直接访问 Repo/Cache，持久化逻辑 |
+| **Store** | 全局状态管理 | 维护状态，增删改查，调用 Repo，记录日志 | UI 交互逻辑，直接访问 Cache/API |
+| **Repo** | 持久化抽象 | 封装存储细节，暴露稳定 API，批量读写 | 业务逻辑，被页面直接调用 |
+| **CacheManager** | 统一缓存接口 | 原子操作，序列化处理，错误处理 | 业务逻辑 |
+
+### Composable 适用场景
+- 复杂表单（多步骤、多校验）
+- 跨模块数据协调
+- 页面特定交互逻辑（导航、通知、确认框）
+
+**简单页面可直接使用 Store**
 
 ## 缓存管理规范
 
-- **必须使用**统一的缓存接口（可通过 `window.services` 封装或直接使用 `window.utools.dbStorage`）。
-- **禁止直接使用** `localStorage` 或原生存储 API。
-- **统一错误处理**和日志记录。
-- 所有缓存键定义在 `src/constants/cache-keys.ts`（如需要），使用常量避免硬编码。
+### 1. 统一缓存接口
+- **必须使用** `CacheManager` 进行所有缓存操作
+- **禁止直接使用** `window.utools.dbStorage.getItem/setItem/removeItem`
+- **统一错误处理** 和日志记录
+
+### 2. 集中缓存键管理
+- 所有缓存键定义在 [src/stores/cache.ts](mdc:src/stores/cache.ts)
+- 使用 `CACHE_KEYS` 常量，避免硬编码
+- 按功能分类：应用级、业务级、草稿数据
 
 ### 正确的缓存操作
-
 ```typescript
-// ✅ 正确：使用 uTools dbStorage
-window.utools.dbStorage.setItem('key', value)
-const data = window.utools.dbStorage.getItem('key')
+import { CacheManager } from '@/utils/cache-manager'
+import { CACHE_KEYS } from '@/stores/cache'
 
-// ✅ 正确：通过 window.services 封装
-const data = window.services.getCache('key')
-window.services.setCache('key', value)
+// ✅ 正确：使用 CacheManager
+const data = CacheManager.get(CACHE_KEYS.USER_INFO)
+CacheManager.set(CACHE_KEYS.ITEMS_DATA, items)
+CacheManager.remove(CACHE_KEYS.DRAFT_DATA)
 ```
 
 ### 错误的缓存操作
-
 ```typescript
-// ❌ 错误：直接使用 localStorage
-const data = localStorage.getItem('key')
-localStorage.setItem('key', value)
+// ❌ 错误：直接使用 uTools API
+const data = window.utools.dbStorage.getItem('user_info')
+window.utools.dbStorage.setItem('items_data', items)
+window.utools.dbStorage.removeItem('draft_data')
 ```
 
-## 数据验证
+## 核心模式
 
-- 写入前必须验证数据有效性。
-- 使用 TypeScript 类型定义确保类型安全。
-- 验证失败时返回明确的错误信息。
-
+### 1. 统一写入（Store 层）
 ```typescript
-// ✅ 正确：写入前验证
-const validateData = (data: FeatureData): { valid: boolean; errors: string[] } => {
+// 计算 next → 持久化 → 原子替换
+const next = [...items.value, newItem]
+const res = await repo.saveAll(next)
+if (res.success) items.value = next
+```
+
+### 2. 数据验证（写入前）
+```typescript
+const validate = (data: T): { valid: boolean; errors: string[] } => {
   const errors: string[] = []
   if (!data.name?.trim()) errors.push('名称不能为空')
   return { valid: errors.length === 0, errors }
 }
 ```
 
-## 数据操作模式
-
-### 统一写入
-
-- **计算 next** → **持久化** → **原子替换**
-
+### 3. 查询过滤（Store 层）
 ```typescript
-// ✅ 正确：统一写入模式
-const next = [...items.value, newItem]
-const res = await repo.saveAll(next)
-if (res.success) items.value = next
+// 静态：computed | 动态：方法
+const activeItems = computed(() => items.value.filter(...))
+const searchItems = (keyword: string) => items.value.filter(...)
 ```
 
-### 查询过滤
-
-- 静态过滤：使用 `computed`
-- 动态过滤：使用方法
-
+### 4. 多用户隔离
 ```typescript
-// ✅ 正确：使用 computed 缓存
-const activeItems = computed(() => 
-  items.value.filter(item => item.status === 'active')
-)
-
-// ✅ 正确：动态过滤
-const searchItems = (keyword: string) => 
-  items.value.filter(item => item.name.includes(keyword))
+// Repo 提供：getByOpenid(openid: string)
+// Store 调用：items.value = await repo.getByOpenid(currentOpenid)
 ```
 
-### 错误处理
-
+### 5. 错误处理
 - **Store**：记录日志 + 向上抛出
-- **Composable**：捕获错误 + UI 反馈（Toast）
-
-```typescript
-// ✅ 正确：Store 中的错误处理
-try {
-  const res = await repo.saveAll(next)
-  if (!res.success) throw new Error('保存失败')
-  items.value = next
-  logger.logRequestSuccess(reqId, 200, { id })
-} catch (e) {
-  logger.logRequestError(reqId, e)
-  throw e
-}
-
-// ✅ 正确：Composable 中的错误处理
-try {
-  await itemStore.addItem(data)
-  window.utools.showNotification('添加成功')
-} catch (error) {
-  window.utools.showNotification('添加失败：' + error.message)
-}
-```
+- **Composable**：捕获错误 + UI 反馈（通知）
 
 ## 性能优化
 
 | 场景 | ✅ 推荐 | ❌ 避免 |
-|-----|---|---|
+|-----|---------|---------|
 | 批量操作 | `saveAll(next)` 一次持久化 | 循环调用 `save()` |
 | 懒加载 | 判断已加载再获取 | 重复加载 |
 | 派生数据 | `computed` 缓存 | 方法每次计算 |
-| 缓存操作 | `window.utools.dbStorage` 统一接口 | 直接使用 `localStorage` |
+| 缓存操作 | `CacheManager` 统一接口 | 直接使用 `window.utools.dbStorage` |
 
 ## 常见反模式
 
-| 反模式 | 错误示例 | ✅ 正确做法 |
-|----|---|---------|
-| 页面直连 Repo | `const items = await itemRepo.getAll()` | 通过 Store 或 Composable 调用 |
-| Store 含 UI 逻辑 | `window.utools.showNotification()` 在 Store 中 | Store 记录日志，Composable 反馈用户 |
-| Composable 访问缓存 | `window.utools.dbStorage.getItem()` 在 Composable | 通过 Store 或 Repo 访问 |
-| 直接使用存储 API | `localStorage.getItem('key')` | 使用 `window.utools.dbStorage` 或封装接口 |
-| 多次持久化 | 直接修改 + 单次 `save()` | 计算 next → 批量 `saveAll()` |
+| 反模式 | 错误示例 |
+|-------|---------|
+| 页面直连 Repo | `const items = await itemRepo.getAll()` |
+| Store 含 UI 逻辑 | `window.utools.showNotification()` 在 Store 中 |
+| Composable 访问缓存 | `CacheManager.get()` 在 Composable |
+| 多次持久化 | 直接修改 + 单次 `save()` |
+| 直接使用存储 API | `window.utools.dbStorage.getItem('key')` |
+
+## 最佳实践
+
+- [ ] 各层职责清晰，禁止跨层直连
+- [ ] 写入操作：计算 next → 持久化 → 原子替换
+- [ ] ID 生成：`repo.generateId()`
+- [ ] 数据验证在写入前执行
+- [ ] 错误分层处理：Store 记录，Composable 反馈
+- [ ] 多用户数据按 openid 隔离
+- [ ] 使用 `CacheManager` 统一缓存操作
+- [ ] 通过 `CACHE_KEYS` 管理缓存键

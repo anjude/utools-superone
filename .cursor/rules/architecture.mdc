@@ -13,7 +13,7 @@
 | 层级 | 职责 | ✅ 允许 | ❌ 禁止 |
 |-----|---|---|---|
 | **页面/组件** | UI 展示与交互 | 调用 Composable/Store，处理用户交互 | 直接访问 Repo/Services，包含业务逻辑 |
-| **Composable** | 页面级业务逻辑 | 封装复杂交互，组合多个 Store，UI 逻辑（Toast、确认框） | 直接访问 Repo/Services，持久化逻辑 |
+| **Composable** | 页面级业务逻辑 | 封装复杂交互，组合多个 Store，UI 逻辑（通知、确认框） | 直接访问 Repo/Services，持久化逻辑 |
 | **Store**（可选） | 全局状态管理 | 维护状态，增删改查，调用 Repo/Services，记录日志 | UI 交互逻辑，直接访问缓存/API |
 | **Repo**（可选） | 数据访问抽象 | 封装存储细节，暴露稳定 API，批量读写 | 业务逻辑，被页面直接调用 |
 | **Services** | Node 能力封装 | 通过 `window.services` 暴露 Node 能力 | 在 Vue 组件中直接使用 `require` |
@@ -22,7 +22,7 @@
 
 - 复杂表单（多步骤、多校验）
 - 跨模块数据协调
-- 页面特定交互逻辑（导航、Toast、确认框）
+- 页面特定交互逻辑（导航、通知、确认框）
 - 复杂业务逻辑封装
 
 **简单页面可直接使用 Store 或直接调用 Services**
@@ -68,7 +68,6 @@ const fs = require('fs')
 - 新增 Repo 放在 `src/repos/` 目录，命名使用 `Repo` 后缀（如 `featureRepo.ts`）。
 - 功能组件放在 `src/<Feature>/index.vue`。
 - 通用组件放在 `src/components/` 目录，使用 `cu-` 前缀（如 `cu-button.vue`）。
-- 业务组件放在 `src/components/business/` 目录，使用 `biz-` 前缀（如 `biz-feature-card.vue`）。
 
 ## 数据流
 
