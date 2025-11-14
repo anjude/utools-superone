@@ -2,4 +2,23 @@
 :root {
   --blue: rgb(88, 164, 246);
   --light: #fff;
+  
+  // 浅色主题变量
+  --bg-color: #f4f4f4;
+  --text-color: #333;
+  --card-bg: #fff;
+  --border-color: #e0e0e0;
+  --scrollbar-track: #f4f4f4;
+  --scrollbar-thumb: #c0c0c0;
+}
+
+// 深色主题变量
+[data-theme='dark'],
+.dark {
+  --bg-color: #303133;
+  --text-color: #fff;
+  --card-bg: #2d2d2d;
+  --border-color: #404040;
+  --scrollbar-track: #303133;
+  --scrollbar-thumb: #666;
 }

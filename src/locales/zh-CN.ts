@@ -30,6 +30,12 @@ export default {
     empty: '暂无主题',
     top: '置顶',
     loadFailed: '加载主题列表失败'
+  },
+  theme: {
+    light: '浅色',
+    dark: '深色',
+    auto: '自动',
+    switch: '切换主题'
   }
 }
 

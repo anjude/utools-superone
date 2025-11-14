@@ -30,6 +30,12 @@ export default {
     empty: 'No topics',
     top: 'Pinned',
     loadFailed: 'Failed to load topic list'
+  },
+  theme: {
+    light: 'Light',
+    dark: 'Dark',
+    auto: 'Auto',
+    switch: 'Switch Theme'
   }
 }
 

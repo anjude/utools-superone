@@ -118,16 +118,26 @@ onMounted(() => {
 }
 
 .topic-item {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, background-color 0.3s;
+}
+
+[data-theme='dark'] .topic-item,
+.dark .topic-item {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .topic-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='dark'] .topic-item:hover,
+.dark .topic-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .topic-header {
@@ -145,6 +155,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--text-color);
+  transition: color 0.3s;
 }
 
 .top-badge {
@@ -166,32 +178,17 @@ onMounted(() => {
 
 .topic-description {
   margin: 0;
-  color: #666;
+  color: var(--text-color);
   font-size: 14px;
   line-height: 1.5;
   word-break: break-word;
+  opacity: 0.8;
+  transition: color 0.3s, opacity 0.3s;
 }
 
-@media (prefers-color-scheme: dark) {
-  .topic-item {
-    background: #2d2d2d;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .topic-item:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  }
-
-  .topic-name {
-    color: #fff;
-  }
-
-  .topic-description {
-    color: #ccc;
-  }
-
-  .topic-time {
-    color: #999;
-  }
+.topic-time {
+  color: var(--text-color);
+  opacity: 0.6;
+  transition: color 0.3s, opacity 0.3s;
 }
 </style>

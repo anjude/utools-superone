@@ -3,11 +3,15 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import type { PluginEnterAction } from './types/utools'
 import { useUserStore } from './stores'
+import { useTheme } from './composables/useTheme'
 
 type GenericEnterAction = PluginEnterAction<unknown, unknown>
 
 const router = useRouter()
 const userStore = useUserStore()
+
+// 初始化主题
+useTheme()
 
 // 存储 enterAction 供组件使用
 let currentEnterAction: GenericEnterAction | null = null

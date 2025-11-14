@@ -107,24 +107,32 @@ onMounted(() => {
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: #f5f5f5;
+  background: var(--bg-color);
+  transition: background-color 0.3s;
 }
 
 .login-content {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   width: 100%;
   text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+[data-theme='dark'] .login-content,
+.dark .login-content {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .login-title {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 30px;
-  color: #333;
+  color: var(--text-color);
+  transition: color 0.3s;
 }
 
 .login-status {
@@ -162,8 +170,10 @@ onMounted(() => {
 }
 
 .success-tip {
-  color: #666;
+  color: var(--text-color);
+  opacity: 0.7;
   font-size: 14px;
+  transition: color 0.3s, opacity 0.3s;
 }
 
 .login-error {
