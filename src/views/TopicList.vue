@@ -1,543 +1,72 @@
 <script lang="ts" setup>
-import { onMounted, ref, computed, watch, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessageBox, ElNotification } from 'element-plus'
 import { MarkdownEditor, MarkdownViewer } from '@/components'
-import { TopicRepo } from '@/repos/topic-repo'
-import { TopicLogRepo } from '@/repos/topic-log-repo'
-import type { ITopic, ITopicFormData, TopicLogListItem } from '@/types/topic'
-import { TopicEnums } from '@/constants/enums'
-import { timestampToChineseDateTime, getCurrentTimestamp } from '@/utils/time'
-import { CacheManager } from '@/utils/cache-manager'
-import { CACHE_KEYS } from '@/stores/cache'
+import { useTopicStore } from '@/stores/topic'
+import { useTopicManagement } from '@/composables/useTopicManagement'
+import { timestampToChineseDateTime } from '@/utils/time'
 
 const { t } = useI18n()
-const router = useRouter()
 
-const topics = ref<ITopic[]>([])
-const loading = ref(false)
-const error = ref<string>('')
+// 初始化 store 和 composable
+const topicStore = useTopicStore()
+const {
+  // 编辑主题弹窗状态
+  showAddTopicDialog,
+  isEditMode,
+  topicForm,
+  creatingTopic,
+  topicFormError,
+  // 编辑器状态
+  editorContent,
+  saving,
+  canSave,
+  selectedTopic,
+  // 编辑日志弹窗状态
+  showEditLogDialog,
+  editLogContent,
+  updatingLog,
+  editLogError,
+  // 右键菜单状态
+  contextMenuVisible,
+  contextMenuPosition,
+  contextMenuTopic,
+  // 编辑主题弹窗方法
+  handleOpenAddTopicDialog,
+  handleOpenEditTopicDialogFromMenu,
+  handleCloseAddTopicDialog,
+  handleSubmitTopic,
+  // 主题选择
+  handleTopicSelect,
+  // 编辑器方法
+  handleSaveLog,
+  // 编辑日志弹窗方法
+  handleOpenEditLogDialog,
+  handleCloseEditLogDialog,
+  handleUpdateLog,
+  // 日志操作
+  handleCopyLog,
+  handleDeleteLog,
+  // 右键菜单方法
+  handleContextMenu,
+  handleDeleteTopic,
+  handlePinTopic,
+  handleUnpinTopic,
+  // 刷新
+  handleRefresh,
+} = useTopicManagement(topicStore)
 
-// 选中的主题ID（用于编辑器和日志列表）
-const selectedTopicId = ref<number | null>(null)
-const editorContent = ref('')
-const saving = ref(false)
-
-// 日志相关状态
-const logs = ref<TopicLogListItem[]>([])
-const logsLoading = ref(false)
-const logsError = ref<string>('')
-
-// 编辑日志弹窗相关状态
-const showEditLogDialog = ref(false)
-const editingLog = ref<TopicLogListItem | null>(null)
-const editLogContent = ref('')
-const updatingLog = ref(false)
-const editLogError = ref<string>('')
-
-// 当前选中的主题
-const selectedTopic = computed(() => {
-  return topics.value.find(t => t.id === selectedTopicId.value) || null
-})
-
-// 判断编辑器是否有内容（用于优化保存按钮禁用状态）
-const hasEditorContent = computed(() => {
-  return editorContent.value.trim().length > 0
-})
-
-// 判断保存按钮是否可用
-const canSave = computed(() => {
-  return selectedTopicId.value !== null && hasEditorContent.value && !saving.value
-})
-
-// 添加/编辑主题弹窗相关状态
-const showAddTopicDialog = ref(false)
-const editingTopicId = ref<number | null>(null)
-const topicForm = ref<{
-  topicName: string
-  description: string
-}>({
-  topicName: '',
-  description: '',
-})
-const creatingTopic = ref(false)
-const topicFormError = ref<string>('')
-
-// 判断是否为编辑模式
-const isEditMode = computed(() => editingTopicId.value !== null)
-
-// 右键菜单相关状态
-const contextMenuVisible = ref(false)
-const contextMenuPosition = ref({ x: 0, y: 0 })
-const contextMenuTopic = ref<ITopic | null>(null)
-let contextMenuCloseHandler: ((e: MouseEvent) => void) | null = null
-
-const loadTopics = async () => {
-  loading.value = true
-  error.value = ''
-  try {
-    const data = await TopicRepo.getAll()
-    // 按置顶权重和创建时间排序：置顶的在前，同置顶权重按创建时间倒序
-    topics.value = data.sort((a, b) => {
-      if (a.top !== b.top) {
-        return b.top - a.top // 置顶权重大的在前
-      }
-      return b.createTime - a.createTime // 创建时间新的在前
-    })
-    
-    // 如果有主题且没有选中，尝试从缓存恢复选中的主题
-    if (topics.value.length > 0 && !selectedTopicId.value) {
-      // 从本地缓存读取保存的主题ID
-      const savedTopicId = CacheManager.get<number>(CACHE_KEYS.SELECTED_TOPIC_ID, null, true)
-      
-      if (savedTopicId !== null) {
-        // 检查保存的主题是否还存在
-        const topicExists = topics.value.some(topic => topic.id === savedTopicId)
-        if (topicExists) {
-          selectedTopicId.value = savedTopicId
-        } else {
-          // 如果保存的主题不存在，选择第一个主题
-          selectedTopicId.value = topics.value[0].id
-          // 更新缓存为第一个主题
-          CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, selectedTopicId.value, true)
-        }
-      } else {
-        // 没有保存的主题，默认选中第一个
-        selectedTopicId.value = topics.value[0].id
-        // 保存到缓存
-        CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, selectedTopicId.value, true)
-      }
-    }
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : t('topic.loadFailed')
-    console.error('加载主题列表失败:', err)
-  } finally {
-    loading.value = false
-  }
-}
-
-const loadLogs = async (topicId: number) => {
-  if (!topicId) {
-    logs.value = []
-    return
-  }
-  logsLoading.value = true
-  logsError.value = ''
-  try {
-    const data = await TopicLogRepo.getListItemsByTopicIdsAndTypes(
-      [topicId],
-      [TopicEnums.TopicType.Topic],
-      { offset: 0, size: 100 }
-    )
-    // 按创建时间倒序排列（最新的在前）
-    logs.value = data.sort((a, b) => b.createTime - a.createTime)
-  } catch (err) {
-    logsError.value = err instanceof Error ? err.message : '加载日志失败'
-    console.error('加载主题日志失败:', err)
-  } finally {
-    logsLoading.value = false
-  }
-}
-
-// 刷新功能（同时刷新主题列表和日志）
-const handleRefresh = async () => {
-  await loadTopics()
-  if (selectedTopicId.value) {
-    await loadLogs(selectedTopicId.value)
-  }
-}
-
-// 监听选中主题变化，自动加载日志
-watch(selectedTopicId, (newId) => {
-  if (newId) {
-    loadLogs(newId)
-  } else {
-    logs.value = []
-  }
-})
-
-const handleTopicSelect = (topic: ITopic) => {
-  selectedTopicId.value = topic.id
-  // 保存选中的主题ID到本地缓存
-  CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, topic.id, true)
-}
-
-const handleSaveLog = async () => {
-  if (!selectedTopicId.value || !editorContent.value.trim()) {
-    return
-  }
-
-  saving.value = true
-  try {
-    await TopicLogRepo.create({
-      topicId: selectedTopicId.value,
-      topicType: TopicEnums.TopicType.Topic,
-      content: editorContent.value.trim(),
-    })
-    // 清空编辑器
-    editorContent.value = ''
-    // 重新加载日志列表
-    await loadLogs(selectedTopicId.value)
-  } catch (err) {
-    console.error('保存日志失败:', err)
-    ElNotification({
-      message: err instanceof Error ? err.message : '保存日志失败',
-      type: 'error',
-      duration: 2000,
-      position: 'bottom-right'
-    })
-  } finally {
-    saving.value = false
-  }
-}
-
-const handleOpenAddTopicDialog = () => {
-  editingTopicId.value = null
-  topicForm.value = {
-    topicName: '',
-    description: '',
-  }
-  topicFormError.value = ''
-  showAddTopicDialog.value = true
-}
-
-const handleOpenEditTopicDialog = (topic: ITopic) => {
-  editingTopicId.value = topic.id
-  topicForm.value = {
-    topicName: topic.topicName,
-    description: topic.description || '',
-  }
-  topicFormError.value = ''
-  showAddTopicDialog.value = true
-}
-
-// 从右键菜单打开编辑对话框
-const handleOpenEditTopicDialogFromMenu = () => {
-  if (!contextMenuTopic.value) return
-  handleOpenEditTopicDialog(contextMenuTopic.value)
-  closeContextMenu()
-}
-
-const handleCloseAddTopicDialog = () => {
-  showAddTopicDialog.value = false
-  editingTopicId.value = null
-  topicForm.value = {
-    topicName: '',
-    description: '',
-  }
-  topicFormError.value = ''
-}
-
-const handleCreateTopic = async () => {
-  if (!topicForm.value.topicName?.trim()) {
-    topicFormError.value = '主题名称不能为空'
-    return
-  }
-
-  creatingTopic.value = true
-  topicFormError.value = ''
-  try {
-    const description = topicForm.value.description?.trim()
-    const newTopic = await TopicRepo.create({
-      topicName: topicForm.value.topicName.trim(),
-      ...(description ? { description } : {}),
-    })
-    // 关闭弹窗
-    handleCloseAddTopicDialog()
-    // 刷新主题列表
-    await loadTopics()
-    // 自动选中新创建的主题
-    if (newTopic.id) {
-      selectedTopicId.value = newTopic.id
-      // 保存选中的主题ID到本地缓存
-      CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, newTopic.id, true)
-    }
-  } catch (err) {
-    topicFormError.value = err instanceof Error ? err.message : '创建主题失败'
-    console.error('创建主题失败:', err)
-  } finally {
-    creatingTopic.value = false
-  }
-}
-
-const handleUpdateTopic = async () => {
-  if (!editingTopicId.value) return
-  
-  if (!topicForm.value.topicName?.trim()) {
-    topicFormError.value = '主题名称不能为空'
-    return
-  }
-
-  creatingTopic.value = true
-  topicFormError.value = ''
-  try {
-    const description = topicForm.value.description?.trim()
-    await TopicRepo.update(editingTopicId.value, {
-      topicName: topicForm.value.topicName.trim(),
-      ...(description ? { description } : {}),
-    })
-    // 关闭弹窗
-    handleCloseAddTopicDialog()
-    // 刷新主题列表
-    await loadTopics()
-  } catch (err) {
-    topicFormError.value = err instanceof Error ? err.message : '更新主题失败'
-    console.error('更新主题失败:', err)
-  } finally {
-    creatingTopic.value = false
-  }
-}
-
-const handleSubmitTopic = () => {
-  if (isEditMode.value) {
-    handleUpdateTopic()
-  } else {
-    handleCreateTopic()
-  }
-}
-
-// 关闭右键菜单
-const closeContextMenu = () => {
-  contextMenuVisible.value = false
-  if (contextMenuCloseHandler) {
-    document.removeEventListener('click', contextMenuCloseHandler)
-    contextMenuCloseHandler = null
-  }
-}
-
-// 右键菜单处理
-const handleContextMenu = (event: MouseEvent, topic: ITopic) => {
-  event.preventDefault()
-  event.stopPropagation()
-  
-  // 先关闭之前的菜单（如果有）
-  closeContextMenu()
-  
-  contextMenuTopic.value = topic
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  contextMenuVisible.value = true
-  
-  // 点击其他地方关闭菜单
-  nextTick(() => {
-    contextMenuCloseHandler = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest('.p-context-menu')) {
-        closeContextMenu()
-      }
-    }
-    document.addEventListener('click', contextMenuCloseHandler)
-  })
-}
-
-// 删除主题
-const handleDeleteTopic = async () => {
-  if (!contextMenuTopic.value) return
-  
-  const topicId = contextMenuTopic.value.id
-  const topicName = contextMenuTopic.value.topicName
-  
-  try {
-    await ElMessageBox.confirm(
-      `确定要删除主题「${topicName}」吗？此操作不可恢复。`,
-      '删除确认',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        showClose: false,
-        closeOnClickModal: false,
-        closeOnPressEscape: false,
-      }
-    )
-    
-    // 如果用户确认删除，执行删除操作
-    await TopicRepo.delete(topicId)
-    
-    // 如果删除的是当前选中的主题，清空选中状态
-    if (selectedTopicId.value === topicId) {
-      selectedTopicId.value = null
-    }
-    
-    // 刷新主题列表
-    await loadTopics()
-    closeContextMenu()
-  } catch (err) {
-    // 用户取消删除或删除失败
-    if (err === 'cancel') {
-      closeContextMenu()
-      return
-    }
-    console.error('删除主题失败:', err)
-    ElMessageBox.alert(
-      err instanceof Error ? err.message : '删除主题失败',
-      '错误',
-      {
-        confirmButtonText: '确定',
-        type: 'error',
-      }
-    )
-  }
-}
-
-// 置顶主题
-const handlePinTopic = async () => {
-  if (!contextMenuTopic.value) return
-  
-  const topicId = contextMenuTopic.value.id
-  const currentTimestamp = getCurrentTimestamp()
-  
-  try {
-    await TopicRepo.update(topicId, { top: currentTimestamp })
-    
-    // 刷新主题列表
-    await loadTopics()
-    closeContextMenu()
-  } catch (err) {
-    console.error('置顶主题失败:', err)
-    ElMessageBox.alert(
-      err instanceof Error ? err.message : '置顶主题失败',
-      '错误',
-      {
-        confirmButtonText: '确定',
-        type: 'error',
-      }
-    )
-  }
-}
-
-// 取消置顶主题
-const handleUnpinTopic = async () => {
-  if (!contextMenuTopic.value) return
-  
-  const topicId = contextMenuTopic.value.id
-  
-  try {
-    await TopicRepo.update(topicId, { top: 0 })
-    
-    // 刷新主题列表
-    await loadTopics()
-    closeContextMenu()
-  } catch (err) {
-    console.error('取消置顶失败:', err)
-    ElMessageBox.alert(
-      err instanceof Error ? err.message : '取消置顶失败',
-      '错误',
-      {
-        confirmButtonText: '确定',
-        type: 'error',
-      }
-    )
-  }
-}
-
-// 复制日志内容
-const handleCopyLog = async (log: TopicLogListItem) => {
-  try {
-    await navigator.clipboard.writeText(log.content)
-    ElNotification({
-      message: '已复制到剪贴板',
-      type: 'success',
-      duration: 2000,
-      position: 'bottom-right'
-    })
-  } catch (err) {
-    console.error('复制失败:', err)
-    ElNotification({
-      message: '复制失败',
-      type: 'error',
-      duration: 2000,
-      position: 'bottom-right'
-    })
-  }
-}
-
-// 打开编辑日志弹窗
-const handleOpenEditLogDialog = (log: TopicLogListItem) => {
-  editingLog.value = log
-  editLogContent.value = log.content
-  editLogError.value = ''
-  showEditLogDialog.value = true
-}
-
-// 关闭编辑日志弹窗
-const handleCloseEditLogDialog = () => {
-  showEditLogDialog.value = false
-  editingLog.value = null
-  editLogContent.value = ''
-  editLogError.value = ''
-}
-
-// 保存编辑的日志
-const handleUpdateLog = async () => {
-  if (!editingLog.value || !editLogContent.value.trim()) {
-    editLogError.value = '日志内容不能为空'
-    return
-  }
-
-  updatingLog.value = true
-  editLogError.value = ''
-  try {
-    await TopicLogRepo.update(editingLog.value.id, {
-      content: editLogContent.value.trim(),
-      topicId: editingLog.value.topicId,
-      topicType: editingLog.value.topicType,
-    })
-    // 关闭弹窗
-    handleCloseEditLogDialog()
-    // 重新加载日志列表
-    if (selectedTopicId.value) {
-      await loadLogs(selectedTopicId.value)
-    }
-  } catch (err) {
-    editLogError.value = err instanceof Error ? err.message : '更新日志失败'
-    console.error('更新日志失败:', err)
-  } finally {
-    updatingLog.value = false
-  }
-}
-
-// 删除日志
-const handleDeleteLog = async (log: TopicLogListItem) => {
-  try {
-    await ElMessageBox.confirm(
-      '确定要删除这条日志吗？此操作不可恢复。',
-      '删除确认',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        showClose: false,
-        closeOnClickModal: false,
-        closeOnPressEscape: false,
-      }
-    )
-    
-    // 如果用户确认删除，执行删除操作
-    await TopicLogRepo.delete(log.id)
-    
-    // 重新加载日志列表
-    if (selectedTopicId.value) {
-      await loadLogs(selectedTopicId.value)
-    }
-  } catch (err) {
-    // 用户取消删除或删除失败
-    if (err === 'cancel') {
-      return
-    }
-    console.error('删除日志失败:', err)
-    ElMessageBox.alert(
-      err instanceof Error ? err.message : '删除日志失败',
-      '错误',
-      {
-        confirmButtonText: '确定',
-        type: 'error',
-      }
-    )
-  }
-}
+// 从 store 获取状态
+const topics = computed(() => topicStore.topics)
+const loading = computed(() => topicStore.loading)
+const error = computed(() => topicStore.error)
+const selectedTopicId = computed(() => topicStore.selectedTopicId)
+const logs = computed(() => topicStore.logs)
+const logsLoading = computed(() => topicStore.logsLoading)
+const logsError = computed(() => topicStore.logsError)
 
 onMounted(() => {
-  loadTopics()
+  topicStore.loadTopics()
 })
 </script>
 
@@ -573,7 +102,7 @@ onMounted(() => {
       <p>{{ error }}</p>
       <button 
         class="cu-button cu-button--primary cu-button--small" 
-        @click="loadTopics"
+        @click="topicStore.loadTopics"
       >
         重试
       </button>
