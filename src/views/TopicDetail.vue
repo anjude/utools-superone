@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { MarkdownViewer } from '@/components'
 import { TopicRepo } from '@/repos/topic-repo'
 import { TopicLogRepo } from '@/repos/topic-log-repo'
 import type { ITopic, TopicLogListItem } from '@/types/topic'
 import { TopicEnums } from '@/constants/enums'
 import { timestampToChineseDateTime } from '@/utils/time'
-import { markdownToHtml } from '@/utils/markdown'
 
 const route = useRoute()
 const router = useRouter()
@@ -93,7 +93,7 @@ onMounted(() => {
           <span v-if="topic.top > 0" class="cu-tag cu-tag--danger cu-tag--small cu-tag--status">置顶</span>
           {{ topic.topicName }}
         </h3>
-        <p v-if="topic.description" class="p-topic-description" v-html="markdownToHtml(topic.description)"></p>
+        <MarkdownViewer v-if="topic.description" :content="topic.description" class="p-topic-description" />
         <div class="p-topic-meta">
           <span class="p-topic-time">创建时间：{{ timestampToChineseDateTime(topic.createTime) }}</span>
           <span class="p-topic-time">更新时间：{{ timestampToChineseDateTime(topic.updateTime) }}</span>
@@ -107,7 +107,7 @@ onMounted(() => {
         <div v-else-if="logs.length === 0" class="p-logs-empty">暂无日志</div>
         <ul v-else class="p-logs-list">
           <li v-for="log in logs" :key="log.id" class="cu-card cu-card--large p-log-item">
-            <div class="p-log-content" v-html="markdownToHtml(log.content)"></div>
+            <MarkdownViewer :content="log.content" class="p-log-content" />
             <div class="p-log-meta">
               <span class="p-log-time">{{ timestampToChineseDateTime(log.createTime) }}</span>
             </div>

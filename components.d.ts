@@ -18,6 +18,7 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
     MarkdownEditor: typeof import('./src/components/MarkdownEditor.vue')['default']
+    MarkdownViewer: typeof import('./src/components/MarkdownViewer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -28,4 +28,7 @@ export const CACHE_KEYS = {
 
   // 用户引导
   GUIDE_SHOWN: 'user_guide_shown', // 标识是否已展示过用户引导
+
+  // 主题管理缓存
+  SELECTED_TOPIC_ID: 'selected_topic_id', // 当前选中的主题ID
 } as const

@@ -2,6 +2,9 @@
 import { onMounted, onUnmounted, ref, watch, computed, nextTick } from 'vue'
 import Vditor from 'vditor'
 import '@/styles/vditor/index.css'
+import { commonApi } from '@/api/common'
+import { logger } from '@/utils/logger'
+import CONFIG from '@/constants/config'
 
 interface Props {
   /** markdown 源码 */
@@ -18,7 +21,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
-  height: '200px',
+  height: '50px',
   disabled: false,
   toolbars: () => [],
 })
@@ -42,6 +45,11 @@ const editorHeight = computed(() => {
     return `${props.height}px`
   }
   return props.height
+})
+
+// 计算 wrapper 的高度（用于 CSS）
+const wrapperHeight = computed(() => {
+  return editorHeight.value
 })
 
 // 监听外部传入的 modelValue 变化
@@ -90,6 +98,40 @@ watch(
   { immediate: false }
 )
 
+// 更新 placeholder 的辅助函数
+const updatePlaceholder = (placeholder: string) => {
+  if (!containerRef.value) return
+  
+  nextTick(() => {
+    // 更新 wysiwyg 模式的 placeholder
+    const wysiwygElement = containerRef.value?.querySelector('.vditor-wysiwyg pre.vditor-reset') as HTMLElement
+    if (wysiwygElement) {
+      wysiwygElement.setAttribute('placeholder', placeholder || '')
+    }
+    // 更新 ir 模式的 placeholder
+    const irElement = containerRef.value?.querySelector('.vditor-ir pre.vditor-reset') as HTMLElement
+    if (irElement) {
+      irElement.setAttribute('placeholder', placeholder || '')
+    }
+    // 更新 sv 模式的 placeholder
+    const svElement = containerRef.value?.querySelector('.vditor-sv') as HTMLElement
+    if (svElement) {
+      svElement.setAttribute('placeholder', placeholder || '')
+    }
+  })
+}
+
+// 监听 placeholder 变化
+watch(
+  () => props.placeholder,
+  newPlaceholder => {
+    if (vditor.value) {
+      updatePlaceholder(newPlaceholder || '')
+    }
+  },
+  { immediate: true }
+)
+
 onMounted(async () => {
   // 确保 DOM 元素已经准备好
   await nextTick()
@@ -122,7 +164,6 @@ onMounted(async () => {
               'bold',
               'italic',
               'strike',
-              'link',
               '|',
               'list',
               'ordered-list',
@@ -132,7 +173,6 @@ onMounted(async () => {
               'line',
               'code',
               '|',
-              'upload',
               'table',
               '|',
               'fullscreen',
@@ -165,6 +205,80 @@ onMounted(async () => {
         hide: false,
         pin: true,
       },
+      upload: {
+        accept: 'image/*',
+        multiple: false,
+        handler: async (files: File[]): Promise<string> => {
+          try {
+            if (!files || files.length === 0) {
+              throw new Error('请选择图片文件')
+            }
+
+            const file = files[0]
+
+            // 验证文件类型
+            const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp']
+            if (!validImageTypes.includes(file.type)) {
+              throw new Error('只支持图片文件（jpg, jpeg, png, gif, bmp, webp）')
+            }
+
+            // 上传图片
+            const imageUrl = await commonApi.uploadImageFile(file)
+
+            // 在 WYSIWYG 模式下，使用 insertValue 直接插入 markdown 格式的图片
+            // 这样可以确保图片被正确渲染
+            if (vditor.value) {
+              // 确保 URL 格式正确，去除可能的空格
+              const cleanUrl = imageUrl.trim()
+              const markdownImage = `![${file.name || 'image'}](${cleanUrl})`
+              // 使用 insertValue 插入图片，第二个参数为 true 表示进行 Markdown 渲染
+              vditor.value.insertValue(markdownImage, true)
+            }
+
+            // 返回空字符串，表示已经手动处理，不需要 Vditor 自动插入
+            return ''
+          } catch (error) {
+            logger.error('图片上传失败', { error })
+            if (window.utools && typeof window.utools.showNotification === 'function') {
+              window.utools.showNotification('图片上传失败')
+            }
+            throw error
+          }
+        },
+        validate: (files: File[]): string | boolean => {
+          if (!files || files.length === 0) {
+            return '请选择图片文件'
+          }
+
+          const file = files[0]
+          const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp']
+          
+          if (!validImageTypes.includes(file.type)) {
+            return '只支持图片文件（jpg, jpeg, png, gif, bmp, webp）'
+          }
+
+          // 限制文件大小（例如 10MB）
+          const maxSize = 10 * 1024 * 1024 // 10MB
+          if (file.size > maxSize) {
+            return '图片大小不能超过 10MB'
+          }
+
+          return true
+        },
+        linkToImgUrl: CONFIG.baseURL + '/api/so/common/wx_upload',
+        linkToImgFormat: (responseText: string): string => {
+          try {
+            const data = JSON.parse(responseText)
+            if (data.err_code === 0 && data.data && data.data.url) {
+              return data.data.url
+            }
+            throw new Error(data.msg || '上传失败')
+          } catch (error) {
+            logger.error('图片链接转换失败', { error, responseText })
+            throw error
+          }
+        },
+      },
       icon: 'ant',
       mode: 'wysiwyg', // 所见即所得模式
       after: () => {
@@ -176,6 +290,12 @@ onMounted(async () => {
             mdContent = vditor.value.html2md(editorContent.value) as string
           }
           vditor.value.setValue(mdContent)
+          
+          // 初始化后更新 placeholder
+          setTimeout(() => {
+            updatePlaceholder(props.placeholder || '')
+          }, 50)
+          
           // 设置禁用状态
           if (props.disabled) {
             vditor.value.disabled()
@@ -237,12 +357,24 @@ onMounted(async () => {
         }
       },
       input: (value: string) => {
-        // 输入时获取 Markdown 内容并 emit
+        // 输入时获取 Markdown 内容并 emit（实时触发，无延迟）
         if (vditor.value) {
           const markdown = vditor.value.getValue()
+          // 立即更新，不等待
           editorContent.value = markdown
           emit('update:modelValue', markdown)
           emit('change', markdown)
+        }
+      },
+      blur: () => {
+        // 失焦时也更新一次，确保内容完全同步
+        if (vditor.value) {
+          const markdown = vditor.value.getValue()
+          if (markdown !== editorContent.value) {
+            editorContent.value = markdown
+            emit('update:modelValue', markdown)
+            emit('change', markdown)
+          }
         }
       },
     })
@@ -275,7 +407,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="markdown-editor-wrapper">
+  <div class="markdown-editor-wrapper" :style="{ height: wrapperHeight }">
     <div ref="containerRef" class="vditor-container"></div>
   </div>
 </template>
@@ -287,7 +419,6 @@ onUnmounted(() => {
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  height: 100%;
   min-height: 0;
 
   .vditor-container {
@@ -370,9 +501,25 @@ onUnmounted(() => {
 
     // 确保整个编辑器容器可交互
     .vditor-ir__node,
-    .vditor-wysiwyg__node,
-    .vditor-sv__node {
+      .vditor-wysiwyg__node,
+      .vditor-sv__node {
       pointer-events: auto;
+    }
+
+    // 修复有序列表显示数字的问题
+    .vditor-wysiwyg ol,
+    .vditor-ir ol {
+      list-style-type: decimal !important;
+      list-style-position: outside;
+      padding-left: 2em;
+    }
+
+    .vditor-wysiwyg ol ol {
+      list-style-type: lower-alpha;
+    }
+
+    .vditor-wysiwyg ol ol ol {
+      list-style-type: lower-roman;
     }
   }
 }

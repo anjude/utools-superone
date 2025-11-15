@@ -3,13 +3,14 @@ import { onMounted, ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessageBox } from 'element-plus'
-import { MarkdownEditor } from '@/components'
+import { MarkdownEditor, MarkdownViewer } from '@/components'
 import { TopicRepo } from '@/repos/topic-repo'
 import { TopicLogRepo } from '@/repos/topic-log-repo'
 import type { ITopic, ITopicFormData, TopicLogListItem } from '@/types/topic'
 import { TopicEnums } from '@/constants/enums'
 import { timestampToChineseDateTime, getCurrentTimestamp } from '@/utils/time'
-import { markdownToHtml } from '@/utils/markdown'
+import { CacheManager } from '@/utils/cache-manager'
+import { CACHE_KEYS } from '@/stores/cache'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -38,6 +39,16 @@ const editLogError = ref<string>('')
 // 当前选中的主题
 const selectedTopic = computed(() => {
   return topics.value.find(t => t.id === selectedTopicId.value) || null
+})
+
+// 判断编辑器是否有内容（用于优化保存按钮禁用状态）
+const hasEditorContent = computed(() => {
+  return editorContent.value.trim().length > 0
+})
+
+// 判断保存按钮是否可用
+const canSave = computed(() => {
+  return selectedTopicId.value !== null && hasEditorContent.value && !saving.value
 })
 
 // 添加主题弹窗相关状态
@@ -70,9 +81,29 @@ const loadTopics = async () => {
       }
       return b.createTime - a.createTime // 创建时间新的在前
     })
-    // 如果有主题且没有选中，默认选中第一个
+    
+    // 如果有主题且没有选中，尝试从缓存恢复选中的主题
     if (topics.value.length > 0 && !selectedTopicId.value) {
-      selectedTopicId.value = topics.value[0].id
+      // 从本地缓存读取保存的主题ID
+      const savedTopicId = CacheManager.get<number>(CACHE_KEYS.SELECTED_TOPIC_ID, null, true)
+      
+      if (savedTopicId !== null) {
+        // 检查保存的主题是否还存在
+        const topicExists = topics.value.some(topic => topic.id === savedTopicId)
+        if (topicExists) {
+          selectedTopicId.value = savedTopicId
+        } else {
+          // 如果保存的主题不存在，选择第一个主题
+          selectedTopicId.value = topics.value[0].id
+          // 更新缓存为第一个主题
+          CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, selectedTopicId.value, true)
+        }
+      } else {
+        // 没有保存的主题，默认选中第一个
+        selectedTopicId.value = topics.value[0].id
+        // 保存到缓存
+        CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, selectedTopicId.value, true)
+      }
     }
   } catch (err) {
     error.value = err instanceof Error ? err.message : t('topic.loadFailed')
@@ -124,6 +155,8 @@ watch(selectedTopicId, (newId) => {
 
 const handleTopicSelect = (topic: ITopic) => {
   selectedTopicId.value = topic.id
+  // 保存选中的主题ID到本地缓存
+  CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, topic.id, true)
 }
 
 const handleSaveLog = async () => {
@@ -189,6 +222,8 @@ const handleCreateTopic = async () => {
     // 自动选中新创建的主题
     if (newTopic.id) {
       selectedTopicId.value = newTopic.id
+      // 保存选中的主题ID到本地缓存
+      CacheManager.set(CACHE_KEYS.SELECTED_TOPIC_ID, newTopic.id, true)
     }
   } catch (err) {
     topicFormError.value = err instanceof Error ? err.message : '创建主题失败'
@@ -496,7 +531,7 @@ onMounted(() => {
         <button 
           class="cu-button cu-button--primary cu-button--small"
           @click="handleSaveLog"
-          :disabled="!selectedTopicId || !editorContent.trim() || saving"
+          :disabled="!canSave"
         >
           {{ saving ? '保存中...' : '保存' }}
         </button>
@@ -508,7 +543,7 @@ onMounted(() => {
       <MarkdownEditor
         v-model="editorContent"
         :placeholder="selectedTopic ? `记录到「${selectedTopic.topicName}」...` : '请先选择一个主题'"
-        :height="200"
+        :height="150"
         :disabled="!selectedTopicId"
       />
     </div>
@@ -524,7 +559,7 @@ onMounted(() => {
       <div v-else-if="logs.length === 0" class="p-logs-empty">暂无日志</div>
       <ul v-else class="p-logs-list">
         <li v-for="log in logs" :key="log.id" class="cu-card cu-card--small p-log-item">
-          <div class="p-log-content" v-html="markdownToHtml(log.content)"></div>
+          <MarkdownViewer :content="log.content" class="p-log-content" />
           <div class="p-log-meta">
             <span class="p-log-time">{{ timestampToChineseDateTime(log.createTime) }}</span>
             <div class="p-log-actions">

@@ -67,11 +67,12 @@ export const commonApi = {
       formData.append('file', blob, fileName)
 
       // 准备请求头
+      // 注意：使用 FormData 时不要手动设置 Content-Type，浏览器会自动设置为 multipart/form-data
       const token = CacheManager.get(CACHE_KEYS.TOKEN)
       const headers: Record<string, string> = {}
 
       if (token) {
-        headers.Authorization = `Bearer ${token}`
+        headers.Authorization = `${token}`
       }
 
       // 发送请求
@@ -88,7 +89,70 @@ export const commonApi = {
       const data = await response.json()
 
       if (data.err_code === 0) {
-        return data.data.url
+        let url = data.data.url
+        // 如果 URL 缺少协议前缀，添加 https://
+        if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url
+        }
+        return url
+      } else {
+        throw new Error(data.msg || '上传失败')
+      }
+    } catch (error) {
+      throw error
+    }
+  },
+
+  /**
+   * 上传图片文件（File 对象）
+   * @param file File 对象
+   * @returns 图片 URL
+   */
+  async uploadImageFile(file: File): Promise<string> {
+    try {
+      // 验证文件类型
+      const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp']
+      if (!validImageTypes.includes(file.type)) {
+        throw new Error('只支持图片文件（jpg, jpeg, png, gif, bmp, webp）')
+      }
+
+      // 创建 FormData
+      const formData = new FormData()
+      formData.append('file', file)
+
+      // 准备请求头
+      // 注意：使用 FormData 时不要手动设置 Content-Type，浏览器会自动设置为 multipart/form-data
+      const token = CacheManager.get(CACHE_KEYS.TOKEN)
+      const headers: Record<string, string> = {}
+
+      if (token) {
+        headers.Authorization = `${token}`
+      }
+
+      // 发送请求
+      const response = await fetch(CONFIG.baseURL + '/api/so/common/wx_upload', {
+        method: 'POST',
+        headers,
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error(`上传失败: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (data.err_code === 0) {
+        let url = data.data.url
+        // 去除空格和换行符
+        if (url) {
+          url = url.trim().replace(/\s+/g, '')
+        }
+        // 如果 URL 缺少协议前缀，添加 https://
+        if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url
+        }
+        return url
       } else {
         throw new Error(data.msg || '上传失败')
       }
