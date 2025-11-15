@@ -10,6 +10,8 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# 不忽略 vditor 的 dist 目录
+!public/vditor/dist
 
 # 环境变量文件
 *.local
