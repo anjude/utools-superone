@@ -116,11 +116,22 @@ export class Request {
    */
   private navigateToLogin(): void {
     try {
+      // 保存当前路由信息，用于登录成功后返回
+      let redirectPath: string | undefined
+      if (typeof window !== 'undefined' && (window as any).__router) {
+        const router = (window as any).__router
+        const currentRoute = router.currentRoute.value
+        redirectPath = currentRoute.fullPath !== '/login' ? currentRoute.fullPath : undefined
+        if (redirectPath) {
+          sessionStorage.setItem('login_redirect', redirectPath)
+        }
+      }
+
       // 优先使用 utools.redirect 方法
       if (window.utools && typeof window.utools.redirect === 'function') {
         try {
           window.utools.redirect('login', { type: 'text', data: '' })
-          logger.info('已调用 utools.redirect 跳转到登录页')
+          logger.info('已调用 utools.redirect 跳转到登录页', { redirect: redirectPath })
           return
         } catch (redirectError) {
           logger.error('utools.redirect 调用失败', { error: redirectError })
@@ -133,8 +144,15 @@ export class Request {
       // 所以通过 window 对象来访问 router
       if (typeof window !== 'undefined' && (window as any).__router) {
         try {
-          ;(window as any).__router.push({ name: 'Login' })
-          logger.info('已使用 Vue Router 跳转到登录页')
+          const router = (window as any).__router
+          const currentRoute = router.currentRoute.value
+          // 保存当前路由信息，用于登录成功后返回
+          const redirect = currentRoute.fullPath !== '/login' ? currentRoute.fullPath : undefined
+          router.push({ 
+            name: 'Login',
+            query: redirect ? { redirect } : undefined
+          })
+          logger.info('已使用 Vue Router 跳转到登录页', { redirect })
           return
         } catch (routerError) {
           logger.error('Vue Router 跳转失败', { error: routerError })
@@ -233,12 +251,27 @@ export class Request {
             }
           }
 
+          // 记录错误码用于调试
+          if (errCode !== undefined && errCode !== 0) {
+            logger.info('检测到业务错误码', { errCode, url: interceptedConfig.url })
+          }
+
           if (businessData && errCode === 0) {
             logger.logRequestSuccess(requestId, interceptedResponse.statusCode, businessData.data)
             return interceptedResponse
-          } else if (businessData && errCode === -100004) {
-            // 登录过期错误，跳转登录页
+          } else if (businessData && (errCode === 100004 || errCode === -100004)) {
+            // 登录过期错误（支持正数和负数格式），跳转登录页
             logger.logRequestError(requestId, businessData, interceptedConfig)
+            logger.warn('登录已过期，清除用户信息并跳转登录页', { errCode })
+            // 清除 token 和用户信息
+            if (typeof window !== 'undefined' && (window as any).__userStore) {
+              try {
+                ;(window as any).__userStore.logout()
+                logger.info('用户信息已清除')
+              } catch (e) {
+                logger.error('清除用户信息失败', { error: e })
+              }
+            }
             this.navigateToLogin()
             return Promise.reject(businessData)
           } else {

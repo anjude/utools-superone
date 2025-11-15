@@ -22,7 +22,9 @@ export default {
     loginFailed: '登录失败',
     retry: '重试',
     startLogin: '开始登录',
-    loggingIn: '登录中...'
+    loggingIn: '登录中...',
+    wechatScanTip: '请使用微信扫码登录',
+    refreshQrCode: '刷新二维码'
   },
   topic: {
     title: '主题列表',

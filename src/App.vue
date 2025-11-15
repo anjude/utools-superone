@@ -26,9 +26,10 @@ onMounted(() => {
 
   console.log('App mounted')
 
-  // 将 router 挂载到 window 上，供 request-client 等工具类使用
+  // 将 router 和 userStore 挂载到 window 上，供 request-client 等工具类使用
   if (typeof window !== 'undefined') {
     ;(window as any).__router = router
+    ;(window as any).__userStore = userStore
   }
 
   // 根据环境变量设置 baseURL

@@ -22,7 +22,9 @@ export default {
     loginFailed: 'Login failed',
     retry: 'Retry',
     startLogin: 'Start Login',
-    loggingIn: 'Logging in...'
+    loggingIn: 'Logging in...',
+    wechatScanTip: 'Please scan QR code with WeChat',
+    refreshQrCode: 'Refresh QR Code'
   },
   topic: {
     title: 'Topic List',
