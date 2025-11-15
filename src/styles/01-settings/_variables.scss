@@ -2,7 +2,9 @@
 :root {
   --light: #fff;
   
+  // ============================================
   // 间距系统（基于 4px 网格）
+  // ============================================
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 12px;
@@ -12,4 +14,61 @@
   --spacing-3xl: 32px;
   --spacing-4xl: 40px;
   --spacing-5xl: 48px;
+  
+  // 额外的间距变量（用于特殊场景）
+  --spacing-2: 2px;
+  --spacing-3: 3px;
+  --spacing-6: 6px;
+  --spacing-10: 10px;
+  --spacing-18: 18px;
+  
+  // ============================================
+  // 字体大小系统
+  // ============================================
+  --font-size-xs: 10px;
+  --font-size-sm: 11px;
+  --font-size-base: 12px;
+  --font-size-md: 13px;
+  --font-size-normal: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 26px;
+  
+  // ============================================
+  // 行高系统
+  // ============================================
+  --line-height-tight: 1.4;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+  
+  // ============================================
+  // 字重系统
+  // ============================================
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  // ============================================
+  // 字体大小映射（用于语义化命名）
+  // ============================================
+  // 标题字体大小
+  --font-size-h1: var(--font-size-3xl);      // 24px
+  --font-size-h2: var(--font-size-2xl);      // 20px
+  --font-size-h3: var(--font-size-xl);       // 18px
+  --font-size-h4: var(--font-size-lg);       // 16px
+  --font-size-h5: var(--font-size-normal);   // 14px
+  --font-size-h6: var(--font-size-md);       // 13px
+  
+  // 正文字体大小
+  --font-size-body: var(--font-size-normal); // 14px
+  --font-size-body-sm: var(--font-size-base); // 12px
+  --font-size-body-lg: var(--font-size-lg);  // 16px
+  
+  // 辅助文本字体大小
+  --font-size-caption: var(--font-size-base); // 12px
+  --font-size-caption-sm: var(--font-size-sm); // 11px
+  --font-size-caption-xs: var(--font-size-xs); // 10px
 }

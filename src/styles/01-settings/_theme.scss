@@ -38,6 +38,7 @@
   --glass-shadow-soft: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
   
   // 圆角
+  --radius-xs: 3px;
   --radius-sm: 4px;
   --radius-base: 8px;
   --radius-md: 12px;
@@ -63,6 +64,63 @@
   
   // 主题浅色（用于hover背景）
   --theme-light: rgba(7, 193, 96, 0.1);
+  
+  // ============================================
+  // 颜色透明度系统（浅色模式）
+  // ============================================
+  // 主要颜色透明度
+  --primary-light: rgba(1, 194, 96, 0.1);
+  --primary-light-strong: rgba(1, 194, 96, 0.15);
+  --primary-light-weak: rgba(1, 194, 96, 0.05);
+  
+  // 警告颜色透明度
+  --warning-light: rgba(243, 156, 18, 0.1);
+  --warning-light-strong: rgba(243, 156, 18, 0.15);
+  --warning-light-weak: rgba(243, 156, 18, 0.05);
+  
+  // 错误颜色透明度
+  --error-light: rgba(231, 76, 60, 0.1);
+  --error-light-strong: rgba(231, 76, 60, 0.15);
+  --error-light-weak: rgba(231, 76, 60, 0.05);
+  --error-danger-light: rgba(245, 101, 101, 0.1);
+  
+  // 成功颜色透明度
+  --success-light: rgba(39, 174, 96, 0.1);
+  --success-light-strong: rgba(39, 174, 96, 0.15);
+  --success-light-weak: rgba(39, 174, 96, 0.05);
+  
+  // 信息颜色透明度
+  --info-light: rgba(52, 152, 219, 0.1);
+  --info-light-strong: rgba(52, 152, 219, 0.15);
+  --info-light-weak: rgba(52, 152, 219, 0.05);
+  
+  // 中性颜色透明度（黑色/白色）
+  --black-light-weak: rgba(0, 0, 0, 0.02);
+  --black-light: rgba(0, 0, 0, 0.05);
+  --black-light-strong: rgba(0, 0, 0, 0.1);
+  --white-light-weak: rgba(255, 255, 255, 0.02);
+  --white-light: rgba(255, 255, 255, 0.05);
+  --white-light-strong: rgba(255, 255, 255, 0.1);
+  
+  // 文本透明度
+  --text-opacity-disabled: 0.3;
+  --text-opacity-secondary: 0.5;
+  --text-opacity-tertiary: 0.6;
+  --text-opacity-quaternary: 0.7;
+  --text-opacity-hover: 0.8;
+  
+  // ============================================
+  // 颜色值（用于需要固定颜色值的场景）
+  // ============================================
+  --color-warning: #ffc107;
+  --color-warning-rgb: 255, 193, 7;
+  
+  // ============================================
+  // 边框宽度
+  // ============================================
+  --border-width-base: 1px;
+  --border-width-thick: 2px;
+  --border-width-thin: 0.5px;
 }
 
 // 深色主题变量
@@ -104,6 +162,7 @@
   --glass-shadow-soft: 0 4px 16px 0 rgba(0, 0, 0, 0.3);
   
   // 圆角（与浅色模式相同）
+  --radius-xs: 3px;
   --radius-sm: 4px;
   --radius-base: 8px;
   --radius-md: 12px;
@@ -129,6 +188,48 @@
   
   // 主题浅色（用于hover背景）
   --theme-light: rgba(7, 193, 96, 0.1);
+  
+  // 颜色透明度系统（深色模式）
+  --primary-light: rgba(1, 194, 96, 0.15);
+  --primary-light-strong: rgba(1, 194, 96, 0.2);
+  --primary-light-weak: rgba(1, 194, 96, 0.08);
+  
+  --warning-light: rgba(243, 156, 18, 0.15);
+  --warning-light-strong: rgba(243, 156, 18, 0.2);
+  --warning-light-weak: rgba(243, 156, 18, 0.08);
+  
+  --error-light: rgba(231, 76, 60, 0.15);
+  --error-light-strong: rgba(231, 76, 60, 0.2);
+  --error-light-weak: rgba(231, 76, 60, 0.08);
+  --error-danger-light: rgba(245, 101, 101, 0.15);
+  
+  --success-light: rgba(39, 174, 96, 0.15);
+  --success-light-strong: rgba(39, 174, 96, 0.2);
+  --success-light-weak: rgba(39, 174, 96, 0.08);
+  
+  --info-light: rgba(52, 152, 219, 0.15);
+  --info-light-strong: rgba(52, 152, 219, 0.2);
+  --info-light-weak: rgba(52, 152, 219, 0.08);
+  
+  --black-light-weak: rgba(0, 0, 0, 0.05);
+  --black-light: rgba(0, 0, 0, 0.1);
+  --black-light-strong: rgba(0, 0, 0, 0.15);
+  --white-light-weak: rgba(255, 255, 255, 0.03);
+  --white-light: rgba(255, 255, 255, 0.05);
+  --white-light-strong: rgba(255, 255, 255, 0.1);
+  
+  --text-opacity-disabled: 0.3;
+  --text-opacity-secondary: 0.5;
+  --text-opacity-tertiary: 0.6;
+  --text-opacity-quaternary: 0.7;
+  --text-opacity-hover: 0.8;
+  
+  --color-warning: #ffc107;
+  --color-warning-rgb: 255, 193, 7;
+  
+  --border-width-base: 1px;
+  --border-width-thick: 2px;
+  --border-width-thin: 0.5px;
 }
 
 // 兼容 prefers-color-scheme（用于自动模式）
@@ -193,6 +294,48 @@
     
     // 主题浅色（用于hover背景）
     --theme-light: rgba(7, 193, 96, 0.1);
+    
+    // 颜色透明度系统（自动暗色模式）
+    --primary-light: rgba(1, 194, 96, 0.15);
+    --primary-light-strong: rgba(1, 194, 96, 0.2);
+    --primary-light-weak: rgba(1, 194, 96, 0.08);
+    
+    --warning-light: rgba(243, 156, 18, 0.15);
+    --warning-light-strong: rgba(243, 156, 18, 0.2);
+    --warning-light-weak: rgba(243, 156, 18, 0.08);
+    
+    --error-light: rgba(231, 76, 60, 0.15);
+    --error-light-strong: rgba(231, 76, 60, 0.2);
+    --error-light-weak: rgba(231, 76, 60, 0.08);
+    --error-danger-light: rgba(245, 101, 101, 0.15);
+    
+    --success-light: rgba(39, 174, 96, 0.15);
+    --success-light-strong: rgba(39, 174, 96, 0.2);
+    --success-light-weak: rgba(39, 174, 96, 0.08);
+    
+    --info-light: rgba(52, 152, 219, 0.15);
+    --info-light-strong: rgba(52, 152, 219, 0.2);
+    --info-light-weak: rgba(52, 152, 219, 0.08);
+    
+    --black-light-weak: rgba(0, 0, 0, 0.05);
+    --black-light: rgba(0, 0, 0, 0.1);
+    --black-light-strong: rgba(0, 0, 0, 0.15);
+    --white-light-weak: rgba(255, 255, 255, 0.03);
+    --white-light: rgba(255, 255, 255, 0.05);
+    --white-light-strong: rgba(255, 255, 255, 0.1);
+    
+    --text-opacity-disabled: 0.3;
+    --text-opacity-secondary: 0.5;
+    --text-opacity-tertiary: 0.6;
+    --text-opacity-quaternary: 0.7;
+    --text-opacity-hover: 0.8;
+    
+    --color-warning: #ffc107;
+    --color-warning-rgb: 255, 193, 7;
+    
+    --border-width-base: 1px;
+    --border-width-thick: 2px;
+    --border-width-thin: 0.5px;
   }
 }
 

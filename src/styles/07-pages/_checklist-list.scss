@@ -2,16 +2,16 @@
 @use '../02-tools/mixins' as *;
 
 .p-checklist-list-wrap {
-  padding: 8px;
+  padding: var(--spacing-sm);
   min-height: 100vh;
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-6);
 
   @include respond-to('sm') {
-    padding: 12px;
-    gap: 8px;
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 }
 
@@ -19,17 +19,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
+  padding: var(--spacing-xs) 0;
   margin-bottom: 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: var(--border-width-base) solid var(--border-color);
 
   .p-page-title {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
     letter-spacing: -0.02em;
-    transition: color 0.3s ease;
+    transition: color var(--transition-normal);
   }
 
   .p-header-actions {
@@ -44,20 +44,20 @@
 .p-error,
 .p-empty {
   text-align: center;
-  padding: 12px;
+  padding: var(--spacing-md);
   color: var(--text-color);
-  opacity: 0.7;
-  font-size: 14px;
-  transition: color 0.3s ease, opacity 0.3s ease;
+  opacity: var(--text-opacity-quaternary);
+  font-size: var(--font-size-body);
+  transition: color var(--transition-normal), opacity var(--transition-normal);
 }
 
 .p-error {
   color: var(--error-color);
-  opacity: 0.9;
+  opacity: var(--text-opacity-hover);
 
   p {
-    margin: 0 0 8px;
-    font-weight: 500;
+    margin: 0 0 var(--spacing-sm);
+    font-weight: var(--font-weight-medium);
   }
 }
 
@@ -65,15 +65,15 @@
 .p-checklists-selector-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 2px 0;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2) 0;
 }
 
 // 清单选择器（可滚动）
 .p-checklists-selector {
   flex: 1;
   display: flex;
-  gap: 6px;
+  gap: var(--spacing-6);
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
@@ -83,7 +83,7 @@
   scrollbar-color: var(--border-color) transparent;
   
   &::-webkit-scrollbar {
-    height: 6px;
+    height: var(--spacing-6);
   }
   
   &::-webkit-scrollbar-track {
@@ -103,20 +103,20 @@
 .p-checklist-tag {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 10px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-10);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   background: var(--card-bg);
   color: var(--text-color);
-  font-size: 13px;
+  font-size: var(--font-size-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   white-space: nowrap;
 
   &:hover {
     border-color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--primary-light);
     color: var(--primary-color);
   }
 
@@ -128,109 +128,109 @@
 }
 
 .p-checklist-tag-top-icon {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   line-height: 1;
-  margin-right: 3px;
+  margin-right: var(--spacing-3);
   display: inline-block;
 }
 
 .p-checklist-tag-name {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 // 执行区域
 .p-execution-section {
   flex-shrink: 0;
-  margin-bottom: 6px;
-  padding: 6px 10px;
+  margin-bottom: var(--spacing-6);
+  padding: var(--spacing-6) var(--spacing-10);
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-md);
 }
 
 .p-execution-header {
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-6);
   
   // 进度条区域间距
   .cu-progress-info {
-    margin-top: 4px;
+    margin-top: var(--spacing-xs);
     margin-bottom: 0;
     padding: 0;
   }
   
   .cu-progress-modern {
-    margin-top: 3px;
-    height: 6px;
+    margin-top: var(--spacing-3);
+    height: var(--spacing-6);
   }
   
   .cu-progress-label {
-    gap: 4px;
+    gap: var(--spacing-xs);
   }
   
   .cu-progress-label-text {
-    font-size: 12px;
+    font-size: var(--font-size-body-sm);
   }
   
   .cu-progress-count {
-    font-size: 12px;
+    font-size: var(--font-size-body-sm);
   }
   
   .cu-progress-percent {
-    font-size: 12px;
+    font-size: var(--font-size-body-sm);
   }
 }
 
 .p-execution-title {
-  margin: 0 0 4px;
-  font-size: 14px;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-xs);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
 
 .p-execution-actions {
   display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--border-color);
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: var(--border-width-base) solid var(--border-color);
 }
 
 .p-execution-items {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 6px;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-6);
 }
 
 .p-execution-item {
   display: flex;
-  gap: 4px;
-  padding: 3px 4px;
-  border: 1px solid var(--border-color);
+  gap: var(--spacing-xs);
+  padding: var(--spacing-3) var(--spacing-xs);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 
   &--completed {
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--primary-light);
     border-color: var(--primary-color);
-    opacity: 0.8;
+    opacity: var(--text-opacity-hover);
   }
 }
 
 .p-execution-item-checkbox {
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--border-color);
+  width: var(--spacing-18);
+  height: var(--spacing-18);
+  border: var(--border-width-thick) solid var(--border-color);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 2px;
+  transition: all var(--transition-base);
+  margin-top: var(--spacing-2);
 
   .p-execution-item--completed & {
     background: var(--primary-color);
@@ -244,27 +244,27 @@
 
 .p-check-icon {
   color: var(--light);
-  font-size: 12px;
-  font-weight: bold;
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-bold);
   line-height: 1;
 }
 
 .p-execution-item-content {
   flex: 1;
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-xs);
   min-width: 0;
   align-items: flex-start;
 }
 
 .p-execution-item-number {
   flex-shrink: 0;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
-  opacity: 0.7;
-  font-size: 12px;
-  line-height: 1.4;
-  margin-top: 2px;
+  opacity: var(--text-opacity-quaternary);
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-tight);
+  margin-top: var(--spacing-2);
 }
 
 .p-execution-item-body {
@@ -272,13 +272,13 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-2);
 }
 
 .p-execution-item-text {
   color: var(--text-color);
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-tight);
   margin-bottom: 0;
 
   :deep(h1),
@@ -287,20 +287,20 @@
   :deep(h4),
   :deep(h5),
   :deep(h6) {
-    margin: 6px 0 3px;
-    font-weight: 600;
+    margin: var(--spacing-6) 0 var(--spacing-3);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
-    font-size: 14px;
+    font-size: var(--font-size-body);
   }
 
   :deep(p) {
-    margin: 3px 0;
+    margin: var(--spacing-3) 0;
   }
 
   :deep(ul),
   :deep(ol) {
-    margin: 3px 0;
-    padding-left: 18px;
+    margin: var(--spacing-3) 0;
+    padding-left: var(--spacing-18);
   }
 
   :deep(li) {
@@ -309,57 +309,57 @@
 }
 
 .p-execution-item-notes {
-  margin-top: 2px;
+  margin-top: var(--spacing-2);
 }
 
 .p-execution-item-notes-btn {
-  padding: 1px 6px;
-  font-size: 10px;
+  padding: 1px var(--spacing-6);
+  font-size: var(--font-size-caption-xs);
   color: var(--text-color);
   background: transparent;
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0.6;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-tertiary);
   align-self: flex-start;
-  margin-top: 2px;
+  margin-top: var(--spacing-2);
 
   &:hover {
     opacity: 1;
     border-color: var(--primary-color);
     color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--primary-light);
   }
 }
 
 .p-execution-summary {
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-xs);
+  border-top: var(--border-width-base) solid var(--border-color);
 }
 
 .p-execution-summary-title {
-  margin: 0 0 4px;
-  font-size: 13px;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-xs);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
 .p-execution-footer {
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-xs);
+  border-top: var(--border-width-base) solid var(--border-color);
   display: flex;
   justify-content: flex-end;
 }
 
 .p-execution-empty {
-  padding: 12px;
+  padding: var(--spacing-md);
   text-align: center;
   color: var(--text-color);
-  opacity: 0.6;
-  font-size: 13px;
+  opacity: var(--text-opacity-tertiary);
+  font-size: var(--font-size-md);
 }
 
 // 执行记录区域
@@ -370,9 +370,9 @@
 }
 
 .p-executions-title {
-  margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-6);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
   transition: color var(--transition-normal);
 }
@@ -383,13 +383,13 @@
   padding: var(--spacing-md);
   text-align: center;
   color: var(--text-color);
-  opacity: 0.6;
-  font-size: 13px;
+  opacity: var(--text-opacity-tertiary);
+  font-size: var(--font-size-md);
 }
 
 .p-executions-error {
   color: var(--error-color);
-  opacity: 0.9;
+  opacity: var(--text-opacity-hover);
 }
 
 .p-executions-list {
@@ -398,7 +398,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .p-execution-record-item {
@@ -412,20 +412,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .p-execution-record-time {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 }
 
 .p-execution-record-status {
-  font-size: 11px;
-  padding: 2px 6px;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-2) var(--spacing-6);
   border-radius: var(--radius-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 
   &--completed {
     background: var(--theme-light);
@@ -433,36 +433,36 @@
   }
 
   &--in-progress {
-    background: rgba(255, 193, 7, 0.1);
+    background: var(--warning-light);
     color: var(--warning-color);
   }
 }
 
 .p-execution-record-progress {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-color);
-  opacity: 0.7;
-  margin-bottom: 4px;
+  opacity: var(--text-opacity-quaternary);
+  margin-bottom: var(--spacing-xs);
 }
 
 .p-execution-record-actions {
   display: flex;
-  gap: 6px;
+  gap: var(--spacing-6);
   margin-top: var(--spacing-xs);
   padding-top: var(--spacing-xs);
-  border-top: 1px solid var(--border-color);
+  border-top: var(--border-width-base) solid var(--border-color);
 }
 
 .p-execution-record-action-btn {
-  padding: 2px var(--spacing-sm);
-  font-size: 11px;
+  padding: var(--spacing-2) var(--spacing-sm);
+  font-size: var(--font-size-sm);
   color: var(--text-color);
   background: transparent;
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-base);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 
   &:hover {
     opacity: 1;
@@ -475,7 +475,7 @@
     &:hover {
       border-color: var(--error-color);
       color: var(--error-color);
-      background: rgba(231, 76, 60, 0.1);
+      background: var(--error-light);
     }
   }
 }
@@ -490,7 +490,7 @@
 
 .p-checklist-item-editor {
   padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
 }
@@ -503,7 +503,7 @@
 }
 
 .p-checklist-item-number {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
@@ -514,14 +514,14 @@
 
 .p-checklist-item-action-btn {
   padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-color);
   background: transparent;
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-base);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 
   &:hover:not(:disabled) {
     opacity: 1;
@@ -531,7 +531,7 @@
   }
 
   &:disabled {
-    opacity: 0.3;
+    opacity: var(--text-opacity-disabled);
     cursor: not-allowed;
   }
 
@@ -539,7 +539,7 @@
     &:hover:not(:disabled) {
       border-color: var(--error-color);
       color: var(--error-color);
-      background: rgba(231, 76, 60, 0.1);
+      background: var(--error-light);
     }
   }
 }
@@ -551,60 +551,60 @@
 }
 
 .p-checklist-limit-tip {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-color);
-  opacity: 0.6;
+  opacity: var(--text-opacity-tertiary);
 }
 
 // 执行记录详情样式
 .p-execution-detail {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-lg);
 }
 
 .p-execution-detail-info {
   p {
-    margin: 8px 0;
-    font-size: 14px;
+    margin: var(--spacing-sm) 0;
+    font-size: var(--font-size-body);
     color: var(--text-color);
   }
 
   strong {
-    font-weight: 600;
-    margin-right: 8px;
+    font-weight: var(--font-weight-semibold);
+    margin-right: var(--spacing-sm);
   }
 }
 
 .p-status-completed {
   color: var(--primary-color);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .p-status-in-progress {
-  color: #ffc107;
-  font-weight: 500;
+  color: var(--color-warning);
+  font-weight: var(--font-weight-medium);
 }
 
 .p-execution-detail-steps {
   h4 {
-    margin: 0 0 12px;
-    font-size: 14px;
-    font-weight: 600;
+    margin: 0 0 var(--spacing-md);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
   }
 }
 
 .p-execution-detail-step {
-  padding: 8px;
-  margin-bottom: 8px;
-  border: 1px solid var(--border-color);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
 
   &--skipped {
-    opacity: 0.6;
-    background: rgba(0, 0, 0, 0.02);
+    opacity: var(--text-opacity-tertiary);
+    background: var(--black-light-weak);
   }
 }
 
@@ -612,33 +612,33 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .p-execution-detail-step-number {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
 .p-execution-detail-step-status {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 }
 
 .p-execution-detail-step-summary {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border-color);
-  font-size: 13px;
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: var(--border-width-base) solid var(--border-color);
+  font-size: var(--font-size-md);
   color: var(--text-color);
 }
 
 .p-execution-detail-summary {
   h4 {
-    margin: 0 0 8px;
-    font-size: 14px;
-    font-weight: 600;
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
   }
 }
@@ -646,32 +646,32 @@
 // 右键菜单样式
 .p-context-menu {
   position: fixed;
-  z-index: 1000;
+  z-index: var(--z-index-dropdown);
   min-width: 120px;
-  padding: 4px 0;
+  padding: var(--spacing-xs) 0;
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   cursor: default;
   user-select: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 
   .p-context-menu-item {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
     color: var(--text-color);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-base);
 
     &:hover {
-      background: rgba(1, 194, 96, 0.1);
+      background: var(--primary-light);
       color: var(--primary-color);
     }
 
     &--danger {
       &:hover {
-        background: rgba(245, 101, 101, 0.1);
+        background: var(--error-danger-light);
         color: var(--error-color);
       }
     }
@@ -687,7 +687,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
 // 执行结果弹窗样式
@@ -699,21 +699,21 @@
 
 .p-execution-result-header {
   padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: var(--border-width-base) solid var(--border-color);
 }
 
 .p-execution-result-title {
   margin: 0 0 var(--spacing-sm);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
 .p-execution-result-time {
   margin: 0 0 var(--spacing-md);
-  font-size: 13px;
+  font-size: var(--font-size-md);
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 }
 
 .p-execution-result-progress {
@@ -723,21 +723,21 @@
 }
 
 .p-progress-label {
-  font-size: 13px;
+  font-size: var(--font-size-md);
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 }
 
 .p-progress-value {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
   color: var(--text-color);
   min-width: 50px;
 }
 
 .p-progress-bar-small {
   flex: 1;
-  height: 6px;
+  height: var(--spacing-6);
   background: var(--border-color);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -754,8 +754,8 @@
 
 .p-execution-result-section-title {
   margin: 0 0 var(--spacing-md);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
@@ -767,7 +767,7 @@
 
 .p-execution-result-step {
   padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
   transition: border-color var(--transition-base);
@@ -777,8 +777,8 @@
   }
 
   &--skipped {
-    opacity: 0.6;
-    background: rgba(0, 0, 0, 0.02);
+    opacity: var(--text-opacity-tertiary);
+    background: var(--black-light-weak);
   }
 }
 
@@ -790,42 +790,42 @@
 }
 
 .p-execution-result-step-number {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
 }
 
 .p-execution-result-step-status {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: var(--text-opacity-quaternary);
 }
 
 .p-execution-result-step-content {
   margin-top: var(--spacing-sm);
   padding: var(--spacing-sm);
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--black-light-weak);
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: var(--font-size-md);
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 }
 
 .p-execution-result-step-summary {
   margin-top: var(--spacing-md);
   padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color);
-  font-size: 13px;
+  border-top: var(--border-width-base) solid var(--border-color);
+  font-size: var(--font-size-md);
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 
   strong {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin-right: var(--spacing-sm);
   }
 }
 
 .p-execution-result-summary {
   padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color);
+  border-top: var(--border-width-base) solid var(--border-color);
 }
 
