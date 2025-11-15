@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import type { PluginEnterAction } from './types/utools'
 import { useUserStore } from './stores'
 import { useTheme } from './composables/useTheme'
+import CONFIG from './constants/config'
 
 type GenericEnterAction = PluginEnterAction<unknown, unknown>
 
@@ -16,12 +17,31 @@ useTheme()
 // 存储 enterAction 供组件使用
 let currentEnterAction: GenericEnterAction | null = null
 
-// 将 enterAction 挂载到 window 上，供组件访问
+// 将 enterAction 和 router 挂载到 window 上，供组件和工具类访问
 if (typeof window !== 'undefined') {
   ;(window as any).__utoolsEnterAction = null
 }
 
 onMounted(() => {
+
+  console.log('App mounted')
+
+  // 将 router 挂载到 window 上，供 request-client 等工具类使用
+  if (typeof window !== 'undefined') {
+    ;(window as any).__router = router
+  }
+
+  // 根据环境变量设置 baseURL
+  // 优先使用 VITE_BASE_URL，如果没有则根据 VITE_ENV 或 MODE 从 urlMap 中选择
+  const baseURL = import.meta.env.VITE_BASE_URL
+  if (baseURL) {
+    CONFIG.baseURL = baseURL
+  } else {
+    CONFIG.baseURL = CONFIG.getBaseURLByEnv()
+  }
+  
+  console.log('BaseURL:', CONFIG.baseURL, 'Env:', import.meta.env.VITE_ENV || import.meta.env.MODE)
+
   // 初始化用户 store（加载缓存数据）
   userStore.init()
 

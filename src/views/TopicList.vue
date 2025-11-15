@@ -171,7 +171,7 @@ onMounted(() => {
       <div class="p-editor-wrapper">
         <MdEditor
           v-model="editorContent"
-          :preview="false"
+          :preview="true"
           :toolbars="[
             'bold',
             'underline',
@@ -201,7 +201,7 @@ onMounted(() => {
           ]"
           :placeholder="selectedTopic ? `记录到「${selectedTopic.topicName}」...` : '请先选择一个主题'"
           language="zh-CN"
-          :style="{ height: '180px' }"
+          :style="{ height: '240px' }"
           :disabled="!selectedTopicId"
         />
         <div class="p-editor-save-btn">

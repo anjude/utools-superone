@@ -116,13 +116,43 @@ export class Request {
    */
   private navigateToLogin(): void {
     try {
+      // 优先使用 utools.redirect 方法
       if (window.utools && typeof window.utools.redirect === 'function') {
-        // utools redirect 需要传入 code 和 payload
-        // 使用空字符串作为 payload，或者传入一个文本类型的 payload
-        window.utools.redirect('login', { type: 'text', data: '' })
-      } else {
-        logger.warn('无法跳转到登录页：utools.redirect 方法不可用')
+        try {
+          window.utools.redirect('login', { type: 'text', data: '' })
+          logger.info('已调用 utools.redirect 跳转到登录页')
+          return
+        } catch (redirectError) {
+          logger.error('utools.redirect 调用失败', { error: redirectError })
+          // 继续尝试其他方式
+        }
       }
+
+      // 如果 utools.redirect 不可用，尝试使用 Vue Router（如果可用）
+      // 注意：这里不能直接导入 router，因为会造成循环依赖
+      // 所以通过 window 对象来访问 router
+      if (typeof window !== 'undefined' && (window as any).__router) {
+        try {
+          ;(window as any).__router.push({ name: 'Login' })
+          logger.info('已使用 Vue Router 跳转到登录页')
+          return
+        } catch (routerError) {
+          logger.error('Vue Router 跳转失败', { error: routerError })
+        }
+      }
+
+      // 最后尝试使用 location.hash
+      if (typeof window !== 'undefined' && window.location) {
+        try {
+          window.location.hash = '#/login'
+          logger.info('已使用 location.hash 跳转到登录页')
+          return
+        } catch (locationError) {
+          logger.error('location.hash 跳转失败', { error: locationError })
+        }
+      }
+
+      logger.warn('无法跳转到登录页：所有跳转方式都不可用')
     } catch (error) {
       logger.error('跳转登录页失败', { error })
     }
@@ -142,14 +172,19 @@ export class Request {
       let finalData = interceptedConfig.data
 
       if (interceptedConfig.method === 'GET' && interceptedConfig.params) {
-        finalUrl = this.getFullUrl(interceptedConfig.url, interceptedConfig.params)
+        // GET 请求的 params 也需要转换为 snake_case
+        const convertedParams = ParamConverter.toSnakeCase(interceptedConfig.params)
+        finalUrl = this.getFullUrl(interceptedConfig.url, convertedParams)
         finalData = undefined
       } else if (interceptedConfig.method === 'GET' && interceptedConfig.data) {
-        finalUrl = this.getFullUrl(interceptedConfig.url, interceptedConfig.data)
+        // GET 请求的 data 也需要转换为 snake_case
+        const convertedData = ParamConverter.toSnakeCase(interceptedConfig.data)
+        finalUrl = this.getFullUrl(interceptedConfig.url, convertedData)
         finalData = undefined
       } else {
         finalUrl = this.getFullUrl(interceptedConfig.url)
         if (finalData) {
+          // POST/PUT 等请求的 data 转换为 snake_case
           finalData = ParamConverter.toSnakeCase(finalData)
         }
       }
@@ -188,7 +223,15 @@ export class Request {
         if (interceptedResponse.statusCode >= 200 && interceptedResponse.statusCode < 300) {
           const businessData = interceptedResponse.data as BusinessResponse
           // 兼容处理：支持 errCode 和 err_code 两种格式
-          const errCode = businessData?.errCode ?? (businessData as any)?.err_code
+          // 同时支持 { error: { errCode: -100004 } } 这种嵌套结构
+          let errCode: number | undefined
+          if (businessData) {
+            errCode = businessData.errCode ?? (businessData as any)?.err_code
+            // 如果顶层没有 errCode，检查 error 对象中的 errCode
+            if (errCode === undefined && (businessData as any)?.error) {
+              errCode = (businessData as any).error.errCode ?? (businessData as any).error.err_code
+            }
+          }
 
           if (businessData && errCode === 0) {
             logger.logRequestSuccess(requestId, interceptedResponse.statusCode, businessData.data)

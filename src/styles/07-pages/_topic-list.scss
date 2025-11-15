@@ -55,9 +55,32 @@
 // 主题选择器
 .p-topics-selector {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  
+  // 隐藏滚动条但保持滚动功能
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+    
+    &:hover {
+      background: var(--primary-color);
+    }
+  }
 }
 
 .p-topic-tag {
@@ -135,15 +158,16 @@
 
 .p-editor-save-btn {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  z-index: 10;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
   
   .cu-button {
     font-size: 12px;
     padding: 4px 12px;
     height: 28px;
     line-height: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
