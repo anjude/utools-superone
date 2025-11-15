@@ -166,12 +166,20 @@ onMounted(async () => {
       <div class="p-execution-header">
         <div class="p-execution-header-top">
           <h3 class="p-execution-title">{{ selectedChecklist.title }} - 执行</h3>
-          <button 
-            class="cu-button cu-button--text cu-button--small"
-            @click="handleViewDetail(selectedChecklist.id)"
-          >
-            查看详情 →
-          </button>
+          <div class="p-execution-header-actions">
+            <button 
+              class="cu-button cu-button--text cu-button--small"
+              @click="management.handleOpenEditChecklistDialog(selectedChecklist)"
+            >
+              编辑
+            </button>
+            <button 
+              class="cu-button cu-button--text cu-button--small"
+              @click="handleViewDetail(selectedChecklist.id)"
+            >
+              查看详情 →
+            </button>
+          </div>
         </div>
         <div class="cu-progress-info">
           <div class="cu-progress-label">
@@ -207,8 +215,12 @@ onMounted(async () => {
           class="p-execution-item"
           :class="{ 'p-execution-item--completed': execution.isStepCompleted(item.id) }"
         >
-          <div class="p-execution-item-checkbox" @click="execution.toggleStepCompletion(item.id)">
-            <span v-if="execution.isStepCompleted(item.id)" class="p-check-icon">✓</span>
+          <div 
+            class="cu-checkbox cu-checkbox--absolute"
+            :class="{ 'cu-checkbox--checked': execution.isStepCompleted(item.id) }"
+            @click="execution.toggleStepCompletion(item.id)"
+          >
+            <span class="cu-checkbox__icon">✓</span>
           </div>
           <div class="p-execution-item-content">
             <div class="p-execution-item-number">{{ index + 1 }}.</div>

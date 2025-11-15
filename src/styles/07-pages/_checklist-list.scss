@@ -204,6 +204,7 @@
 }
 
 .p-execution-item {
+  position: relative;
   display: flex;
   gap: var(--spacing-xs);
   padding: var(--spacing-3) var(--spacing-xs);
@@ -219,42 +220,13 @@
   }
 }
 
-.p-execution-item-checkbox {
-  flex-shrink: 0;
-  width: var(--spacing-18);
-  height: var(--spacing-18);
-  border: var(--border-width-thick) solid var(--border-color);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  margin-top: var(--spacing-2);
-
-  .p-execution-item--completed & {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-  }
-
-  &:hover {
-    border-color: var(--primary-color);
-  }
-}
-
-.p-check-icon {
-  color: var(--light);
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-}
-
 .p-execution-item-content {
   flex: 1;
   display: flex;
   gap: var(--spacing-xs);
   min-width: 0;
   align-items: flex-start;
+  padding-right: var(--spacing-lg);
 }
 
 .p-execution-item-number {
@@ -688,6 +660,12 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--spacing-xs);
+}
+
+.p-execution-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 // 执行结果弹窗样式

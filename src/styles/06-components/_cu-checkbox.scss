@@ -1,0 +1,294 @@
+// ============================================
+// 通用复选框组件样式系统 (cu-checkbox)
+// 项目的唯一checkbox标准，通过样式类组合适应不同场景
+// 
+// 设计原则：
+// - 单一数据源：所有复选框样式必须基于 cu-checkbox
+// - 设计令牌：使用统一的设计令牌（CSS变量）
+// - 简洁优雅：遵循 Apple + 微信设计理念
+// ============================================
+
+@use '../02-tools/mixins' as *;
+
+// ============================================
+// 基础复选框样式
+// ============================================
+
+.cu-checkbox {
+  // 基础布局
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  
+  // 设计令牌：尺寸（基于18px，符合触摸目标最小44px的原则）
+  width: var(--spacing-18);
+  height: var(--spacing-18);
+  min-width: var(--spacing-18);
+  min-height: var(--spacing-18);
+  
+  // 设计令牌：边框、圆角
+  border: var(--border-width-thick) solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  
+  // 交互
+  cursor: pointer;
+  user-select: none;
+  
+  // 过渡效果（符合设计规范：0.2s ease）
+  transition: all var(--transition-base);
+  
+  // 选中状态
+  &--checked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  // 悬停状态
+  &:hover:not(.cu-checkbox--disabled) {
+    border-color: var(--primary-color);
+    
+    &.cu-checkbox--checked {
+      background: var(--primary-color-hover);
+      border-color: var(--primary-color-hover);
+    }
+  }
+  
+  // 焦点状态
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+  
+  // 禁用状态
+  &--disabled {
+    opacity: var(--opacity-disabled);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  // 只读状态
+  &--readonly {
+    cursor: default;
+  }
+}
+
+// 复选框图标
+.cu-checkbox__icon {
+  position: absolute;
+  color: var(--light);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0);
+  transition: all var(--transition-base);
+  
+  // 选中状态时显示图标
+  .cu-checkbox--checked & {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ============================================
+// 尺寸变体 (Size Variants)
+// ============================================
+
+// 小尺寸
+.cu-checkbox--small {
+  width: var(--spacing-lg);
+  height: var(--spacing-lg);
+  min-width: var(--spacing-lg);
+  min-height: var(--spacing-lg);
+  border-width: var(--border-width-base);
+  border-radius: var(--radius-xs);
+  
+  .cu-checkbox__icon {
+    font-size: var(--font-size-caption);
+  }
+}
+
+// 大尺寸
+.cu-checkbox--large {
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  min-width: var(--spacing-2xl);
+  min-height: var(--spacing-2xl);
+  border-width: var(--border-width-thick);
+  border-radius: var(--radius-md);
+  
+  .cu-checkbox__icon {
+    font-size: var(--font-size-body);
+  }
+}
+
+// ============================================
+// 圆角变体 (Radius Variants)
+// ============================================
+
+.cu-checkbox--rounded {
+  border-radius: var(--radius-md);
+}
+
+.cu-checkbox--round {
+  border-radius: var(--radius-full);
+}
+
+// ============================================
+// 位置变体 (Position Variants)
+// ============================================
+
+// 绝对定位（用于放在卡片右上角等场景）
+.cu-checkbox--absolute {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  z-index: var(--z-index-base);
+}
+
+// ============================================
+// 样式变体 (Style Variants)
+// ============================================
+
+// 实心变体（默认已实现）
+.cu-checkbox--solid {
+  // 默认样式即为实心
+}
+
+// 轮廓变体
+.cu-checkbox--outline {
+  background: transparent;
+  
+  &.cu-checkbox--checked {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    
+    .cu-checkbox__icon {
+      color: var(--primary-color);
+    }
+  }
+  
+  &:hover:not(.cu-checkbox--disabled):not(.cu-checkbox--checked) {
+    background: var(--primary-light-weak);
+  }
+}
+
+// ============================================
+// 响应式优化
+// ============================================
+
+@include respond-to('sm') {
+  .cu-checkbox {
+    // 移动端确保触摸目标足够大
+    width: calc(var(--spacing-18) + 2px);
+    height: calc(var(--spacing-18) + 2px);
+    min-width: calc(var(--spacing-18) + 2px);
+    min-height: calc(var(--spacing-18) + 2px);
+  }
+}
+
+// ============================================
+// 暗色模式优化
+// ============================================
+
+[data-theme='dark'] .cu-checkbox,
+.dark .cu-checkbox {
+  border-color: var(--border-color);
+  background: var(--card-bg);
+  
+  &.cu-checkbox--checked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  &.cu-checkbox--outline {
+    background: transparent;
+    
+    &.cu-checkbox--checked {
+      background: var(--primary-light);
+    }
+  }
+}
+
+// ============================================
+// 无障碍优化 (A11y)
+// ============================================
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .cu-checkbox {
+    border-width: 2px;
+    
+    &.cu-checkbox--checked {
+      border-width: 2px;
+    }
+  }
+}
+
+// 减少动画模式支持
+@media (prefers-reduced-motion: reduce) {
+  .cu-checkbox {
+    transition: none;
+    
+    .cu-checkbox__icon {
+      transition: none;
+    }
+  }
+}
+
+// ============================================
+// 工具类辅助 (Utility Helpers)
+// ============================================
+
+// 复选框组合（带标签）
+.cu-checkbox-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  
+  .cu-checkbox {
+    flex-shrink: 0;
+  }
+  
+  .cu-checkbox-label {
+    font-size: var(--font-size-body);
+    color: var(--text-color);
+    line-height: var(--line-height-normal);
+    user-select: none;
+    cursor: pointer;
+  }
+  
+  // 禁用状态
+  &.cu-checkbox-group--disabled {
+    opacity: var(--opacity-disabled);
+    cursor: not-allowed;
+    
+    .cu-checkbox-label {
+      cursor: not-allowed;
+    }
+  }
+}
+
+// 复选框容器（用于多个复选框的布局）
+.cu-checkbox-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  
+  &.cu-checkbox-container--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  &.cu-checkbox-container--inline {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+  }
+}
+

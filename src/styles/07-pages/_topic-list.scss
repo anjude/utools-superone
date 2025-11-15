@@ -2,16 +2,16 @@
 @use '../02-tools/mixins' as *;
 
 .p-topic-list-wrap {
-  padding: 8px;
+  padding: var(--spacing-sm);
   min-height: 100vh;
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-6);
 
   @include respond-to('sm') {
-    padding: 12px;
-    gap: 8px;
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 }
 
@@ -19,17 +19,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
+  padding: var(--spacing-xs) 0;
   margin-bottom: 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: var(--border-width-base) solid var(--border-color);
 
   .p-page-title {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
     letter-spacing: -0.02em;
-    transition: color 0.3s ease;
+    transition: color var(--transition-normal);
   }
 
   .p-header-actions {
@@ -44,20 +44,20 @@
 .p-error,
 .p-empty {
   text-align: center;
-  padding: 12px;
+  padding: var(--spacing-md);
   color: var(--text-color);
-  opacity: 0.7;
-  font-size: 14px;
-  transition: color 0.3s ease, opacity 0.3s ease;
+  opacity: var(--text-opacity-quaternary);
+  font-size: var(--font-size-body);
+  transition: color var(--transition-normal), opacity var(--transition-normal);
 }
 
 .p-error {
   color: var(--error-color);
-  opacity: 0.9;
+  opacity: var(--text-opacity-hover);
 
   p {
-    margin: 0 0 8px;
-    font-weight: 500;
+    margin: 0 0 var(--spacing-sm);
+    font-weight: var(--font-weight-medium);
   }
 }
 
@@ -65,15 +65,15 @@
 .p-topics-selector-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 2px 0;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2) 0;
 }
 
 // 主题选择器（左侧，可滚动）
 .p-topics-selector {
   flex: 1;
   display: flex;
-  gap: 6px;
+  gap: var(--spacing-6);
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
@@ -84,7 +84,7 @@
   scrollbar-color: var(--border-color) transparent;
   
   &::-webkit-scrollbar {
-    height: 6px;
+    height: var(--spacing-6);
   }
   
   &::-webkit-scrollbar-track {
@@ -93,7 +93,7 @@
   
   &::-webkit-scrollbar-thumb {
     background: var(--border-color);
-    border-radius: 3px;
+    border-radius: var(--radius-xs);
     
     &:hover {
       background: var(--primary-color);
@@ -111,20 +111,20 @@
 .p-topic-tag {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 10px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-10);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   background: var(--card-bg);
   color: var(--text-color);
-  font-size: 13px;
+  font-size: var(--font-size-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   white-space: nowrap;
 
   &:hover {
     border-color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--primary-light);
     color: var(--primary-color);
   }
 
@@ -136,45 +136,45 @@
 }
 
 .p-topic-tag-top-icon {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   line-height: 1;
-  margin-right: 3px;
+  margin-right: var(--spacing-3);
   display: inline-block;
 }
 
 .p-topic-tag-name {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .p-topic-tag-edit-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: var(--spacing-18);
+  height: var(--spacing-18);
   padding: 0;
-  margin-left: 4px;
-  font-size: 12px;
+  margin-left: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
   line-height: 1;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
   opacity: 0;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   flex-shrink: 0;
 
   .p-topic-tag:hover & {
-    opacity: 0.6;
+    opacity: var(--text-opacity-tertiary);
   }
 
   &:hover {
     opacity: 1 !important;
-    background: rgba(1, 194, 96, 0.15);
+    background: var(--primary-light-strong);
   }
 
   .p-topic-tag--active & {
-    opacity: 0.7;
+    opacity: var(--text-opacity-quaternary);
     color: var(--light);
 
     &:hover {
@@ -187,7 +187,7 @@
 // 编辑器区域
 .p-editor-section {
   flex-shrink: 0;
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-6);
 }
 
 // 日志区域
@@ -198,26 +198,26 @@
 }
 
 .p-logs-title {
-  margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-6);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
-  transition: color 0.3s ease;
+  transition: color var(--transition-normal);
 }
 
 .p-logs-loading,
 .p-logs-error,
 .p-logs-empty {
-  padding: 12px;
+  padding: var(--spacing-md);
   text-align: center;
   color: var(--text-color);
-  opacity: 0.6;
-  font-size: 13px;
+  opacity: var(--text-opacity-tertiary);
+  font-size: var(--font-size-md);
 }
 
 .p-logs-error {
   color: var(--error-color);
-  opacity: 0.9;
+  opacity: var(--text-opacity-hover);
 }
 
 .p-logs-list {
@@ -226,7 +226,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 // 使用 cu-card 作为唯一卡片标准
@@ -235,16 +235,16 @@
   // 页面特定的悬停效果（覆盖 cu-card 默认样式）
   &:hover {
     border-color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--primary-light);
   }
 }
 
 .p-log-content {
   color: var(--text-color);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
   word-break: break-word;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 
   :deep(h1),
   :deep(h2),
@@ -252,20 +252,20 @@
   :deep(h4),
   :deep(h5),
   :deep(h6) {
-    margin: 6px 0 3px;
-    font-weight: 600;
+    margin: var(--spacing-6) 0 var(--spacing-3);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
-    font-size: 14px;
+    font-size: var(--font-size-body);
   }
 
   :deep(p) {
-    margin: 3px 0;
+    margin: var(--spacing-3) 0;
   }
 
   :deep(ul),
   :deep(ol) {
-    margin: 3px 0;
-    padding-left: 18px;
+    margin: var(--spacing-3) 0;
+    padding-left: var(--spacing-18);
   }
 
   :deep(li) {
@@ -273,26 +273,26 @@
   }
 
   :deep(code) {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 2px 4px;
-    border-radius: 3px;
+    background: var(--black-light);
+    padding: var(--spacing-2) var(--spacing-xs);
+    border-radius: var(--radius-xs);
     font-size: 0.9em;
   }
 
   :deep(pre) {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 4px;
-    border-radius: 4px;
+    background: var(--black-light);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-xs);
     overflow-x: auto;
-    margin: 4px 0;
-    font-size: 12px;
+    margin: var(--spacing-xs) 0;
+    font-size: var(--font-size-body-sm);
   }
 
   :deep(blockquote) {
-    border-left: 2px solid var(--primary-color);
-    padding-left: 6px;
-    margin: 4px 0;
-    opacity: 0.8;
+    border-left: var(--border-width-thick) solid var(--primary-color);
+    padding-left: var(--spacing-6);
+    margin: var(--spacing-xs) 0;
+    opacity: var(--text-opacity-hover);
   }
 }
 
@@ -300,46 +300,46 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: var(--border-width-base) solid var(--border-color);
 }
 
 .p-log-time {
-  font-size: 11px;
+  font-size: var(--font-size-sm);
   color: var(--text-color);
-  opacity: 0.5;
+  opacity: var(--text-opacity-secondary);
 }
 
 .p-log-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-6);
 }
 
 .p-log-action-btn {
-  padding: 2px 8px;
-  font-size: 11px;
+  padding: var(--spacing-2) var(--spacing-sm);
+  font-size: var(--font-size-sm);
   color: var(--text-color);
   background: transparent;
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0.7;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-quaternary);
 
   &:hover {
     opacity: 1;
     border-color: var(--primary-color);
     color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--primary-light);
   }
 
   &--danger {
     &:hover {
       border-color: var(--error-color);
       color: var(--error-color);
-      background: rgba(245, 101, 101, 0.1);
+      background: var(--error-danger-light);
     }
   }
 }
@@ -347,32 +347,32 @@
 // 右键菜单样式
 .p-context-menu {
   position: fixed;
-  z-index: 1000;
+  z-index: var(--z-index-dropdown);
   min-width: 120px;
-  padding: 4px 0;
+  padding: var(--spacing-xs) 0;
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: var(--border-width-base) solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   cursor: default;
   user-select: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 
   .p-context-menu-item {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
     color: var(--text-color);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-base);
 
     &:hover {
-      background: rgba(1, 194, 96, 0.1);
+      background: var(--primary-light);
       color: var(--primary-color);
     }
 
     &--danger {
       &:hover {
-        background: rgba(245, 101, 101, 0.1);
+        background: var(--error-danger-light);
         color: var(--error-color);
       }
     }
