@@ -1,17 +1,17 @@
-// ChecklistList页面样式 - 参考TopicList样式
+// ChecklistList页面样式 - 紧凑布局
 @use '../02-tools/mixins' as *;
 
 .p-checklist-list-wrap {
-  padding: var(--spacing-sm);
+  padding: 8px;
   min-height: 100vh;
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 6px;
 
   @include respond-to('sm') {
-    padding: var(--spacing-md);
-    gap: var(--spacing-md);
+    padding: 12px;
+    gap: 8px;
   }
 }
 
@@ -19,17 +19,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md) 0;
-  margin-bottom: var(--spacing-sm);
+  padding: 4px 0;
+  margin-bottom: 0;
   border-bottom: 1px solid var(--border-color);
 
   .p-page-title {
     margin: 0;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-color);
     letter-spacing: -0.02em;
-    transition: color var(--transition-normal);
+    transition: color 0.3s ease;
   }
 
   .p-header-actions {
@@ -44,11 +44,11 @@
 .p-error,
 .p-empty {
   text-align: center;
-  padding: var(--spacing-md);
+  padding: 12px;
   color: var(--text-color);
   opacity: 0.7;
   font-size: 14px;
-  transition: color var(--transition-normal), opacity var(--transition-normal);
+  transition: color 0.3s ease, opacity 0.3s ease;
 }
 
 .p-error {
@@ -56,7 +56,7 @@
   opacity: 0.9;
 
   p {
-    margin: 0 0 var(--spacing-sm);
+    margin: 0 0 8px;
     font-weight: 500;
   }
 }
@@ -65,8 +65,8 @@
 .p-checklists-selector-wrapper {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-xs) 0;
+  gap: 8px;
+  padding: 2px 0;
 }
 
 // 清单选择器（可滚动）
@@ -111,12 +111,12 @@
   color: var(--text-color);
   font-size: 13px;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: all 0.2s ease;
   white-space: nowrap;
 
   &:hover {
     border-color: var(--primary-color);
-    background: var(--theme-light);
+    background: rgba(1, 194, 96, 0.1);
     color: var(--primary-color);
   }
 
@@ -141,29 +141,48 @@
 // 执行区域
 .p-execution-section {
   flex-shrink: 0;
-  margin-bottom: var(--spacing-sm);
-  padding: var(--spacing-md);
+  margin-bottom: 6px;
+  padding: 6px 10px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
 }
 
 .p-execution-header {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 6px;
   
   // 进度条区域间距
   .cu-progress-info {
-    margin-top: var(--spacing-sm);
+    margin-top: 4px;
+    margin-bottom: 0;
+    padding: 0;
   }
   
   .cu-progress-modern {
-    margin-top: var(--spacing-xs);
+    margin-top: 3px;
+    height: 6px;
+  }
+  
+  .cu-progress-label {
+    gap: 4px;
+  }
+  
+  .cu-progress-label-text {
+    font-size: 12px;
+  }
+  
+  .cu-progress-count {
+    font-size: 12px;
+  }
+  
+  .cu-progress-percent {
+    font-size: 12px;
   }
 }
 
 .p-execution-title {
-  margin: 0 0 var(--spacing-sm);
-  font-size: 16px;
+  margin: 0 0 4px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-color);
 }
@@ -171,30 +190,30 @@
 
 .p-execution-actions {
   display: flex;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-md);
+  gap: 6px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .p-execution-items {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
+  gap: 4px;
+  margin-bottom: 6px;
 }
 
 .p-execution-item {
   display: flex;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  gap: 4px;
+  padding: 3px 4px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
-  transition: all var(--transition-base);
+  transition: all 0.2s ease;
 
   &--completed {
-    background: var(--theme-light);
+    background: rgba(1, 194, 96, 0.1);
     border-color: var(--primary-color);
     opacity: 0.8;
   }
@@ -202,15 +221,16 @@
 
 .p-execution-item-checkbox {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border: 2px solid var(--border-color);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: all 0.2s ease;
+  margin-top: 2px;
 
   .p-execution-item--completed & {
     background: var(--primary-color);
@@ -224,15 +244,17 @@
 
 .p-check-icon {
   color: var(--light);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
+  line-height: 1;
 }
 
 .p-execution-item-content {
   flex: 1;
   display: flex;
-  gap: var(--spacing-sm);
+  gap: 4px;
   min-width: 0;
+  align-items: flex-start;
 }
 
 .p-execution-item-number {
@@ -240,69 +262,104 @@
   font-weight: 600;
   color: var(--text-color);
   opacity: 0.7;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 2px;
 }
 
 .p-execution-item-body {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .p-execution-item-text {
   color: var(--text-color);
   font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
+  margin-bottom: 0;
+
+  :deep(h1),
+  :deep(h2),
+  :deep(h3),
+  :deep(h4),
+  :deep(h5),
+  :deep(h6) {
+    margin: 6px 0 3px;
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 14px;
+  }
+
+  :deep(p) {
+    margin: 3px 0;
+  }
+
+  :deep(ul),
+  :deep(ol) {
+    margin: 3px 0;
+    padding-left: 18px;
+  }
+
+  :deep(li) {
+    margin: 1px 0;
+  }
 }
 
 .p-execution-item-notes {
-  margin-top: var(--spacing-sm);
+  margin-top: 2px;
 }
 
 .p-execution-item-notes-btn {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 11px;
+  padding: 1px 6px;
+  font-size: 10px;
   color: var(--text-color);
   background: transparent;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all var(--transition-base);
-  opacity: 0.7;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+  align-self: flex-start;
+  margin-top: 2px;
 
   &:hover {
     opacity: 1;
     border-color: var(--primary-color);
     color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
   }
 }
 
 .p-execution-summary {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
+  margin-top: 6px;
+  padding-top: 4px;
   border-top: 1px solid var(--border-color);
 }
 
 .p-execution-summary-title {
-  margin: 0 0 var(--spacing-sm);
-  font-size: 14px;
+  margin: 0 0 4px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-color);
 }
 
 .p-execution-footer {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
+  margin-top: 6px;
+  padding-top: 4px;
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
 }
 
 .p-execution-empty {
-  padding: var(--spacing-2xl);
+  padding: 12px;
   text-align: center;
   color: var(--text-color);
   opacity: 0.6;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 // 执行记录区域
@@ -586,35 +643,35 @@
   }
 }
 
-// 右键菜单样式（复用TopicList的样式）
+// 右键菜单样式
 .p-context-menu {
   position: fixed;
-  z-index: var(--z-index-popover);
+  z-index: 1000;
   min-width: 120px;
-  padding: var(--spacing-xs) 0;
+  padding: 4px 0;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   cursor: default;
   user-select: none;
-  transition: all var(--transition-base);
+  transition: all 0.2s ease;
 
   .p-context-menu-item {
-    padding: var(--spacing-sm) var(--spacing-lg);
+    padding: 8px 16px;
     font-size: 13px;
     color: var(--text-color);
     cursor: pointer;
-    transition: background-color var(--transition-base);
+    transition: background-color 0.2s ease;
 
     &:hover {
-      background: var(--theme-light);
+      background: rgba(1, 194, 96, 0.1);
       color: var(--primary-color);
     }
 
     &--danger {
       &:hover {
-        background: rgba(231, 76, 60, 0.1);
+        background: rgba(245, 101, 101, 0.1);
         color: var(--error-color);
       }
     }
@@ -630,7 +687,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 4px;
 }
 
 // 执行结果弹窗样式

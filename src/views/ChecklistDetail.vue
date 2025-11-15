@@ -113,37 +113,18 @@ onMounted(async () => {
       </button>
     </div>
 
-    <!-- 清单详情和执行历史 -->
+    <!-- 执行历史列表 -->
     <div v-else class="p-checklist-detail-content">
-      <!-- 清单信息 -->
-      <div class="p-checklist-info">
-        <h3 class="p-checklist-info-title">清单信息</h3>
-        <div class="p-checklist-items">
-          <div
-            v-for="(item, index) in checklist.items"
-            :key="item.id"
-            class="p-checklist-item"
-          >
-            <div class="p-checklist-item-number">{{ index + 1 }}.</div>
-            <div class="p-checklist-item-content">
-              <MarkdownViewer :content="item.contentMd" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 执行记录列表 -->
       <div class="p-executions-section">
-        <h3 class="p-executions-title">
-          {{ checklist.title }} 的执行记录
-        </h3>
         <div v-if="executionHistory.executionsLoading.value" class="p-executions-loading">加载中...</div>
         <div v-else-if="executionHistory.executionsError.value" class="p-executions-error">{{ executionHistory.executionsError.value }}</div>
         <div v-else-if="executionHistory.executions.value.length === 0" class="p-executions-empty">暂无执行记录</div>
         <ul v-else class="p-executions-list">
           <li v-for="execution in executionHistory.executions.value" :key="execution.id" class="cu-card cu-card--small p-execution-record-item">
-            <div class="p-execution-record-header">
-              <span class="p-execution-record-time">{{ timestampToChineseDateTime(execution.createTime) }}</span>
+            <div class="p-execution-record-content">
+              <div class="p-execution-record-progress">
+                {{ executionHistory.getExecutionProgress(execution) }}
+              </div>
               <span class="p-execution-record-status" :class="{
                 'p-execution-record-status--completed': execution.status === ChecklistExecutionStatus.Completed,
                 'p-execution-record-status--in-progress': execution.status === ChecklistExecutionStatus.InProgress
@@ -151,24 +132,24 @@ onMounted(async () => {
                 {{ execution.status === ChecklistExecutionStatus.Completed ? '已完成' : '进行中' }}
               </span>
             </div>
-            <div class="p-execution-record-progress">
-              完成进度: {{ executionHistory.getExecutionProgress(execution) }}
-            </div>
-            <div class="p-execution-record-actions">
-              <button 
-                class="p-execution-record-action-btn" 
-                @click="executionHistory.handleViewExecutionDetail(execution)"
-                title="查看详情"
-              >
-                查看详情
-              </button>
-              <button 
-                class="p-execution-record-action-btn p-execution-record-action-btn--danger" 
-                @click="executionHistory.handleDeleteExecution(execution).then(() => executionHistory.loadExecutions(checklistId!))"
-                title="删除"
-              >
-                删除
-              </button>
+            <div class="p-execution-record-meta">
+              <span class="p-execution-record-time">{{ timestampToChineseDateTime(execution.createTime) }}</span>
+              <div class="p-execution-record-actions">
+                <button 
+                  class="p-execution-record-action-btn" 
+                  @click="executionHistory.handleViewExecutionDetail(execution)"
+                  title="查看详情"
+                >
+                  查看详情
+                </button>
+                <button 
+                  class="p-execution-record-action-btn p-execution-record-action-btn--danger" 
+                  @click="executionHistory.handleDeleteExecution(execution).then(() => executionHistory.loadExecutions(checklistId!))"
+                  title="删除"
+                >
+                  删除
+                </button>
+              </div>
             </div>
           </li>
         </ul>
@@ -179,7 +160,7 @@ onMounted(async () => {
     <el-dialog
       v-model="executionHistory.showExecutionDetailDialog.value"
       title="执行记录详情"
-      width="700px"
+      width="600px"
       @close="executionHistory.handleCloseExecutionDetailDialog"
     >
       <div v-if="executionHistory.viewingExecution.value && checklist" class="p-execution-detail">

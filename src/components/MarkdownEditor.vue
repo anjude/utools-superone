@@ -13,8 +13,12 @@ interface Props {
   modelValue: string
   /** 占位符 */
   placeholder?: string
-  /** 编辑器高度 */
-  height?: string | number
+  /** 编辑器高度，支持 'auto' 自适应 */
+  height?: string | number | 'auto'
+  /** 编辑器最大高度 */
+  maxHeight?: string | number
+  /** 编辑器最小高度 */
+  minHeight?: string | number
   /** 是否禁用 */
   disabled?: boolean
   /** 工具栏配置 */
@@ -25,7 +29,9 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
-  height: '50px',
+  height: 'auto',
+  maxHeight: '600px',
+  minHeight: '200px',
   disabled: false,
   toolbars: () => [],
   autofocus: false,
@@ -49,15 +55,44 @@ const editorContent = ref(props.modelValue)
 const { isDark } = useTheme()
 
 const editorHeight = computed(() => {
+  if (props.height === 'auto') {
+    return 'auto'
+  }
   if (typeof props.height === 'number') {
     return `${props.height}px`
   }
   return props.height
 })
 
-// 计算 wrapper 的高度（用于 CSS）
-const wrapperHeight = computed(() => {
-  return editorHeight.value
+// 计算最大高度
+const editorMaxHeight = computed(() => {
+  if (typeof props.maxHeight === 'number') {
+    return `${props.maxHeight}px`
+  }
+  return props.maxHeight
+})
+
+// 计算最小高度
+const editorMinHeight = computed(() => {
+  if (typeof props.minHeight === 'number') {
+    return `${props.minHeight}px`
+  }
+  return props.minHeight
+})
+
+// 计算 wrapper 的样式（用于 CSS）
+const wrapperStyle = computed(() => {
+  const style: Record<string, string> = {}
+  if (props.height !== 'auto') {
+    style.height = editorHeight.value
+  }
+  if (props.maxHeight) {
+    style.maxHeight = editorMaxHeight.value
+  }
+  if (props.minHeight) {
+    style.minHeight = editorMinHeight.value
+  }
+  return style
 })
 
 // 监听外部传入的 modelValue 变化
@@ -169,7 +204,11 @@ onMounted(async () => {
     containerRef.value.id = editorContainerId
   }
 
-  const heightValue = editorHeight.value
+  // 如果高度是 auto，使用 minHeight 作为初始值，然后通过 CSS 控制自适应
+  // 如果没有设置 minHeight，使用默认的 200px
+  const heightValue = props.height === 'auto' 
+    ? (props.minHeight ? (typeof props.minHeight === 'number' ? `${props.minHeight}px` : props.minHeight) : '200px')
+    : editorHeight.value
 
   try {
     vditor.value = new Vditor(editorContainerId, {
@@ -433,7 +472,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="markdown-editor-wrapper" :style="{ height: wrapperHeight }">
+  <div 
+    class="markdown-editor-wrapper" 
+    :class="{ 'auto-height': props.height === 'auto' }"
+    :style="wrapperStyle"
+  >
     <div ref="containerRef" class="vditor-container"></div>
   </div>
 </template>
@@ -446,6 +489,40 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  
+  // 当高度为 auto 时，使用自适应高度
+  &.auto-height {
+    height: auto;
+    min-height: inherit;
+    // 当内容超过最大高度时，显示滚动条
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    .vditor-container {
+      height: auto;
+      min-height: inherit;
+    }
+    
+    :deep(.vditor) {
+      height: auto;
+      min-height: inherit;
+      overflow: visible;
+      
+      .vditor-content {
+        flex: none;
+        // 当内容超过最大高度时，显示滚动条
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: auto;
+        
+        .vditor-wysiwyg,
+        .vditor-ir,
+        .vditor-sv {
+          min-height: auto;
+        }
+      }
+    }
+  }
 
   .vditor-container {
     border-radius: var(--radius-md);

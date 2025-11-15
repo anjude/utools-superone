@@ -142,7 +142,9 @@ onMounted(() => {
       <MarkdownEditor
         v-model="editorContent"
         :placeholder="selectedTopic ? `记录到「${selectedTopic.topicName}」...` : '请先选择一个主题'"
-        :height="150"
+        height="auto"
+        :min-height="120"
+        :max-height="300"
         :disabled="!selectedTopicId"
       />
     </div>
