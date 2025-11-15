@@ -44,6 +44,25 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
+  
+  // 过渡动画
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  // Z-Index 层级
+  --z-index-base: 0;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  
+  // 主题浅色（用于hover背景）
+  --theme-light: rgba(7, 193, 96, 0.1);
 }
 
 // 深色主题变量
@@ -91,6 +110,25 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
+  
+  // 过渡动画（与浅色模式相同）
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  // Z-Index 层级（与浅色模式相同）
+  --z-index-base: 0;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  
+  // 主题浅色（用于hover背景）
+  --theme-light: rgba(7, 193, 96, 0.1);
 }
 
 // 兼容 prefers-color-scheme（用于自动模式）
@@ -136,6 +174,25 @@
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 9999px;
+    
+    // 过渡动画
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    // Z-Index 层级
+    --z-index-base: 0;
+    --z-index-dropdown: 1000;
+    --z-index-sticky: 1020;
+    --z-index-fixed: 1030;
+    --z-index-modal-backdrop: 1040;
+    --z-index-modal: 1050;
+    --z-index-popover: 1060;
+    --z-index-tooltip: 1070;
+    
+    // 主题浅色（用于hover背景）
+    --theme-light: rgba(7, 193, 96, 0.1);
   }
 }
 

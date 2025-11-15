@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { ElDialog } from 'element-plus'
@@ -81,6 +81,18 @@ const handleCompleteExecution = async () => {
 const handleViewDetail = (checklistId: number) => {
   router.push({ name: 'ChecklistDetail', params: { id: checklistId } })
 }
+
+// 根据百分比计算进度条颜色（使用主题色）
+const progressBarStyle = computed(() => {
+  const percent = execution.progressPercent.value
+  // 使用主题色，100%时使用深色变体作为完成提示
+  const color = percent >= 100 ? 'var(--primary-color-active)' : 'var(--primary-color)'
+  
+  return {
+    width: `${percent}%`,
+    backgroundColor: color
+  }
+})
 
 onMounted(async () => {
   await checklistStore.loadChecklists()
@@ -169,7 +181,7 @@ onMounted(async () => {
           <span class="cu-progress-percent">{{ execution.progressPercent }}%</span>
         </div>
         <div class="cu-progress-modern">
-          <div class="cu-progress__bar" :style="{ width: `${execution.progressPercent}%` }"></div>
+          <div class="cu-progress__bar" :style="progressBarStyle"></div>
         </div>
       </div>
 
@@ -446,152 +458,3 @@ onMounted(async () => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-@use '@/styles/07-pages/checklist-list' as *;
-
-.p-execution-header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-sm);
-}
-
-// 执行结果弹窗样式
-.p-execution-result {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-.p-execution-result-header {
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.p-execution-result-title {
-  margin: 0 0 var(--spacing-sm);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.p-execution-result-time {
-  margin: 0 0 var(--spacing-md);
-  font-size: 13px;
-  color: var(--text-color);
-  opacity: 0.7;
-}
-
-.p-execution-result-progress {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.p-progress-label {
-  font-size: 13px;
-  color: var(--text-color);
-  opacity: 0.7;
-}
-
-.p-progress-value {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-color);
-  min-width: 50px;
-}
-
-.p-progress-bar-small {
-  flex: 1;
-  height: 6px;
-  background: var(--border-color);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.p-progress-bar-fill-small {
-  height: 100%;
-  min-width: 0;
-  width: 0;
-  background: var(--primary-color);
-  transition: width 0.3s ease;
-  border-radius: 3px;
-}
-
-.p-execution-result-section-title {
-  margin: 0 0 var(--spacing-md);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.p-execution-result-steps {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.p-execution-result-step {
-  padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background: var(--bg-color);
-  transition: border-color 0.2s ease;
-
-  &:hover {
-    border-color: var(--primary-color);
-  }
-
-  &--skipped {
-    opacity: 0.6;
-    background: rgba(0, 0, 0, 0.02);
-  }
-}
-
-.p-execution-result-step-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-sm);
-}
-
-.p-execution-result-step-number {
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.p-execution-result-step-status {
-  font-size: 12px;
-  color: var(--text-color);
-  opacity: 0.7;
-}
-
-.p-execution-result-step-content {
-  margin-top: var(--spacing-sm);
-  padding: var(--spacing-sm);
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--text-color);
-  line-height: 1.6;
-}
-
-.p-execution-result-step-summary {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color);
-  font-size: 13px;
-  color: var(--text-color);
-  line-height: 1.6;
-
-  strong {
-    font-weight: 600;
-    margin-right: var(--spacing-sm);
-  }
-}
-
-.p-execution-result-summary {
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color);
-}
-</style>

@@ -1,120 +1,65 @@
-/* ==================
- * 进度条组件样式（标准组件：cu-progress）
- * ITCSS Components 层 - 一组件一文件
- * ================== */
+// ============================================
+// 通用进度条组件样式系统 (cu-progress)
+// ============================================
 
-/* 传统进度条样式（向后兼容） */
-.cu-progress {
-	overflow: hidden;
-	height: 28px;
-	background-color: var(--border-color);
-	display: inline-flex;
-	align-items: center;
-	width: 100%;
-}
+@use '../02-tools/mixins' as *;
 
-.cu-progress + view,
-.cu-progress + text {
-	line-height: 1;
-}
+// ============================================
+// 进度信息区域
+// ============================================
 
-.cu-progress.xs {
-	height: 10px;
-}
-
-.cu-progress.sm {
-	height: 20px;
-}
-
-.cu-progress view {
-	width: 0;
-	height: 100%;
-	align-items: center;
-	display: flex;
-	justify-items: flex-end;
-	justify-content: space-around;
-	font-size: 12px;
-	color: var(--light);
-	transition: width 0.6s ease;
-}
-
-.cu-progress text {
-	align-items: center;
-	display: flex;
-	font-size: 12px;
-	color: var(--text-color);
-	text-indent: 10px;
-}
-
-.cu-progress.text-progress {
-	padding-right: 60px;
-}
-
-.cu-progress.striped view {
-	background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-	background-size: 72px 72px;
-}
-
-.cu-progress.active view {
-	animation: cu-progress-stripes 2s linear infinite;
-}
-
-@keyframes cu-progress-stripes {
-	from {
-		background-position: 72px 0;
-	}
-
-	to {
-		background-position: 0 0;
-	}
-}
-
-/* 现代化进度条样式（推荐使用） */
-.cu-progress-modern {
-  width: 100%;
-  height: 6px;
-  background: var(--border-color);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-
-.cu-progress-modern .cu-progress__bar {
-  display: block;
-  height: 100%;
-  min-width: 0;
-  background: var(--primary-color);
-  border-radius: var(--radius-sm);
-  transition: width 0.3s ease;
-}
-
-/* 进度信息容器 */
 .cu-progress-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
 }
 
 .cu-progress-label {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .cu-progress-label-text {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-color);
+  opacity: 0.7;
+  font-weight: 500;
 }
 
 .cu-progress-count {
   font-size: 13px;
   color: var(--text-color);
-  opacity: 0.7;
+  font-weight: 600;
 }
 
 .cu-progress-percent {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 14px;
   color: var(--primary-color);
+  font-weight: 600;
+}
+
+// ============================================
+// 现代风格进度条
+// ============================================
+
+.cu-progress-modern {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cu-progress__bar {
+  height: 100%;
+  min-width: 0;
+  width: 0;
+  background: var(--primary-color);
+  border-radius: 4px;
+  transition: width 0.3s ease;
 }
 

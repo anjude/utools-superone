@@ -2,16 +2,16 @@
 @use '../02-tools/mixins' as *;
 
 .p-checklist-list-wrap {
-  padding: 8px;
+  padding: var(--spacing-sm);
   min-height: 100vh;
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 
   @include respond-to('sm') {
-    padding: 12px;
-    gap: 12px;
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
   }
 }
 
@@ -29,7 +29,7 @@
     font-weight: 600;
     color: var(--text-color);
     letter-spacing: -0.02em;
-    transition: color 0.3s ease;
+    transition: color var(--transition-normal);
   }
 
   .p-header-actions {
@@ -44,11 +44,11 @@
 .p-error,
 .p-empty {
   text-align: center;
-  padding: 12px;
+  padding: var(--spacing-md);
   color: var(--text-color);
   opacity: 0.7;
   font-size: 14px;
-  transition: color 0.3s ease, opacity 0.3s ease;
+  transition: color var(--transition-normal), opacity var(--transition-normal);
 }
 
 .p-error {
@@ -56,7 +56,7 @@
   opacity: 0.9;
 
   p {
-    margin: 0 0 8px;
+    margin: 0 0 var(--spacing-sm);
     font-weight: 500;
   }
 }
@@ -65,8 +65,8 @@
 .p-checklists-selector-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 0;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
 }
 
 // 清单选择器（可滚动）
@@ -92,7 +92,7 @@
   
   &::-webkit-scrollbar-thumb {
     background: var(--border-color);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     
     &:hover {
       background: var(--primary-color);
@@ -111,12 +111,12 @@
   color: var(--text-color);
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   white-space: nowrap;
 
   &:hover {
     border-color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--theme-light);
     color: var(--primary-color);
   }
 
@@ -141,19 +141,28 @@
 // 执行区域
 .p-execution-section {
   flex-shrink: 0;
-  margin-bottom: 8px;
-  padding: 12px;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-md);
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
 }
 
 .p-execution-header {
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
+  
+  // 进度条区域间距
+  .cu-progress-info {
+    margin-top: var(--spacing-sm);
+  }
+  
+  .cu-progress-modern {
+    margin-top: var(--spacing-xs);
+  }
 }
 
 .p-execution-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-sm);
   font-size: 16px;
   font-weight: 600;
   color: var(--text-color);
@@ -162,30 +171,30 @@
 
 .p-execution-actions {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border-color);
 }
 
 .p-execution-items {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
 }
 
 .p-execution-item {
   display: flex;
-  gap: 8px;
-  padding: 8px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 
   &--completed {
-    background: rgba(1, 194, 96, 0.05);
+    background: var(--theme-light);
     border-color: var(--primary-color);
     opacity: 0.8;
   }
@@ -201,7 +210,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 
   .p-execution-item--completed & {
     background: var(--primary-color);
@@ -222,7 +231,7 @@
 .p-execution-item-content {
   flex: 1;
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
   min-width: 0;
 }
 
@@ -242,22 +251,22 @@
   color: var(--text-color);
   font-size: 13px;
   line-height: 1.5;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .p-execution-item-notes {
-  margin-top: 8px;
+  margin-top: var(--spacing-sm);
 }
 
 .p-execution-item-notes-btn {
-  padding: 4px 8px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 11px;
   color: var(--text-color);
   background: transparent;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   opacity: 0.7;
 
   &:hover {
@@ -268,28 +277,28 @@
 }
 
 .p-execution-summary {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
   border-top: 1px solid var(--border-color);
 }
 
 .p-execution-summary-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-sm);
   font-size: 14px;
   font-weight: 600;
   color: var(--text-color);
 }
 
 .p-execution-footer {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
 }
 
 .p-execution-empty {
-  padding: 24px;
+  padding: var(--spacing-2xl);
   text-align: center;
   color: var(--text-color);
   opacity: 0.6;
@@ -308,13 +317,13 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--text-color);
-  transition: color 0.3s ease;
+  transition: color var(--transition-normal);
 }
 
 .p-executions-loading,
 .p-executions-error,
 .p-executions-empty {
-  padding: 12px;
+  padding: var(--spacing-md);
   text-align: center;
   color: var(--text-color);
   opacity: 0.6;
@@ -338,7 +347,7 @@
 .p-execution-record-item {
   &:hover {
     border-color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--theme-light);
   }
 }
 
@@ -362,13 +371,13 @@
   font-weight: 500;
 
   &--completed {
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--theme-light);
     color: var(--primary-color);
   }
 
   &--in-progress {
     background: rgba(255, 193, 7, 0.1);
-    color: #ffc107;
+    color: var(--warning-color);
   }
 }
 
@@ -382,34 +391,34 @@
 .p-execution-record-actions {
   display: flex;
   gap: 6px;
-  margin-top: 4px;
-  padding-top: 4px;
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
   border-top: 1px solid var(--border-color);
 }
 
 .p-execution-record-action-btn {
-  padding: 2px 8px;
+  padding: 2px var(--spacing-sm);
   font-size: 11px;
   color: var(--text-color);
   background: transparent;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   opacity: 0.7;
 
   &:hover {
     opacity: 1;
     border-color: var(--primary-color);
     color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--theme-light);
   }
 
   &--danger {
     &:hover {
       border-color: var(--error-color);
       color: var(--error-color);
-      background: rgba(245, 101, 101, 0.1);
+      background: rgba(231, 76, 60, 0.1);
     }
   }
 }
@@ -418,12 +427,12 @@
 .p-checklist-items-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
 }
 
 .p-checklist-item-editor {
-  padding: 12px;
+  padding: var(--spacing-md);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-color);
@@ -433,7 +442,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .p-checklist-item-number {
@@ -443,25 +452,25 @@
 
 .p-checklist-item-actions {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .p-checklist-item-action-btn {
-  padding: 4px 8px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 12px;
   color: var(--text-color);
   background: transparent;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   opacity: 0.7;
 
   &:hover:not(:disabled) {
     opacity: 1;
     border-color: var(--primary-color);
     color: var(--primary-color);
-    background: rgba(1, 194, 96, 0.1);
+    background: var(--theme-light);
   }
 
   &:disabled {
@@ -473,7 +482,7 @@
     &:hover:not(:disabled) {
       border-color: var(--error-color);
       color: var(--error-color);
-      background: rgba(245, 101, 101, 0.1);
+      background: rgba(231, 76, 60, 0.1);
     }
   }
 }
@@ -481,7 +490,7 @@
 .p-checklist-add-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .p-checklist-limit-tip {
@@ -580,32 +589,32 @@
 // 右键菜单样式（复用TopicList的样式）
 .p-context-menu {
   position: fixed;
-  z-index: 1000;
+  z-index: var(--z-index-popover);
   min-width: 120px;
-  padding: 4px 0;
+  padding: var(--spacing-xs) 0;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   cursor: default;
   user-select: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 
   .p-context-menu-item {
-    padding: 8px 16px;
+    padding: var(--spacing-sm) var(--spacing-lg);
     font-size: 13px;
     color: var(--text-color);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-base);
 
     &:hover {
-      background: rgba(1, 194, 96, 0.1);
+      background: var(--theme-light);
       color: var(--primary-color);
     }
 
     &--danger {
       &:hover {
-        background: rgba(245, 101, 101, 0.1);
+        background: rgba(231, 76, 60, 0.1);
         color: var(--error-color);
       }
     }
@@ -614,5 +623,152 @@
       display: block;
     }
   }
+}
+
+// 执行区域顶部布局
+.p-execution-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+// 执行结果弹窗样式
+.p-execution-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.p-execution-result-header {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.p-execution-result-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-result-time {
+  margin: 0 0 var(--spacing-md);
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-result-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.p-progress-label {
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-progress-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+  min-width: 50px;
+}
+
+.p-progress-bar-small {
+  flex: 1;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.p-progress-bar-fill-small {
+  height: 100%;
+  min-width: 0;
+  width: 0;
+  background: var(--primary-color);
+  transition: width var(--transition-normal);
+  border-radius: var(--radius-sm);
+}
+
+.p-execution-result-section-title {
+  margin: 0 0 var(--spacing-md);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-result-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.p-execution-result-step {
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color);
+  transition: border-color var(--transition-base);
+
+  &:hover {
+    border-color: var(--primary-color);
+  }
+
+  &--skipped {
+    opacity: 0.6;
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.p-execution-result-step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.p-execution-result-step-number {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-result-step-status {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-result-step-content {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.p-execution-result-step-summary {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+
+  strong {
+    font-weight: 600;
+    margin-right: var(--spacing-sm);
+  }
+}
+
+.p-execution-result-summary {
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
 }
 
