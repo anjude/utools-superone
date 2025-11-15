@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { ElMessageBox } from 'element-plus'
 import { MarkdownEditor } from '@/components'
 import { TopicRepo } from '@/repos/topic-repo'
 import { TopicLogRepo } from '@/repos/topic-log-repo'
 import type { ITopic, ITopicFormData, TopicLogListItem } from '@/types/topic'
 import { TopicEnums } from '@/constants/enums'
-import { timestampToChineseDateTime } from '@/utils/time'
+import { timestampToChineseDateTime, getCurrentTimestamp } from '@/utils/time'
 import { markdownToHtml } from '@/utils/markdown'
 
 const { t } = useI18n()
@@ -27,6 +28,13 @@ const logs = ref<TopicLogListItem[]>([])
 const logsLoading = ref(false)
 const logsError = ref<string>('')
 
+// 编辑日志弹窗相关状态
+const showEditLogDialog = ref(false)
+const editingLog = ref<TopicLogListItem | null>(null)
+const editLogContent = ref('')
+const updatingLog = ref(false)
+const editLogError = ref<string>('')
+
 // 当前选中的主题
 const selectedTopic = computed(() => {
   return topics.value.find(t => t.id === selectedTopicId.value) || null
@@ -43,6 +51,12 @@ const topicForm = ref<{
 })
 const creatingTopic = ref(false)
 const topicFormError = ref<string>('')
+
+// 右键菜单相关状态
+const contextMenuVisible = ref(false)
+const contextMenuPosition = ref({ x: 0, y: 0 })
+const contextMenuTopic = ref<ITopic | null>(null)
+let contextMenuCloseHandler: ((e: MouseEvent) => void) | null = null
 
 const loadTopics = async () => {
   loading.value = true
@@ -88,6 +102,14 @@ const loadLogs = async (topicId: number) => {
     console.error('加载主题日志失败:', err)
   } finally {
     logsLoading.value = false
+  }
+}
+
+// 刷新功能（同时刷新主题列表和日志）
+const handleRefresh = async () => {
+  await loadTopics()
+  if (selectedTopicId.value) {
+    await loadLogs(selectedTopicId.value)
   }
 }
 
@@ -176,6 +198,239 @@ const handleCreateTopic = async () => {
   }
 }
 
+// 关闭右键菜单
+const closeContextMenu = () => {
+  contextMenuVisible.value = false
+  if (contextMenuCloseHandler) {
+    document.removeEventListener('click', contextMenuCloseHandler)
+    contextMenuCloseHandler = null
+  }
+}
+
+// 右键菜单处理
+const handleContextMenu = (event: MouseEvent, topic: ITopic) => {
+  event.preventDefault()
+  event.stopPropagation()
+  
+  // 先关闭之前的菜单（如果有）
+  closeContextMenu()
+  
+  contextMenuTopic.value = topic
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  contextMenuVisible.value = true
+  
+  // 点击其他地方关闭菜单
+  nextTick(() => {
+    contextMenuCloseHandler = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('.p-context-menu')) {
+        closeContextMenu()
+      }
+    }
+    document.addEventListener('click', contextMenuCloseHandler)
+  })
+}
+
+// 删除主题
+const handleDeleteTopic = async () => {
+  if (!contextMenuTopic.value) return
+  
+  const topicId = contextMenuTopic.value.id
+  const topicName = contextMenuTopic.value.topicName
+  
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除主题「${topicName}」吗？此操作不可恢复。`,
+      '删除确认',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        showClose: false,
+        closeOnClickModal: false,
+        closeOnPressEscape: false,
+      }
+    )
+    
+    // 如果用户确认删除，执行删除操作
+    await TopicRepo.delete(topicId)
+    
+    // 如果删除的是当前选中的主题，清空选中状态
+    if (selectedTopicId.value === topicId) {
+      selectedTopicId.value = null
+    }
+    
+    // 刷新主题列表
+    await loadTopics()
+    closeContextMenu()
+  } catch (err) {
+    // 用户取消删除或删除失败
+    if (err === 'cancel') {
+      closeContextMenu()
+      return
+    }
+    console.error('删除主题失败:', err)
+    ElMessageBox.alert(
+      err instanceof Error ? err.message : '删除主题失败',
+      '错误',
+      {
+        confirmButtonText: '确定',
+        type: 'error',
+      }
+    )
+  }
+}
+
+// 置顶主题
+const handlePinTopic = async () => {
+  if (!contextMenuTopic.value) return
+  
+  const topicId = contextMenuTopic.value.id
+  const currentTimestamp = getCurrentTimestamp()
+  
+  try {
+    await TopicRepo.update(topicId, { top: currentTimestamp })
+    
+    // 刷新主题列表
+    await loadTopics()
+    closeContextMenu()
+  } catch (err) {
+    console.error('置顶主题失败:', err)
+    ElMessageBox.alert(
+      err instanceof Error ? err.message : '置顶主题失败',
+      '错误',
+      {
+        confirmButtonText: '确定',
+        type: 'error',
+      }
+    )
+  }
+}
+
+// 取消置顶主题
+const handleUnpinTopic = async () => {
+  if (!contextMenuTopic.value) return
+  
+  const topicId = contextMenuTopic.value.id
+  
+  try {
+    await TopicRepo.update(topicId, { top: 0 })
+    
+    // 刷新主题列表
+    await loadTopics()
+    closeContextMenu()
+  } catch (err) {
+    console.error('取消置顶失败:', err)
+    ElMessageBox.alert(
+      err instanceof Error ? err.message : '取消置顶失败',
+      '错误',
+      {
+        confirmButtonText: '确定',
+        type: 'error',
+      }
+    )
+  }
+}
+
+// 复制日志内容
+const handleCopyLog = async (log: TopicLogListItem) => {
+  try {
+    await navigator.clipboard.writeText(log.content)
+    if (window.utools && typeof window.utools.showNotification === 'function') {
+      window.utools.showNotification('已复制到剪贴板')
+    } else {
+      alert('已复制到剪贴板')
+    }
+  } catch (err) {
+    console.error('复制失败:', err)
+    alert('复制失败')
+  }
+}
+
+// 打开编辑日志弹窗
+const handleOpenEditLogDialog = (log: TopicLogListItem) => {
+  editingLog.value = log
+  editLogContent.value = log.content
+  editLogError.value = ''
+  showEditLogDialog.value = true
+}
+
+// 关闭编辑日志弹窗
+const handleCloseEditLogDialog = () => {
+  showEditLogDialog.value = false
+  editingLog.value = null
+  editLogContent.value = ''
+  editLogError.value = ''
+}
+
+// 保存编辑的日志
+const handleUpdateLog = async () => {
+  if (!editingLog.value || !editLogContent.value.trim()) {
+    editLogError.value = '日志内容不能为空'
+    return
+  }
+
+  updatingLog.value = true
+  editLogError.value = ''
+  try {
+    await TopicLogRepo.update(editingLog.value.id, {
+      content: editLogContent.value.trim(),
+      topicId: editingLog.value.topicId,
+      topicType: editingLog.value.topicType,
+    })
+    // 关闭弹窗
+    handleCloseEditLogDialog()
+    // 重新加载日志列表
+    if (selectedTopicId.value) {
+      await loadLogs(selectedTopicId.value)
+    }
+  } catch (err) {
+    editLogError.value = err instanceof Error ? err.message : '更新日志失败'
+    console.error('更新日志失败:', err)
+  } finally {
+    updatingLog.value = false
+  }
+}
+
+// 删除日志
+const handleDeleteLog = async (log: TopicLogListItem) => {
+  try {
+    await ElMessageBox.confirm(
+      '确定要删除这条日志吗？此操作不可恢复。',
+      '删除确认',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        showClose: false,
+        closeOnClickModal: false,
+        closeOnPressEscape: false,
+      }
+    )
+    
+    // 如果用户确认删除，执行删除操作
+    await TopicLogRepo.delete(log.id)
+    
+    // 重新加载日志列表
+    if (selectedTopicId.value) {
+      await loadLogs(selectedTopicId.value)
+    }
+  } catch (err) {
+    // 用户取消删除或删除失败
+    if (err === 'cancel') {
+      return
+    }
+    console.error('删除日志失败:', err)
+    ElMessageBox.alert(
+      err instanceof Error ? err.message : '删除日志失败',
+      '错误',
+      {
+        confirmButtonText: '确定',
+        type: 'error',
+      }
+    )
+  }
+}
+
 onMounted(() => {
   loadTopics()
 })
@@ -196,10 +451,10 @@ onMounted(() => {
         </el-button>
         <button 
           class="cu-button cu-button--text cu-button--small" 
-          @click="loadTopics" 
-          :disabled="loading"
+          @click="handleRefresh" 
+          :disabled="loading || logsLoading"
         >
-          {{ loading ? '加载中' : '刷新' }}
+          {{ loading || logsLoading ? '加载中' : '刷新' }}
         </button>
       </div>
     </div>
@@ -231,7 +486,9 @@ onMounted(() => {
           class="p-topic-tag"
           :class="{ 'p-topic-tag--active': selectedTopicId === topic.id }"
           @click="handleTopicSelect(topic)"
+          @contextmenu.prevent="handleContextMenu($event, topic)"
         >
+          <span v-if="topic.top > 0" class="p-topic-tag-top-icon">🔝</span>
           <span class="p-topic-tag-name">{{ topic.topicName }}</span>
         </div>
       </div>
@@ -270,6 +527,29 @@ onMounted(() => {
           <div class="p-log-content" v-html="markdownToHtml(log.content)"></div>
           <div class="p-log-meta">
             <span class="p-log-time">{{ timestampToChineseDateTime(log.createTime) }}</span>
+            <div class="p-log-actions">
+              <button 
+                class="p-log-action-btn" 
+                @click="handleCopyLog(log)"
+                title="复制"
+              >
+                复制
+              </button>
+              <button 
+                class="p-log-action-btn" 
+                @click="handleOpenEditLogDialog(log)"
+                title="编辑"
+              >
+                编辑
+              </button>
+              <button 
+                class="p-log-action-btn p-log-action-btn--danger" 
+                @click="handleDeleteLog(log)"
+                title="删除"
+              >
+                删除
+              </button>
+            </div>
           </div>
         </li>
       </ul>
@@ -320,5 +600,69 @@ onMounted(() => {
         </span>
       </template>
     </el-dialog>
+
+    <!-- 编辑日志弹窗 -->
+    <el-dialog
+      v-model="showEditLogDialog"
+      title="编辑日志"
+      width="600px"
+      @close="handleCloseEditLogDialog"
+    >
+      <el-form :model="{ content: editLogContent }" label-width="80px">
+        <el-form-item label="日志内容" required>
+          <MarkdownEditor
+            v-model="editLogContent"
+            placeholder="请输入日志内容（支持 Markdown 格式）"
+            :height="200"
+          />
+        </el-form-item>
+        <el-form-item v-if="editLogError">
+          <el-alert
+            :title="editLogError"
+            type="error"
+            :closable="false"
+            show-icon
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handleCloseEditLogDialog">取消</el-button>
+          <el-button 
+            type="primary" 
+            @click="handleUpdateLog"
+            :loading="updatingLog"
+          >
+            确定
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 右键菜单 -->
+    <div
+      v-if="contextMenuVisible"
+      class="p-context-menu"
+      :style="{ left: `${contextMenuPosition.x}px`, top: `${contextMenuPosition.y}px` }"
+      @click.stop
+    >
+      <div 
+        v-if="contextMenuTopic && contextMenuTopic.top > 0"
+        class="p-context-menu-item" 
+        @click="handleUnpinTopic"
+      >
+        <span>取消置顶</span>
+      </div>
+      <div 
+        v-else
+        class="p-context-menu-item" 
+        @click="handlePinTopic"
+      >
+        <span>置顶</span>
+      </div>
+      <div class="p-context-menu-item p-context-menu-item--danger" @click="handleDeleteTopic">
+        <span>删除</span>
+      </div>
+    </div>
   </div>
 </template>

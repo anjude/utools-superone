@@ -129,23 +129,14 @@
     border-color: var(--primary-color);
     background: var(--primary-color);
     color: var(--light);
-    
-    .p-topic-tag-top {
-      background: rgba(255, 255, 255, 0.2);
-      color: var(--light);
-    }
   }
 }
 
-.p-topic-tag-top {
+.p-topic-tag-top-icon {
+  font-size: 14px;
+  line-height: 1;
+  margin-right: 3px;
   display: inline-block;
-  padding: 1px 4px;
-  border-radius: var(--radius-sm);
-  background: var(--error-color);
-  color: var(--light);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.2;
 }
 
 .p-topic-tag-name {
@@ -277,4 +268,76 @@
   font-size: 11px;
   color: var(--text-color);
   opacity: 0.5;
+}
+
+.p-log-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.p-log-action-btn {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--text-color);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
+  }
+
+  &--danger {
+    &:hover {
+      border-color: var(--error-color);
+      color: var(--error-color);
+      background: rgba(245, 101, 101, 0.1);
+    }
+  }
+}
+
+// 右键菜单样式
+.p-context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 120px;
+  padding: 4px 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: default;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  .p-context-menu-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: rgba(1, 194, 96, 0.1);
+      color: var(--primary-color);
+    }
+
+    &--danger {
+      &:hover {
+        background: rgba(245, 101, 101, 0.1);
+        color: var(--error-color);
+      }
+    }
+
+    span {
+      display: block;
+    }
+  }
 }
