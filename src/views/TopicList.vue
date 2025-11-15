@@ -201,7 +201,7 @@ onMounted(() => {
           ]"
           :placeholder="selectedTopic ? `记录到「${selectedTopic.topicName}」...` : '请先选择一个主题'"
           language="zh-CN"
-          :style="{ height: '240px' }"
+          :style="{ height: '200px' }"
           :disabled="!selectedTopicId"
         />
         <div class="p-editor-save-btn">
@@ -226,7 +226,7 @@ onMounted(() => {
       <div v-else-if="!selectedTopicId" class="p-logs-empty">请先选择一个主题</div>
       <div v-else-if="logs.length === 0" class="p-logs-empty">暂无日志</div>
       <ul v-else class="p-logs-list">
-        <li v-for="log in logs" :key="log.id" class="p-log-item">
+        <li v-for="log in logs" :key="log.id" class="cu-card cu-card--small p-log-item">
           <div class="p-log-content" v-html="markdownToHtml(log.content)"></div>
           <div class="p-log-meta">
             <span class="p-log-time">{{ timestampToChineseDateTime(log.createTime) }}</span>

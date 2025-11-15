@@ -71,7 +71,7 @@ onMounted(() => {
 
 <template>
   <div class="p-topic-detail-wrap">
-    <div class="p-topic-detail-header">
+    <div class="cu-card cu-card--large p-topic-detail-header">
       <button class="cu-button cu-button--text" @click="router.back()">
         ← 返回
       </button>
@@ -88,7 +88,7 @@ onMounted(() => {
     </div>
 
     <div v-else-if="topic" class="p-topic-detail-content">
-      <div class="p-topic-info">
+      <div class="cu-card cu-card--large p-topic-info">
         <h3 class="p-topic-name">
           <span v-if="topic.top > 0" class="cu-tag cu-tag--danger cu-tag--small cu-tag--status">置顶</span>
           {{ topic.topicName }}
@@ -106,7 +106,7 @@ onMounted(() => {
         <div v-else-if="logsError" class="p-logs-error">{{ logsError }}</div>
         <div v-else-if="logs.length === 0" class="p-logs-empty">暂无日志</div>
         <ul v-else class="p-logs-list">
-          <li v-for="log in logs" :key="log.id" class="p-log-item">
+          <li v-for="log in logs" :key="log.id" class="cu-card cu-card--large p-log-item">
             <div class="p-log-content" v-html="markdownToHtml(log.content)"></div>
             <div class="p-log-meta">
               <span class="p-log-time">{{ timestampToChineseDateTime(log.createTime) }}</span>

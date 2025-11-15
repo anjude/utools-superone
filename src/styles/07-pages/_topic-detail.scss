@@ -2,7 +2,7 @@
 @use '../02-tools/mixins' as *;
 
 .p-topic-detail-wrap {
-  padding: 24px;
+  padding: 12px;
   min-height: 100vh;
   background: var(--bg-color);
   background-image: 
@@ -27,27 +27,26 @@
   }
 
   @include respond-to('sm') {
-    padding: 32px;
+    padding: 16px;
   }
 
   @include respond-to('md') {
-    padding: 40px;
+    padding: 20px;
   }
 }
 
+// 使用 cu-card 作为唯一卡片标准
 .p-topic-detail-header {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 20px 24px;
-  @include glass-card;
-  border-radius: var(--radius-md);
-
+  gap: 12px;
+  margin-bottom: 12px;
+  
+  // 使用 cu-card 基础样式（在 Vue 文件中需要添加 cu-card 类）
   @include respond-to('sm') {
-    padding: 24px 32px;
+    // 响应式调整
   }
 
   h2 {
@@ -70,14 +69,14 @@
   position: relative;
   z-index: 1;
   text-align: center;
-  padding: 60px 20px;
+  padding: 30px 20px;
   color: var(--text-color);
   opacity: 0.7;
   font-size: 16px;
   transition: color 0.3s ease, opacity 0.3s ease;
 
   @include respond-to('sm') {
-    padding: 80px 20px;
+    padding: 40px 20px;
     font-size: 18px;
   }
 }
@@ -87,7 +86,7 @@
   opacity: 0.9;
 
   p {
-    margin: 0 0 16px;
+    margin: 0 0 10px;
     font-weight: 500;
   }
 }
@@ -97,24 +96,23 @@
   z-index: 1;
 }
 
+// 使用 cu-card 作为唯一卡片标准
+// 注意：在 Vue 文件中需要使用 cu-card cu-card--large 类
 .p-topic-info {
-  @include glass-card;
-  border-radius: var(--radius-md);
-  padding: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 
   @include respond-to('sm') {
-    padding: 32px;
+    // 响应式调整
   }
 }
 
 .p-topic-name {
-  margin: 0 0 16px;
+  margin: 0 0 10px;
   font-size: 24px;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   color: var(--text-color);
   transition: color 0.3s ease;
   line-height: 1.4;
@@ -125,10 +123,10 @@
 }
 
 .p-topic-description {
-  margin: 0 0 20px;
+  margin: 0 0 12px;
   color: var(--text-color);
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.6;
   word-break: break-word;
   opacity: 0.9;
   transition: color 0.3s ease, opacity 0.3s ease;
@@ -139,140 +137,7 @@
   :deep(h4),
   :deep(h5),
   :deep(h6) {
-    margin: 20px 0 12px;
-    font-weight: 600;
-    color: var(--text-color);
-  }
-
-  :deep(p) {
-    margin: 12px 0;
-  }
-
-  :deep(ul),
-  :deep(ol) {
-    margin: 12px 0;
-    padding-left: 28px;
-  }
-
-  :deep(li) {
-    margin: 6px 0;
-  }
-
-  :deep(code) {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
-
-  :deep(pre) {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 16px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin: 16px 0;
-  }
-
-  :deep(blockquote) {
-    border-left: 3px solid var(--primary-color);
-    padding-left: 16px;
-    margin: 16px 0;
-    opacity: 0.8;
-  }
-}
-
-.p-topic-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.p-topic-time {
-  font-size: 13px;
-  color: var(--text-color);
-  opacity: 0.6;
-  white-space: nowrap;
-  transition: color 0.3s ease, opacity 0.3s ease;
-
-  @include respond-to('sm') {
-    font-size: 14px;
-  }
-}
-
-// 日志区域样式（复用自 topic-list）
-.p-logs-section {
-  margin-top: 24px;
-}
-
-.p-logs-title {
-  margin: 0 0 16px;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-color);
-  transition: color 0.3s ease;
-
-  @include respond-to('sm') {
-    font-size: 20px;
-  }
-}
-
-.p-logs-loading,
-.p-logs-error,
-.p-logs-empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--text-color);
-  opacity: 0.6;
-  font-size: 14px;
-}
-
-.p-logs-error {
-  color: var(--error-color);
-  opacity: 0.9;
-}
-
-.p-logs-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.p-log-item {
-  @include glass-card;
-  border-radius: var(--radius-md);
-  padding: 20px 24px;
-  margin-bottom: 16px;
-  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-
-  @include respond-to('sm') {
-    padding: 24px 32px;
-    margin-bottom: 20px;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 16px 48px 0 rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
-  }
-}
-
-.p-log-content {
-  color: var(--text-color);
-  font-size: 15px;
-  line-height: 1.7;
-  word-break: break-word;
-  margin-bottom: 12px;
-
-  :deep(h1),
-  :deep(h2),
-  :deep(h3),
-  :deep(h4),
-  :deep(h5),
-  :deep(h6) {
-    margin: 16px 0 8px;
+    margin: 12px 0 8px;
     font-weight: 600;
     color: var(--text-color);
   }
@@ -300,16 +165,145 @@
 
   :deep(pre) {
     background: rgba(0, 0, 0, 0.05);
-    padding: 12px;
+    padding: 10px;
     border-radius: 6px;
     overflow-x: auto;
-    margin: 12px 0;
+    margin: 10px 0;
   }
 
   :deep(blockquote) {
     border-left: 3px solid var(--primary-color);
     padding-left: 12px;
-    margin: 12px 0;
+    margin: 10px 0;
+    opacity: 0.8;
+  }
+}
+
+.p-topic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.p-topic-time {
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.6;
+  white-space: nowrap;
+  transition: color 0.3s ease, opacity 0.3s ease;
+
+  @include respond-to('sm') {
+    font-size: 14px;
+  }
+}
+
+// 日志区域样式（复用自 topic-list）
+.p-logs-section {
+  margin-top: 12px;
+}
+
+.p-logs-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+
+  @include respond-to('sm') {
+    font-size: 20px;
+  }
+}
+
+.p-logs-loading,
+.p-logs-error,
+.p-logs-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+.p-logs-error {
+  color: var(--error-color);
+  opacity: 0.9;
+}
+
+.p-logs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// 使用 cu-card 作为唯一卡片标准
+// 注意：在 Vue 文件中需要使用 cu-card cu-card--large 类
+.p-log-item {
+  margin-bottom: 8px;
+
+  @include respond-to('sm') {
+    margin-bottom: 12px;
+  }
+
+  // 页面特定的悬停效果（符合设计规范：简洁优雅）
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.p-log-content {
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: break-word;
+  margin-bottom: 8px;
+
+  :deep(h1),
+  :deep(h2),
+  :deep(h3),
+  :deep(h4),
+  :deep(h5),
+  :deep(h6) {
+    margin: 10px 0 6px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  :deep(p) {
+    margin: 6px 0;
+  }
+
+  :deep(ul),
+  :deep(ol) {
+    margin: 6px 0;
+    padding-left: 20px;
+  }
+
+  :deep(li) {
+    margin: 3px 0;
+  }
+
+  :deep(code) {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  :deep(pre) {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 8px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 8px 0;
+  }
+
+  :deep(blockquote) {
+    border-left: 3px solid var(--primary-color);
+    padding-left: 10px;
+    margin: 8px 0;
     opacity: 0.8;
   }
 }
@@ -318,8 +312,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -342,12 +336,6 @@
       radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
   }
 
-  .p-log-item {
-    &:hover {
-      box-shadow: 
-        0 16px 48px 0 rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-    }
-  }
+  // cu-card 的暗色模式由 cu-card 自身处理，这里只处理页面特定的样式
 }
 

@@ -2,16 +2,16 @@
 @use '../02-tools/mixins' as *;
 
 .p-topic-list-wrap {
-  padding: 12px;
+  padding: 8px;
   min-height: 100vh;
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 
   @include respond-to('sm') {
-    padding: 16px;
-    gap: 16px;
+    padding: 12px;
+    gap: 12px;
   }
 }
 
@@ -19,7 +19,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 4px 0;
 
   .p-page-title {
     margin: 0;
@@ -35,7 +35,7 @@
 .p-error,
 .p-empty {
   text-align: center;
-  padding: 20px;
+  padding: 12px;
   color: var(--text-color);
   opacity: 0.7;
   font-size: 14px;
@@ -47,7 +47,7 @@
   opacity: 0.9;
 
   p {
-    margin: 0 0 12px;
+    margin: 0 0 8px;
     font-weight: 500;
   }
 }
@@ -55,8 +55,8 @@
 // 主题选择器
 .p-topics-selector {
   display: flex;
-  gap: 8px;
-  padding: 8px 0;
+  gap: 6px;
+  padding: 4px 0;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
@@ -86,8 +86,8 @@
 .p-topic-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
+  gap: 3px;
+  padding: 3px 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: var(--card-bg);
@@ -137,7 +137,7 @@
 
 .p-editor-wrapper {
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border-color);
@@ -147,7 +147,7 @@
     border: none;
     
     .md-editor-content {
-      min-height: 140px;
+      min-height: 120px;
     }
     
     .md-editor-toolbar {
@@ -179,7 +179,7 @@
 }
 
 .p-logs-title {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-color);
@@ -189,7 +189,7 @@
 .p-logs-loading,
 .p-logs-error,
 .p-logs-empty {
-  padding: 16px;
+  padding: 12px;
   text-align: center;
   color: var(--text-color);
   opacity: 0.6;
@@ -207,16 +207,13 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
+// 使用 cu-card 作为唯一卡片标准
+// 注意：在 Vue 文件中需要使用 cu-card cu-card--small 类
 .p-log-item {
-  padding: 8px 10px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  transition: all 0.2s ease;
-
+  // 页面特定的悬停效果（覆盖 cu-card 默认样式）
   &:hover {
     border-color: var(--primary-color);
     background: rgba(1, 194, 96, 0.1);
@@ -228,7 +225,7 @@
   font-size: 13px;
   line-height: 1.5;
   word-break: break-word;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 
   :deep(h1),
   :deep(h2),
@@ -236,24 +233,24 @@
   :deep(h4),
   :deep(h5),
   :deep(h6) {
-    margin: 8px 0 4px;
+    margin: 6px 0 3px;
     font-weight: 600;
     color: var(--text-color);
     font-size: 14px;
   }
 
   :deep(p) {
-    margin: 4px 0;
+    margin: 3px 0;
   }
 
   :deep(ul),
   :deep(ol) {
-    margin: 4px 0;
-    padding-left: 20px;
+    margin: 3px 0;
+    padding-left: 18px;
   }
 
   :deep(li) {
-    margin: 2px 0;
+    margin: 1px 0;
   }
 
   :deep(code) {
@@ -265,17 +262,17 @@
 
   :deep(pre) {
     background: rgba(0, 0, 0, 0.05);
-    padding: 6px;
+    padding: 4px;
     border-radius: 4px;
     overflow-x: auto;
-    margin: 6px 0;
+    margin: 4px 0;
     font-size: 12px;
   }
 
   :deep(blockquote) {
     border-left: 2px solid var(--primary-color);
-    padding-left: 8px;
-    margin: 6px 0;
+    padding-left: 6px;
+    margin: 4px 0;
     opacity: 0.8;
   }
 }
@@ -284,8 +281,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 6px;
-  padding-top: 6px;
+  margin-top: 4px;
+  padding-top: 4px;
   border-top: 1px solid var(--border-color);
 }
 
