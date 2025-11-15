@@ -56,6 +56,8 @@ onMounted(() => {
       router.push({ name: 'Login' })
     } else if (action.code === 'checklist') {
       router.push({ name: 'ChecklistList' })
+    } else if (action.code === 'plan') {
+      router.push({ name: 'PlanList' })
     } else {
       router.push({ name: 'TopicList' })
     }

@@ -27,6 +27,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/plan',
+    name: 'PlanList',
+    component: () => import('@/views/PlanList.vue'),
+    meta: {
+      title: '近期任务',
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

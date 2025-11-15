@@ -15,6 +15,11 @@
       "code": "topic",
       "explain": "管理主题和思考记录，支持 Markdown 编辑和日志管理",
       "cmds": ["主题", "topic"]
+    },
+    {
+      "code": "plan",
+      "explain": "管理近期任务，支持任务创建、编辑、状态流转和删除",
+      "cmds": ["计划", "任务", "近期任务", "plan", "task"]
     }
   ]
 }

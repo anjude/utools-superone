@@ -1,0 +1,365 @@
+// PlanList页面样式 - 参考TopicList布局
+@use '../02-tools/mixins' as *;
+
+.p-plan-list-wrap {
+  padding: var(--spacing-sm);
+  min-height: 100vh;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+
+  @include respond-to('sm') {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+}
+
+.p-plan-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+  margin-bottom: 0;
+  border-bottom: var(--border-width-base) solid var(--border-color);
+
+  .p-page-title {
+    margin: 0;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-color);
+    letter-spacing: -0.02em;
+    transition: color var(--transition-normal);
+  }
+
+  .p-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+}
+
+// 加载、错误、空状态
+.p-loading,
+.p-error,
+.p-empty {
+  text-align: center;
+  padding: var(--spacing-md);
+  color: var(--text-color);
+  opacity: var(--text-opacity-quaternary);
+  font-size: var(--font-size-body);
+  transition: color var(--transition-normal), opacity var(--transition-normal);
+}
+
+.p-error {
+  color: var(--error-color);
+  opacity: var(--text-opacity-hover);
+
+  p {
+    margin: 0 0 var(--spacing-sm);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+// 状态筛选区域
+.p-status-filter {
+  display: flex;
+  gap: var(--spacing-6);
+  padding: var(--spacing-2) 0;
+  flex-wrap: wrap;
+}
+
+.p-status-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3) var(--spacing-10);
+  border-radius: var(--radius-md);
+  border: var(--border-width-base) solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    color: var(--primary-color);
+  }
+
+  &--active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--light);
+  }
+}
+
+// 任务列表区域
+.p-tasks-section {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.p-tasks-empty {
+  padding: var(--spacing-md);
+  text-align: center;
+  color: var(--text-color);
+  opacity: var(--text-opacity-tertiary);
+  font-size: var(--font-size-md);
+}
+
+.p-tasks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+// 使用 cu-card 作为唯一卡片标准
+.p-task-item {
+  // 页面特定的悬停效果（覆盖 cu-card 默认样式）
+  &:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+  }
+}
+
+.p-task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.p-task-title {
+  margin: 0;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.p-task-top-icon {
+  font-size: var(--font-size-body);
+  line-height: 1;
+  display: inline-block;
+}
+
+.p-task-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  flex-shrink: 0;
+}
+
+.p-task-description {
+  margin: var(--spacing-xs) 0;
+  color: var(--text-color);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  word-break: break-word;
+
+  :deep(h1),
+  :deep(h2),
+  :deep(h3),
+  :deep(h4),
+  :deep(h5),
+  :deep(h6) {
+    margin: var(--spacing-6) 0 var(--spacing-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-color);
+    font-size: var(--font-size-body);
+  }
+
+  :deep(p) {
+    margin: var(--spacing-3) 0;
+  }
+
+  :deep(ul),
+  :deep(ol) {
+    margin: var(--spacing-3) 0;
+    padding-left: var(--spacing-18);
+  }
+
+  :deep(li) {
+    margin: 1px 0;
+  }
+
+  :deep(code) {
+    background: var(--black-light);
+    padding: var(--spacing-2) var(--spacing-xs);
+    border-radius: var(--radius-xs);
+    font-size: 0.9em;
+  }
+
+  :deep(pre) {
+    background: var(--black-light);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-xs);
+    overflow-x: auto;
+    margin: var(--spacing-xs) 0;
+    font-size: var(--font-size-body-sm);
+  }
+
+  :deep(blockquote) {
+    border-left: var(--border-width-thick) solid var(--primary-color);
+    padding-left: var(--spacing-6);
+    margin: var(--spacing-xs) 0;
+    opacity: var(--text-opacity-hover);
+  }
+}
+
+.p-task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: var(--border-width-base) solid var(--border-color);
+}
+
+.p-task-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  flex: 1;
+}
+
+.p-task-deadline {
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  opacity: var(--text-opacity-secondary);
+
+  &--overdue {
+    color: var(--error-color);
+    opacity: var(--text-opacity-hover);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.p-task-time {
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  opacity: var(--text-opacity-secondary);
+}
+
+.p-task-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+.p-task-action-btn {
+  padding: var(--spacing-2) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  background: transparent;
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-quaternary);
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
+  }
+}
+
+// 右键菜单样式
+.p-context-menu {
+  position: fixed;
+  z-index: var(--z-index-dropdown);
+  min-width: 120px;
+  padding: var(--spacing-xs) 0;
+  background: var(--card-bg);
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  cursor: default;
+  user-select: none;
+  transition: all var(--transition-base);
+
+  .p-context-menu-item {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+
+    &:hover {
+      background: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    &--danger {
+      &:hover {
+        background: var(--error-danger-light);
+        color: var(--error-color);
+      }
+    }
+
+    span {
+      display: block;
+    }
+  }
+}
+
+// 状态选择菜单样式
+.p-status-menu {
+  position: fixed;
+  z-index: var(--z-index-dropdown);
+  min-width: 120px;
+  padding: var(--spacing-xs) 0;
+  background: var(--card-bg);
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  cursor: default;
+  user-select: none;
+  transition: all var(--transition-base);
+
+  .p-status-menu-item {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      background: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    &--active {
+      background: var(--primary-light);
+      color: var(--primary-color);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .p-status-menu-item-check {
+      color: var(--primary-color);
+      font-weight: var(--font-weight-bold);
+    }
+
+    span {
+      display: block;
+    }
+  }
+}
+
