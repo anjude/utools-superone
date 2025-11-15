@@ -1,10 +1,22 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElNotification } from 'element-plus'
 import { ChecklistRepo } from '@/repos/checklist-repo'
 import type { ChecklistEntity, ChecklistExecutionStepEntity } from '@/types/checklist'
 import { ExecutionMode, ChecklistExecutionStatus } from '@/types/checklist'
 import { getCurrentTimestamp } from '@/utils/time'
 import { logger } from '@/utils/logger'
+import { CacheManager } from '@/utils/cache-manager'
+import { CACHE_KEYS } from '@/stores/cache'
+
+/**
+ * 清单执行进度缓存数据结构
+ */
+interface ChecklistExecutionProgress {
+  completedSteps: number[]
+  stepSummaries: Record<number, string>
+  overallSummary: string
+  visibleNotes: number[]
+}
 
 /**
  * 清单执行 Composable
@@ -30,8 +42,89 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
     return checklist() !== null && totalSteps.value > 0
   })
 
+  // 获取缓存key
+  const getCacheKey = (checklistId: number): string => {
+    return `${CACHE_KEYS.CHECKLIST_EXECUTION_PROGRESS}${checklistId}`
+  }
+
+  // 保存进度到缓存
+  const saveProgress = (checklistId: number) => {
+    if (!checklistId) return
+    
+    const progress: ChecklistExecutionProgress = {
+      completedSteps: Array.from(completedSteps.value),
+      stepSummaries: Object.fromEntries(stepSummaries.value),
+      overallSummary: overallSummary.value,
+      visibleNotes: Array.from(visibleNotes.value),
+    }
+    
+    CacheManager.set(getCacheKey(checklistId), progress, true)
+    logger.debug('保存清单执行进度', { checklistId, progress })
+  }
+
+  // 从缓存恢复进度
+  const restoreProgress = (checklistId: number) => {
+    if (!checklistId) return
+    
+    const currentChecklist = checklist()
+    if (!currentChecklist) {
+      logger.debug('无法恢复进度：清单不存在', { checklistId })
+      return
+    }
+
+    const cached = CacheManager.get<ChecklistExecutionProgress>(getCacheKey(checklistId), null, true)
+    if (!cached) {
+      logger.debug('未找到缓存的执行进度', { checklistId })
+      return
+    }
+
+    // 获取当前checklist的所有itemId，用于验证
+    const validItemIds = new Set(currentChecklist.items.map(item => item.id))
+
+    // 恢复完成步骤（只恢复有效的itemId）
+    completedSteps.value.clear()
+    cached.completedSteps.forEach(id => {
+      if (validItemIds.has(id)) {
+        completedSteps.value.add(id)
+      }
+    })
+
+    // 恢复步骤备注（只恢复有效的itemId）
+    stepSummaries.value.clear()
+    Object.entries(cached.stepSummaries).forEach(([id, summary]) => {
+      const itemId = Number(id)
+      if (validItemIds.has(itemId)) {
+        stepSummaries.value.set(itemId, summary)
+      }
+    })
+
+    // 恢复整体总结
+    overallSummary.value = cached.overallSummary || ''
+
+    // 恢复可见备注（只恢复有效的itemId）
+    visibleNotes.value.clear()
+    cached.visibleNotes.forEach(id => {
+      if (validItemIds.has(id)) {
+        visibleNotes.value.add(id)
+      }
+    })
+
+    logger.debug('恢复清单执行进度', { checklistId, cached })
+  }
+
+  // 清除缓存进度
+  const clearProgress = (checklistId: number) => {
+    if (!checklistId) return
+    CacheManager.remove(getCacheKey(checklistId), true)
+    logger.debug('清除清单执行进度缓存', { checklistId })
+  }
+
   // 重置执行状态
   const resetExecution = () => {
+    const currentChecklist = checklist()
+    if (currentChecklist) {
+      clearProgress(currentChecklist.id)
+    }
     completedSteps.value.clear()
     stepSummaries.value.clear()
     overallSummary.value = ''
@@ -48,6 +141,11 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
     }
     if (!executionStartTime.value) {
       executionStartTime.value = getCurrentTimestamp()
+    }
+    // 自动保存进度
+    const currentChecklist = checklist()
+    if (currentChecklist) {
+      saveProgress(currentChecklist.id)
     }
   }
 
@@ -70,6 +168,11 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
     }
     if (!executionStartTime.value) {
       executionStartTime.value = getCurrentTimestamp()
+    }
+    // 自动保存进度
+    const currentChecklist = checklist()
+    if (currentChecklist) {
+      saveProgress(currentChecklist.id)
     }
   }
 
@@ -102,18 +205,24 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
       if (!executionStartTime.value) {
         executionStartTime.value = getCurrentTimestamp()
       }
+      // 自动保存进度
+      saveProgress(currentChecklist.id)
     }
   }
 
-  // 全部清除
-  const handleUnselectAll = () => {
-    completedSteps.value.clear()
-  }
-
   // 完成执行
-  const completeExecution = async (checklistId: number): Promise<void> => {
+  const completeExecution = async (checklistId: number): Promise<{
+    checklistId: number
+    checklistTitle: string
+    stepSummaries: ChecklistExecutionStepEntity[]
+    overallSummaryMd?: string
+    completedCount: number
+    totalCount: number
+    createTime: number
+    status: ChecklistExecutionStatus
+  } | null> => {
     const currentChecklist = checklist()
-    if (!checklistId || !currentChecklist) return
+    if (!checklistId || !currentChecklist) return null
 
     try {
       const currentTime = getCurrentTimestamp()
@@ -142,17 +251,26 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
         status: ChecklistExecutionStatus.Completed,
       })
 
-      // 重置执行状态
+      // 保存执行记录数据用于弹窗展示
+      const executionRecord = {
+        checklistId,
+        checklistTitle: currentChecklist.title,
+        stepSummaries: stepSummariesList,
+        overallSummaryMd: overallSummary.value.trim() || undefined,
+        completedCount: stepSummariesList.filter(s => !s.isSkipped).length,
+        totalCount: stepSummariesList.length,
+        createTime: currentTime,
+        status: ChecklistExecutionStatus.Completed,
+      }
+
+      // 清除缓存并重置执行状态
+      clearProgress(checklistId)
       resetExecution()
 
       logger.info('执行记录已保存', { checklistId })
       
-      ElNotification({
-        message: '执行记录已保存',
-        type: 'success',
-        duration: 2000,
-        position: 'bottom-right'
-      })
+      // 返回执行记录数据，用于弹窗展示
+      return executionRecord
     } catch (err) {
       logger.error('完成执行失败', { error: err, checklistId })
       ElNotification({
@@ -164,6 +282,14 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
       throw err
     }
   }
+
+  // 监听整体总结变化，自动保存
+  watch(overallSummary, () => {
+    const currentChecklist = checklist()
+    if (currentChecklist) {
+      saveProgress(currentChecklist.id)
+    }
+  })
 
   return {
     // 状态
@@ -179,6 +305,8 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
     canComplete,
     // 方法
     resetExecution,
+    restoreProgress,
+    saveProgress,
     toggleStepCompletion,
     isStepCompleted,
     getStepSummary,
@@ -187,7 +315,6 @@ export function useChecklistExecution(checklist: () => ChecklistEntity | null) {
     showItemNotes,
     handleNotesBlur,
     handleSelectAll,
-    handleUnselectAll,
     completeExecution,
   }
 }

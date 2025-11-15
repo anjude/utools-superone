@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { ElDialog } from 'element-plus'
 import { MarkdownEditor, MarkdownViewer } from '@/components'
 import { useChecklistStore } from '@/stores/checklist'
 import { useChecklistExecution } from '@/composables/useChecklistExecution'
 import { useChecklistManagement } from '@/composables/useChecklistManagement'
+import type { ChecklistExecutionStepEntity } from '@/types/checklist'
+import { timestampToChineseDateTime } from '@/utils/time'
 
 const router = useRouter()
 const checklistStore = useChecklistStore()
@@ -17,10 +20,15 @@ const { checklists, loading, error, selectedChecklistId, selectedChecklist } = s
 // 使用 execution composable
 const execution = useChecklistExecution(() => selectedChecklist.value || null)
 
-// 监听选中清单变化，重置执行状态
-watch(selectedChecklistId, () => {
-  if (selectedChecklistId.value) {
-    execution.resetExecution()
+// 监听选中清单变化，恢复执行进度
+watch(selectedChecklistId, (newId, oldId) => {
+  if (oldId && oldId !== newId) {
+    // 保存旧checklist的进度
+    execution.saveProgress(oldId)
+  }
+  if (newId) {
+    // 恢复新checklist的进度
+    execution.restoreProgress(newId)
   }
 })
 
@@ -28,7 +36,7 @@ watch(selectedChecklistId, () => {
 const handleRefresh = async () => {
   await checklistStore.loadChecklists()
   if (selectedChecklistId.value) {
-    execution.resetExecution()
+    execution.restoreProgress(selectedChecklistId.value)
   }
 }
 
@@ -37,10 +45,36 @@ const handleChecklistSelect = (checklistId: number) => {
   checklistStore.setSelectedChecklistId(checklistId)
 }
 
+// 执行完成弹窗相关状态
+const showExecutionResultDialog = ref(false)
+const executionResult = ref<{
+  checklistTitle: string
+  stepSummaries: ChecklistExecutionStepEntity[]
+  overallSummaryMd?: string
+  completedCount: number
+  totalCount: number
+  createTime: number
+} | null>(null)
+
+// 获取执行步骤对应的检查项内容
+const getStepItemContent = (step: ChecklistExecutionStepEntity): string => {
+  if (!selectedChecklist.value) return ''
+  const item = selectedChecklist.value.items.find(item => item.id === step.itemId)
+  return item?.contentMd || ''
+}
+
 // 完成执行
 const handleCompleteExecution = async () => {
   if (!selectedChecklistId.value) return
-  await execution.completeExecution(selectedChecklistId.value)
+  try {
+    const result = await execution.completeExecution(selectedChecklistId.value)
+    if (result) {
+      executionResult.value = result
+      showExecutionResultDialog.value = true
+    }
+  } catch (err) {
+    // 错误已在 completeExecution 中处理
+  }
 }
 
 // 跳转到详情页
@@ -48,8 +82,12 @@ const handleViewDetail = (checklistId: number) => {
   router.push({ name: 'ChecklistDetail', params: { id: checklistId } })
 }
 
-onMounted(() => {
-  checklistStore.loadChecklists()
+onMounted(async () => {
+  await checklistStore.loadChecklists()
+  // 如果已有选中的checklist，恢复其进度
+  if (selectedChecklistId.value) {
+    execution.restoreProgress(selectedChecklistId.value)
+  }
 })
 </script>
 
@@ -126,7 +164,10 @@ onMounted(() => {
         <div class="p-execution-progress">
           <span class="p-progress-text">{{ execution.completedCount }}/{{ execution.totalSteps }}</span>
           <div class="p-progress-bar">
-            <div class="p-progress-bar-fill" :style="{ width: `${execution.progressPercent}%` }"></div>
+            <div 
+              class="p-progress-bar-fill" 
+              :style="{ width: `${execution.progressPercent}%` }"
+            ></div>
           </div>
           <span class="p-progress-percent">{{ execution.progressPercent }}%</span>
         </div>
@@ -138,12 +179,6 @@ onMounted(() => {
           @click="execution.handleSelectAll"
         >
           全部完成
-        </button>
-        <button 
-          class="cu-button cu-button--text cu-button--small"
-          @click="execution.handleUnselectAll"
-        >
-          全部清除
         </button>
         <button 
           class="cu-button cu-button--text cu-button--small"
@@ -349,6 +384,65 @@ onMounted(() => {
         <span>删除</span>
       </div>
     </div>
+
+    <!-- 执行结果弹窗 -->
+    <el-dialog
+      v-model="showExecutionResultDialog"
+      title="执行完成"
+      width="700px"
+      :close-on-click-modal="false"
+    >
+      <div v-if="executionResult" class="p-execution-result">
+        <div class="p-execution-result-header">
+          <h3 class="p-execution-result-title">{{ executionResult.checklistTitle }}</h3>
+          <p class="p-execution-result-time">{{ timestampToChineseDateTime(executionResult.createTime) }}</p>
+          <div class="p-execution-result-progress">
+            <span class="p-progress-label">完成进度：</span>
+            <span class="p-progress-value">{{ executionResult.completedCount }}/{{ executionResult.totalCount }}</span>
+            <div class="p-progress-bar-small">
+              <div 
+                class="p-progress-bar-fill-small" 
+                :style="{ width: `${Math.round((executionResult.completedCount / executionResult.totalCount) * 100)}%` }"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="executionResult.stepSummaries && executionResult.stepSummaries.length > 0" class="p-execution-result-steps">
+          <h4 class="p-execution-result-section-title">步骤详情</h4>
+          <div
+            v-for="(step, index) in executionResult.stepSummaries"
+            :key="step.itemId"
+            class="p-execution-result-step"
+            :class="{ 'p-execution-result-step--skipped': step.isSkipped }"
+          >
+            <div class="p-execution-result-step-header">
+              <span class="p-execution-result-step-number">{{ index + 1 }}.</span>
+              <span class="p-execution-result-step-status">
+                {{ step.isSkipped ? '未完成' : '已完成' }}
+              </span>
+            </div>
+            <div class="p-execution-result-step-content">
+              <MarkdownViewer :content="getStepItemContent(step)" />
+            </div>
+            <div v-if="step.summaryMd" class="p-execution-result-step-summary">
+              <strong>备注：</strong>
+              <MarkdownViewer :content="step.summaryMd" />
+            </div>
+          </div>
+        </div>
+
+        <div v-if="executionResult.overallSummaryMd" class="p-execution-result-summary">
+          <h4 class="p-execution-result-section-title">执行总结</h4>
+          <MarkdownViewer :content="executionResult.overallSummaryMd" />
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="showExecutionResultDialog = false">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -360,5 +454,144 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--spacing-sm);
+}
+
+// 执行结果弹窗样式
+.p-execution-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.p-execution-result-header {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.p-execution-result-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-result-time {
+  margin: 0 0 var(--spacing-md);
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-result-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.p-progress-label {
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-progress-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+  min-width: 50px;
+}
+
+.p-progress-bar-small {
+  flex: 1;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.p-progress-bar-fill-small {
+  height: 100%;
+  min-width: 0;
+  width: 0;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.p-execution-result-section-title {
+  margin: 0 0 var(--spacing-md);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-result-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.p-execution-result-step {
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-color);
+  }
+
+  &--skipped {
+    opacity: 0.6;
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.p-execution-result-step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.p-execution-result-step-number {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-result-step-status {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-result-step-content {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.p-execution-result-step-summary {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+
+  strong {
+    font-weight: 600;
+    margin-right: var(--spacing-sm);
+  }
+}
+
+.p-execution-result-summary {
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
 }
 </style>

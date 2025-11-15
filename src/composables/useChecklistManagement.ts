@@ -3,6 +3,7 @@ import { ElMessageBox } from 'element-plus'
 import type { ChecklistEntity, ChecklistEditForm } from '@/types/checklist'
 import { getCurrentTimestamp } from '@/utils/time'
 import { logger } from '@/utils/logger'
+import { idGenerator } from '@/utils/id-generator'
 
 /**
  * 清单管理 Composable
@@ -43,7 +44,7 @@ export function useChecklistManagement(
     editingChecklistId.value = null
     checklistForm.value = {
       title: '',
-      items: [{ id: 0, contentMd: '' }],
+      items: [{ id: idGenerator.generateId(), contentMd: '' }],
     }
     checklistFormError.value = ''
     forceUpdate.value++
@@ -82,7 +83,7 @@ export function useChecklistManagement(
 
   // 添加检查项
   const handleAddItem = () => {
-    checklistForm.value.items.push({ id: 0, contentMd: '' })
+    checklistForm.value.items.push({ id: idGenerator.generateId(), contentMd: '' })
     forceUpdate.value++
   }
 

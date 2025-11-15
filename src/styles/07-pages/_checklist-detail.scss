@@ -1,0 +1,415 @@
+// ChecklistDetail页面样式
+@use '../02-tools/mixins' as *;
+
+.p-checklist-detail-wrap {
+  min-height: 100vh;
+  background: var(--bg-color);
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @include respond-to('sm') {
+    padding: var(--spacing-xl);
+  }
+}
+
+.p-checklist-detail-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-color);
+
+  .p-page-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    letter-spacing: -0.02em;
+    transition: color 0.3s ease;
+  }
+}
+
+.p-checklist-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+// 清单信息区域
+.p-checklist-info {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .p-checklist-info-title {
+    margin: 0 0 var(--spacing-xl);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+  }
+}
+
+.p-checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.p-checklist-item {
+  display: flex;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-color);
+  transition: all 0.3s ease;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--primary-color);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    border-color: var(--primary-color);
+    background: rgba(7, 193, 96, 0.03);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(7, 193, 96, 0.1);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.p-checklist-item-number {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--primary-color);
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 193, 96, 0.1);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+
+.p-checklist-item-content {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+// 执行记录区域
+.p-executions-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.p-executions-title {
+  margin: 0 0 var(--spacing-xl);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--primary-color);
+  display: inline-block;
+}
+
+.p-executions-loading,
+.p-executions-error,
+.p-executions-empty {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+.p-executions-error {
+  color: var(--error-color);
+  opacity: 0.9;
+}
+
+.p-executions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.p-execution-record-item {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--primary-color);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    border-color: var(--primary-color);
+    background: rgba(7, 193, 96, 0.03);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(7, 193, 96, 0.1);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.p-execution-record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.p-execution-record-time {
+  font-size: 14px;
+  color: var(--text-color);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.p-execution-record-status {
+  font-size: 12px;
+  padding: 4px var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  &--completed {
+    background: rgba(7, 193, 96, 0.15);
+    color: var(--primary-color);
+    border: 1px solid rgba(7, 193, 96, 0.3);
+  }
+
+  &--in-progress {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ff9800;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+}
+
+.p-execution-record-progress {
+  font-size: 14px;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+}
+
+.p-execution-record-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.p-execution-record-action-btn {
+  padding: 6px var(--spacing-lg);
+  font-size: 13px;
+  color: var(--text-color);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+
+  &:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(7, 193, 96, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(7, 193, 96, 0.2);
+  }
+
+  &--danger {
+    &:hover {
+      border-color: var(--error-color);
+      color: var(--error-color);
+      background: rgba(245, 101, 101, 0.1);
+      box-shadow: 0 2px 4px rgba(245, 101, 101, 0.2);
+    }
+  }
+}
+
+// 执行记录详情弹窗样式
+.p-execution-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.p-execution-detail-info {
+  p {
+    margin: var(--spacing-sm) 0;
+    font-size: 14px;
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+
+  strong {
+    font-weight: 600;
+    margin-right: var(--spacing-sm);
+    color: var(--text-color);
+  }
+}
+
+.p-status-completed {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.p-status-in-progress {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.p-execution-detail-steps {
+  h4 {
+    margin: 0 0 var(--spacing-md);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+}
+
+.p-execution-detail-step {
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-color);
+  }
+
+  &--skipped {
+    opacity: 0.6;
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.p-execution-detail-step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.p-execution-detail-step-number {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-detail-step-status {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-detail-step-content {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.p-execution-detail-step-summary {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+
+  strong {
+    font-weight: 600;
+    margin-right: var(--spacing-sm);
+  }
+}
+
+.p-execution-detail-summary {
+  h4 {
+    margin: 0 0 var(--spacing-md);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+}
+
+// 错误和加载状态
+.p-error {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--error-color);
+  opacity: 0.9;
+
+  p {
+    margin: 0 0 var(--spacing-md);
+    font-weight: 500;
+    font-size: 14px;
+  }
+}
+
+.p-loading {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 14px;
+}
+

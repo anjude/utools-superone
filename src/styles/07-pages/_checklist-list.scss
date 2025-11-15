@@ -182,8 +182,11 @@
 
 .p-progress-bar-fill {
   height: 100%;
+  min-width: 0;
+  width: 0; // 默认宽度为0，由内联样式动态控制
   background: var(--primary-color);
   transition: width 0.3s ease;
+  border-radius: 4px;
 }
 
 .p-progress-percent {

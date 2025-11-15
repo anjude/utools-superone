@@ -34,4 +34,5 @@ export const CACHE_KEYS = {
 
   // 清单管理缓存
   SELECTED_CHECKLIST_ID: 'selected_checklist_id', // 当前选中的清单ID
+  CHECKLIST_EXECUTION_PROGRESS: 'checklist_execution_progress_', // 清单执行进度缓存前缀（后接checklistId）
 } as const
