@@ -19,6 +19,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/checklist/:id',
+    name: 'ChecklistDetail',
+    component: () => import('@/views/ChecklistDetail.vue'),
+    meta: {
+      title: '清单详情',
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

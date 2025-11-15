@@ -4,4 +4,5 @@
  */
 
 export { useUserStore } from './user'
+export { useChecklistStore } from './checklist'
 export { CACHE_KEYS } from './cache'

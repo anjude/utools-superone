@@ -19,6 +19,8 @@ interface Props {
   disabled?: boolean
   /** 工具栏配置 */
   toolbars?: string[]
+  /** 是否自动聚焦 */
+  autofocus?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -26,6 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: '50px',
   disabled: false,
   toolbars: () => [],
+  autofocus: false,
 })
 
 const emit = defineEmits<{
@@ -85,16 +88,18 @@ watch(
             vditor.value.disabled()
           } else {
             vditor.value.enable()
-            // 启用后尝试聚焦，让用户可以直接输入
-            setTimeout(() => {
-              if (vditor.value && !props.disabled) {
-                try {
-                  vditor.value.focus()
-                } catch (e) {
-                  // 聚焦失败不影响使用
+            // 启用后尝试聚焦，让用户可以直接输入（仅在 autofocus 为 true 时）
+            if (props.autofocus) {
+              setTimeout(() => {
+                if (vditor.value && !props.disabled) {
+                  try {
+                    vditor.value.focus()
+                  } catch (e) {
+                    // 聚焦失败不影响使用
+                  }
                 }
-              }
-            }, 50)
+              }, 50)
+            }
           }
         }
       })
@@ -321,16 +326,18 @@ onMounted(async () => {
           } else {
             // 确保编辑器可交互，如果没有禁用则启用
             vditor.value.enable()
-            // 尝试聚焦编辑器（可能需要延迟）
-            setTimeout(() => {
-              if (vditor.value && !props.disabled) {
-                try {
-                  vditor.value.focus()
-                } catch (e) {
-                  // 聚焦失败不影响使用
+            // 尝试聚焦编辑器（仅在 autofocus 为 true 时）
+            if (props.autofocus) {
+              setTimeout(() => {
+                if (vditor.value && !props.disabled) {
+                  try {
+                    vditor.value.focus()
+                  } catch (e) {
+                    // 聚焦失败不影响使用
+                  }
                 }
-              }
-            }, 100)
+              }, 100)
+            }
             
             // 添加点击事件处理，确保空白区域也可以点击聚焦
             nextTick(() => {
