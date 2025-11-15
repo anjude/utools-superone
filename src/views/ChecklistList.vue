@@ -161,15 +161,15 @@ onMounted(async () => {
             查看详情 →
           </button>
         </div>
-        <div class="p-execution-progress">
-          <span class="p-progress-text">{{ execution.completedCount }}/{{ execution.totalSteps }}</span>
-          <div class="p-progress-bar">
-            <div 
-              class="p-progress-bar-fill" 
-              :style="{ width: `${execution.progressPercent}%` }"
-            ></div>
+        <div class="cu-progress-info">
+          <div class="cu-progress-label">
+            <span class="cu-progress-label-text">执行进度</span>
+            <span class="cu-progress-count">{{ execution.completedCount }}/{{ execution.totalSteps }}</span>
           </div>
-          <span class="p-progress-percent">{{ execution.progressPercent }}%</span>
+          <span class="cu-progress-percent">{{ execution.progressPercent }}%</span>
+        </div>
+        <div class="cu-progress-modern">
+          <div class="cu-progress__bar" :style="{ width: `${execution.progressPercent}%` }"></div>
         </div>
       </div>
 

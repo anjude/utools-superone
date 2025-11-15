@@ -159,43 +159,6 @@
   color: var(--text-color);
 }
 
-.p-execution-progress {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.p-progress-text {
-  font-size: 13px;
-  color: var(--text-color);
-  font-weight: 500;
-  min-width: 50px;
-}
-
-.p-progress-bar {
-  flex: 1;
-  height: 8px;
-  background: var(--border-color);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.p-progress-bar-fill {
-  height: 100%;
-  min-width: 0;
-  width: 0; // 默认宽度为0，由内联样式动态控制
-  background: var(--primary-color);
-  transition: width 0.3s ease;
-  border-radius: 4px;
-}
-
-.p-progress-percent {
-  font-size: 12px;
-  color: var(--text-color);
-  opacity: 0.7;
-  min-width: 40px;
-  text-align: right;
-}
 
 .p-execution-actions {
   display: flex;
