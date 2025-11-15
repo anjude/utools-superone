@@ -5,6 +5,8 @@ import { TaskEnums } from '@/types/plan'
 import { getCurrentTimestamp } from '@/utils/time'
 import { logger } from '@/utils/logger'
 import { validateTextField, validatePriority, validateForm } from '@/utils/form-validation'
+import { CacheManager } from '@/utils/cache-manager'
+import { CACHE_KEYS } from '@/stores/cache'
 
 /**
  * 计划管理 Composable
@@ -47,6 +49,48 @@ export function usePlanManagement(
   const statusMenuPosition = ref({ x: 0, y: 0 })
   const statusMenuTask = ref<RecentTask | null>(null)
   let statusMenuCloseHandler: ((e: MouseEvent) => void) | null = null
+
+  // 任务选择相关状态
+  const selectedTaskId = ref<number | null>(null)
+  
+  // 计算属性：获取选中的任务
+  const selectedTask = computed(() => {
+    if (!selectedTaskId.value) return null
+    return planStore.tasks.find(task => task.id === selectedTaskId.value) || null
+  })
+  
+  // 选择任务
+  const handleTaskSelect = (task: RecentTask) => {
+    selectedTaskId.value = task.id
+    // 保存到缓存
+    CacheManager.set(CACHE_KEYS.SELECTED_PLAN_TASK_ID, task.id, true)
+    logger.info('任务已选择', { id: task.id })
+  }
+  
+  // 恢复上次选择的任务，如果没有则选择第一个任务
+  const restoreSelectedTask = () => {
+    const filteredTasks = planStore.filteredTasks
+    if (filteredTasks.length === 0) {
+      selectedTaskId.value = null
+      return
+    }
+    
+    // 尝试从缓存恢复上次选择的任务
+    const cachedTaskId = CacheManager.get<number>(CACHE_KEYS.SELECTED_PLAN_TASK_ID, null, true)
+    if (cachedTaskId !== null) {
+      const task = filteredTasks.find(t => t.id === cachedTaskId)
+      if (task) {
+        selectedTaskId.value = cachedTaskId
+        logger.info('已恢复上次选择的任务', { id: cachedTaskId })
+        return
+      }
+    }
+    
+    // 如果没有缓存或任务不存在，选择第一个任务
+    selectedTaskId.value = filteredTasks[0].id
+    CacheManager.set(CACHE_KEYS.SELECTED_PLAN_TASK_ID, filteredTasks[0].id, true)
+    logger.info('已选择第一个任务', { id: filteredTasks[0].id })
+  }
 
   // 打开添加任务对话框
   const handleOpenAddPlanDialog = () => {
@@ -303,7 +347,7 @@ export function usePlanManagement(
       ElNotification({
         message: '状态更新成功',
         type: 'success',
-        duration: 2000,
+        duration: 500,
         position: 'bottom-right',
       })
       logger.info('任务状态更新成功', { id: taskId, status: newStatus })
@@ -340,6 +384,10 @@ export function usePlanManagement(
       )
 
       await planStore.deleteTask(taskId)
+      // 如果删除的是当前选中的任务，清除选中状态
+      if (selectedTaskId.value === taskId) {
+        selectedTaskId.value = null
+      }
       closeContextMenu()
       ElNotification({
         message: '任务删除成功',
@@ -451,6 +499,11 @@ export function usePlanManagement(
     // 状态筛选相关
     statusList,
     selectedStatusList: computed(() => planStore.selectedStatusList),
+    // 任务选择相关
+    selectedTaskId,
+    selectedTask,
+    handleTaskSelect,
+    restoreSelectedTask,
     // 右键菜单状态
     contextMenuVisible,
     contextMenuPosition,

@@ -24,6 +24,10 @@ const {
   // 状态筛选相关
   statusList,
   selectedStatusList,
+  // 任务选择相关
+  selectedTaskId,
+  selectedTask,
+  handleTaskSelect,
   // 右键菜单状态
   contextMenuVisible,
   contextMenuPosition,
@@ -52,6 +56,8 @@ const {
   // 工具方法
   getStatusLabel,
   getPriorityLabel,
+  // 恢复选中任务
+  restoreSelectedTask,
 } = usePlanManagement(planStore)
 
 // 从 store 获取状态
@@ -80,6 +86,11 @@ watch(tasks, (newTasks) => {
       taskDescriptions.value[task.id] = storeDescription
     }
   })
+  
+  // 如果选中的任务不在列表中，或者当前没有选中任务，恢复选中任务（会尝试恢复上次选择或选择第一个）
+  if (selectedTaskId.value === null || !newTasks.find(t => t.id === selectedTaskId.value)) {
+    restoreSelectedTask()
+  }
 }, { immediate: true })
 
 // 防抖保存任务描述
@@ -184,8 +195,10 @@ const getPriorityClass = (priority: TaskEnums.Priority): string => {
   return priorityClassMap[priority] || 'cu-tag--default'
 }
 
-onMounted(() => {
-  planStore.loadTasks()
+onMounted(async () => {
+  await planStore.loadTasks()
+  // 任务加载完成后，恢复上次选择的任务或选择第一个任务
+  restoreSelectedTask()
 })
 
 // 组件卸载时清理所有定时器
@@ -203,26 +216,43 @@ onUnmounted(() => {
   <div class="p-plan-list-wrap">
     <!-- 顶部：标题和操作按钮 -->
     <div class="p-plan-list-header">
-      <h2 class="p-page-title">近期任务</h2>
-      <div class="p-header-actions">
-        <el-button 
-          type="primary" 
-          size="small"
-          @click="handleOpenAddPlanDialog"
-        >
-          添加任务
-        </el-button>
-        <button 
-          class="cu-button cu-button--text cu-button--small" 
-          @click="handleRefresh" 
-          :disabled="loading"
-        >
-          {{ loading ? '加载中' : '刷新' }}
-        </button>
+      <div class="p-header-left">
+        <h2 class="p-page-title">近期任务</h2>
+      </div>
+      <div v-if="!loading && !error" class="p-header-center">
+        <div class="p-status-filter">
+          <div 
+            v-for="status in statusList"
+            :key="status.value"
+            class="p-status-tag"
+            :class="{ 'p-status-tag--active': selectedStatusList.includes(status.value) }"
+            @click="handleToggleStatus(status.value)"
+          >
+            {{ status.label }}
+          </div>
+        </div>
+      </div>
+      <div class="p-header-right">
+        <div class="p-header-buttons">
+          <el-button 
+            type="primary" 
+            size="small"
+            @click="handleOpenAddPlanDialog"
+          >
+            添加任务
+          </el-button>
+          <button 
+            class="cu-button cu-button--text cu-button--small" 
+            @click="handleRefresh" 
+            :disabled="loading"
+          >
+            {{ loading ? '加载中' : '刷新' }}
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- 状态筛选区域 -->
+    <!-- 加载、错误状态 -->
     <div v-if="loading && tasks.length === 0" class="p-loading">
       加载中...
     </div>
@@ -237,84 +267,81 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <div v-else class="p-status-filter">
-      <div 
-        v-for="status in statusList"
-        :key="status.value"
-        class="p-status-tag"
-        :class="{ 'p-status-tag--active': selectedStatusList.includes(status.value) }"
-        @click="handleToggleStatus(status.value)"
-      >
-        {{ status.label }}
-      </div>
-    </div>
-
-    <!-- 任务列表 -->
-    <div class="p-tasks-section">
-      <div v-if="tasks.length === 0" class="p-tasks-empty">
-        {{ selectedStatusList.length > 0 ? '没有符合条件的任务' : '暂无任务' }}
-      </div>
-      <ul v-else class="p-tasks-list">
-        <li 
-          v-for="task in tasks" 
-          :key="task.id" 
-          class="cu-card cu-card--small p-task-item"
-          @contextmenu.prevent="handleContextMenu($event, task)"
-        >
-          <div class="p-task-header">
-            <h3 class="p-task-title">
-              <span v-if="task.top > 0" class="p-task-top-icon">🔝</span>
+    <!-- 左右布局 -->
+    <div class="p-tasks-layout">
+      <!-- 左侧：任务标题列表 -->
+      <div class="p-tasks-list-section">
+        <div v-if="tasks.length === 0" class="p-tasks-empty">
+          {{ selectedStatusList.length > 0 ? '没有符合条件的任务' : '暂无任务' }}
+        </div>
+        <ul v-else class="p-tasks-list">
+          <li 
+            v-for="task in tasks" 
+            :key="task.id" 
+            class="p-task-list-item"
+            :class="{ 'p-task-list-item--active': selectedTaskId === task.id }"
+            @click="handleTaskSelect(task)"
+            @contextmenu.prevent="handleContextMenu($event, task)"
+          >
+            <h3 class="p-task-list-item-title">
+              <span v-if="task.top > 0" class="p-task-list-item-top-icon">🔝</span>
               {{ task.title }}
             </h3>
-            <div class="p-task-meta">
-              <span 
-                class="cu-tag cu-tag--small"
-                :class="getPriorityClass(task.priority)"
-              >
-                {{ getPriorityLabel(task.priority) }}优先级
-              </span>
-              <span 
-                class="cu-tag cu-tag--small cu-tag--status"
-                :class="getStatusClass(task.status)"
-                @click.stop="handleOpenStatusMenu($event, task)"
-              >
-                {{ getStatusLabel(task.status) }}
-              </span>
-            </div>
-          </div>
-          
-          <div class="p-task-description">
+          </li>
+        </ul>
+      </div>
+
+      <!-- 右侧：任务详情 -->
+      <div class="p-task-detail-section">
+        <div v-if="!selectedTask" class="p-task-detail-empty">
+          请从左侧选择一个任务查看详情
+        </div>
+        <div v-else class="p-task-detail">
+          <div class="p-task-detail-description">
             <MarkdownEditor
-              :model-value="taskDescriptions[task.id] || task.description || ''"
-              @update:model-value="(value: string) => handleDescriptionChange(task.id, value)"
+              :model-value="taskDescriptions[selectedTask!.id] || selectedTask!.description || ''"
+              @update:model-value="(value: string) => handleDescriptionChange(selectedTask!.id, value)"
               placeholder="点击编辑任务详情（支持 Markdown 格式）"
-              :height="'auto'"
-              :min-height="100"
-              :max-height="300"
+              :height="'100%'"
             />
-            <div v-if="savingDescriptions[task.id]" class="p-task-description-saving">
+            <div v-if="savingDescriptions[selectedTask!.id]" class="p-task-description-saving">
               保存中...
             </div>
           </div>
 
-          <div class="p-task-footer">
-            <div class="p-task-info">
-              <span v-if="task.deadline" class="p-task-deadline" :class="{ 'p-task-deadline--overdue': isTaskOverdue(task.deadline, task.completed) }">
-                📅 {{ formatDeadline(task.deadline) }}
+          <div class="p-task-detail-footer">
+            <div class="p-task-detail-meta">
+              <span 
+                class="cu-tag cu-tag--small"
+                :class="getPriorityClass(selectedTask!.priority)"
+              >
+                {{ getPriorityLabel(selectedTask!.priority) }}优先级
               </span>
-              <span class="p-task-time">{{ timestampToChineseDateTime(task.createTime) }}</span>
+              <span 
+                class="cu-tag cu-tag--small cu-tag--status"
+                :class="getStatusClass(selectedTask!.status)"
+                @click.stop="handleOpenStatusMenu($event, selectedTask!)"
+              >
+                {{ getStatusLabel(selectedTask!.status) }}
+              </span>
             </div>
-            <div class="p-task-actions">
-              <div class="p-task-status-buttons">
+            <div class="p-task-detail-info">
+              <span v-if="selectedTask!.deadline" class="p-task-detail-deadline" :class="{ 'p-task-detail-deadline--overdue': isTaskOverdue(selectedTask!.deadline, selectedTask!.completed) }">
+                📅 {{ formatDeadline(selectedTask!.deadline) }}
+              </span>
+              <span class="p-task-detail-time">{{ timestampToChineseDateTime(selectedTask!.createTime) }}</span>
+            </div>
+            <div class="p-task-detail-actions">
+              <div class="p-task-detail-status-buttons">
                 <button
                   v-for="status in statusList"
                   :key="status.value"
                   class="p-task-status-btn"
                   :class="{
-                    'p-task-status-btn--active': task.status === status.value,
+                    'p-task-status-btn--active': selectedTask!.status === status.value,
                     [`p-task-status-btn--${getStatusButtonClass(status.value)}`]: true
                   }"
-                  @click="handleDirectChangeStatus(task, status.value)"
+                  @click="handleDirectChangeStatus(selectedTask!, status.value)"
                   :title="`切换到${status.label}`"
                 >
                   {{ status.label }}
@@ -322,15 +349,15 @@ onUnmounted(() => {
               </div>
               <button 
                 class="p-task-action-btn" 
-                @click="handleOpenEditPlanDialog(task)"
+                @click="handleOpenEditPlanDialog(selectedTask!)"
                 title="编辑"
               >
                 编辑
               </button>
             </div>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
 
     <!-- 添加/编辑任务弹窗 -->

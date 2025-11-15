@@ -23,6 +23,7 @@ export const CACHE_KEYS = {
   // 计划管理缓存
   TASK_STATUS_FILTER: 'task_status_filter',
   SELECTED_PLAN_STATUS_FILTER: 'selected_plan_status_filter', // 当前选中的任务状态筛选
+  SELECTED_PLAN_TASK_ID: 'selected_plan_task_id', // 当前选中的任务ID
 
   // 签到相关缓存
   DAILY_CHECKIN: 'daily_checkin', // 存储日期字符串 YYYY-MM-DD
