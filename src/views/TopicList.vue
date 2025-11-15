@@ -212,6 +212,13 @@ const handleOpenEditTopicDialog = (topic: ITopic) => {
   showAddTopicDialog.value = true
 }
 
+// 从右键菜单打开编辑对话框
+const handleOpenEditTopicDialogFromMenu = () => {
+  if (!contextMenuTopic.value) return
+  handleOpenEditTopicDialog(contextMenuTopic.value)
+  closeContextMenu()
+}
+
 const handleCloseAddTopicDialog = () => {
   showAddTopicDialog.value = false
   editingTopicId.value = null
@@ -588,13 +595,6 @@ onMounted(() => {
         >
           <span v-if="topic.top > 0" class="p-topic-tag-top-icon">🔝</span>
           <span class="p-topic-tag-name">{{ topic.topicName }}</span>
-          <button
-            class="p-topic-tag-edit-btn"
-            @click.stop="handleOpenEditTopicDialog(topic)"
-            title="编辑主题"
-          >
-            ✏️
-          </button>
         </div>
       </div>
       <div class="p-topics-selector-actions">
@@ -764,6 +764,13 @@ onMounted(() => {
         @click="handlePinTopic"
       >
         <span>置顶</span>
+      </div>
+      <div 
+        v-if="contextMenuTopic"
+        class="p-context-menu-item" 
+        @click="handleOpenEditTopicDialogFromMenu"
+      >
+        <span>编辑</span>
       </div>
       <div class="p-context-menu-item p-context-menu-item--danger" @click="handleDeleteTopic">
         <span>删除</span>

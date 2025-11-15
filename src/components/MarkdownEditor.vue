@@ -511,10 +511,27 @@ onUnmounted(() => {
     }
 
     // 修复有序列表显示数字的问题
+    // 一级列表不需要缩进
     .vditor-wysiwyg ol,
     .vditor-ir ol {
       list-style-type: decimal !important;
       list-style-position: outside;
+      padding-left: 0;
+    }
+
+    // 一级无序列表不需要缩进
+    .vditor-wysiwyg ul,
+    .vditor-ir ul {
+      list-style-type: disc;
+      list-style-position: outside;
+      padding-left: 0;
+    }
+
+    // 嵌套列表需要缩进
+    .vditor-wysiwyg ol ol,
+    .vditor-ir ol ol,
+    .vditor-wysiwyg ul ul,
+    .vditor-ir ul ul {
       padding-left: 2em;
     }
 
@@ -524,6 +541,14 @@ onUnmounted(() => {
 
     .vditor-wysiwyg ol ol ol {
       list-style-type: lower-roman;
+    }
+
+    .vditor-wysiwyg ul ul {
+      list-style-type: circle;
+    }
+
+    .vditor-wysiwyg ul ul ul {
+      list-style-type: square;
     }
   }
 }
