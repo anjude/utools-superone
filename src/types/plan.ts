@@ -94,6 +94,7 @@ export interface RecentTaskForm {
   title: string
   description: string
   priority: TaskEnums.Priority
+  status?: TaskEnums.Status // 状态（可选，用于更新时）
   deadline?: number // 截止日期，Unix时间戳
   year?: number // 年份（可选，用于创建时的默认值）
   top?: number // 置顶权重

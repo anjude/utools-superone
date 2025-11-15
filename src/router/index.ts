@@ -35,6 +35,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/stock',
+    name: 'StockList',
+    component: () => import('@/views/StockList.vue'),
+    meta: {
+      title: '投资标的',
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

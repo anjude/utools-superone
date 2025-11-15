@@ -1,0 +1,361 @@
+// StockList页面样式 - 参考TopicList布局
+@use '../02-tools/mixins' as *;
+
+.p-stock-list-wrap {
+  padding: var(--spacing-sm);
+  min-height: 100vh;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+
+  @include respond-to('sm') {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+}
+
+.p-stock-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+  margin-bottom: 0;
+  border-bottom: var(--border-width-base) solid var(--border-color);
+
+  .p-page-title {
+    margin: 0;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-color);
+    letter-spacing: -0.02em;
+    transition: color var(--transition-normal);
+  }
+
+  .p-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+}
+
+// 加载、错误、空状态
+.p-loading,
+.p-error,
+.p-empty {
+  text-align: center;
+  padding: var(--spacing-md);
+  color: var(--text-color);
+  opacity: var(--text-opacity-quaternary);
+  font-size: var(--font-size-body);
+  transition: color var(--transition-normal), opacity var(--transition-normal);
+}
+
+.p-error {
+  color: var(--error-color);
+  opacity: var(--text-opacity-hover);
+
+  p {
+    margin: 0 0 var(--spacing-sm);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+// 标的选择器容器（左右布局）
+.p-stocks-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2) 0;
+}
+
+// 标的选择器（左侧，可滚动）
+.p-stocks-selector {
+  flex: 1;
+  display: flex;
+  gap: var(--spacing-6);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0; // 允许 flex 子元素收缩
+  
+  // 隐藏滚动条但保持滚动功能
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  
+  &::-webkit-scrollbar {
+    height: var(--spacing-6);
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--radius-xs);
+    
+    &:hover {
+      background: var(--primary-color);
+    }
+  }
+}
+
+// 标的选择器操作按钮（右侧，固定宽度）
+.p-stocks-selector-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.p-stock-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-10);
+  border-radius: var(--radius-md);
+  border: var(--border-width-base) solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    color: var(--primary-color);
+  }
+
+  &--active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--light);
+  }
+}
+
+.p-stock-tag-top-icon {
+  font-size: var(--font-size-body);
+  line-height: 1;
+  margin-right: var(--spacing-3);
+  display: inline-block;
+}
+
+.p-stock-tag-name {
+  font-weight: var(--font-weight-medium);
+}
+
+.p-stock-tag-code {
+  margin-left: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  opacity: var(--text-opacity-secondary);
+  padding: var(--spacing-2) var(--spacing-xs);
+  background: var(--black-light);
+  border-radius: var(--radius-xs);
+
+  .p-stock-tag--active & {
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 0.9;
+  }
+}
+
+// 编辑器区域
+.p-editor-section {
+  flex-shrink: 0;
+  margin-bottom: var(--spacing-6);
+}
+
+// 日志区域
+.p-logs-section {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.p-logs-title {
+  margin: 0 0 var(--spacing-6);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+  transition: color var(--transition-normal);
+}
+
+.p-logs-loading,
+.p-logs-error,
+.p-logs-empty {
+  padding: var(--spacing-md);
+  text-align: center;
+  color: var(--text-color);
+  opacity: var(--text-opacity-tertiary);
+  font-size: var(--font-size-md);
+}
+
+.p-logs-error {
+  color: var(--error-color);
+  opacity: var(--text-opacity-hover);
+}
+
+.p-logs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+// 使用 cu-card 作为唯一卡片标准
+// 注意：在 Vue 文件中需要使用 cu-card cu-card--small 类
+.p-log-item {
+  // 页面特定的悬停效果（覆盖 cu-card 默认样式）
+  &:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+  }
+}
+
+.p-log-content {
+  color: var(--text-color);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  word-break: break-word;
+  margin-bottom: var(--spacing-xs);
+
+  :deep(h1),
+  :deep(h2),
+  :deep(h3),
+  :deep(h4),
+  :deep(h5),
+  :deep(h6) {
+    margin: var(--spacing-6) 0 var(--spacing-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-color);
+    font-size: var(--font-size-body);
+  }
+
+  :deep(p) {
+    margin: var(--spacing-3) 0;
+  }
+
+  :deep(ul),
+  :deep(ol) {
+    margin: var(--spacing-3) 0;
+    padding-left: var(--spacing-18);
+  }
+
+  :deep(li) {
+    margin: 1px 0;
+  }
+
+  :deep(code) {
+    background: var(--black-light);
+    padding: var(--spacing-2) var(--spacing-xs);
+    border-radius: var(--radius-xs);
+    font-size: 0.9em;
+  }
+
+  :deep(pre) {
+    background: var(--black-light);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-xs);
+    overflow-x: auto;
+    margin: var(--spacing-xs) 0;
+    font-size: var(--font-size-body-sm);
+  }
+
+  :deep(blockquote) {
+    border-left: var(--border-width-thick) solid var(--primary-color);
+    padding-left: var(--spacing-6);
+    margin: var(--spacing-xs) 0;
+    opacity: var(--text-opacity-hover);
+  }
+}
+
+.p-log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: var(--border-width-base) solid var(--border-color);
+}
+
+.p-log-time {
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  opacity: var(--text-opacity-secondary);
+}
+
+.p-log-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+.p-log-action-btn {
+  padding: var(--spacing-2) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  background: transparent;
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-quaternary);
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
+  }
+
+  &--danger {
+    &:hover {
+      border-color: var(--error-color);
+      color: var(--error-color);
+      background: var(--error-danger-light);
+    }
+  }
+}
+
+// 右键菜单样式
+.p-context-menu {
+  position: fixed;
+  z-index: var(--z-index-dropdown);
+  min-width: 120px;
+  padding: var(--spacing-xs) 0;
+  background: var(--card-bg);
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  cursor: default;
+  user-select: none;
+  transition: all var(--transition-base);
+
+  .p-context-menu-item {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+
+    &:hover {
+      background: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    &--danger {
+      &:hover {
+        background: var(--error-danger-light);
+        color: var(--error-color);
+      }
+    }
+
+    span {
+      display: block;
+    }
+  }
+}
+

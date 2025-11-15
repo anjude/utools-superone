@@ -34,6 +34,9 @@ export const CACHE_KEYS = {
   // 主题管理缓存
   SELECTED_TOPIC_ID: 'selected_topic_id', // 当前选中的主题ID
 
+  // 标的管理缓存
+  SELECTED_STOCK_ID: 'selected_stock_id', // 当前选中的标的ID
+
   // 清单管理缓存
   SELECTED_CHECKLIST_ID: 'selected_checklist_id', // 当前选中的清单ID
   CHECKLIST_EXECUTION_PROGRESS: 'checklist_execution_progress_', // 清单执行进度缓存前缀（后接checklistId）

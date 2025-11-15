@@ -6,4 +6,5 @@
 export { useUserStore } from './user'
 export { useChecklistStore } from './checklist'
 export { useTopicStore } from './topic'
+export { useStockStore } from './stock'
 export { CACHE_KEYS } from './cache'
