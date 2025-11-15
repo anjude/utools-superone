@@ -2,10 +2,10 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { MdEditor } from 'md-editor-v3'
+import { MarkdownEditor } from '@/components'
 import { TopicRepo } from '@/repos/topic-repo'
 import { TopicLogRepo } from '@/repos/topic-log-repo'
-import type { ITopic, TopicLogListItem } from '@/types/topic'
+import type { ITopic, ITopicFormData, TopicLogListItem } from '@/types/topic'
 import { TopicEnums } from '@/constants/enums'
 import { timestampToChineseDateTime } from '@/utils/time'
 import { markdownToHtml } from '@/utils/markdown'
@@ -31,6 +31,18 @@ const logsError = ref<string>('')
 const selectedTopic = computed(() => {
   return topics.value.find(t => t.id === selectedTopicId.value) || null
 })
+
+// 添加主题弹窗相关状态
+const showAddTopicDialog = ref(false)
+const topicForm = ref<{
+  topicName: string
+  description: string
+}>({
+  topicName: '',
+  description: '',
+})
+const creatingTopic = ref(false)
+const topicFormError = ref<string>('')
 
 const loadTopics = async () => {
   loading.value = true
@@ -116,6 +128,54 @@ const handleSaveLog = async () => {
   }
 }
 
+const handleOpenAddTopicDialog = () => {
+  topicForm.value = {
+    topicName: '',
+    description: '',
+  }
+  topicFormError.value = ''
+  showAddTopicDialog.value = true
+}
+
+const handleCloseAddTopicDialog = () => {
+  showAddTopicDialog.value = false
+  topicForm.value = {
+    topicName: '',
+    description: '',
+  }
+  topicFormError.value = ''
+}
+
+const handleCreateTopic = async () => {
+  if (!topicForm.value.topicName?.trim()) {
+    topicFormError.value = '主题名称不能为空'
+    return
+  }
+
+  creatingTopic.value = true
+  topicFormError.value = ''
+  try {
+    const description = topicForm.value.description?.trim()
+    const newTopic = await TopicRepo.create({
+      topicName: topicForm.value.topicName.trim(),
+      ...(description ? { description } : {}),
+    })
+    // 关闭弹窗
+    handleCloseAddTopicDialog()
+    // 刷新主题列表
+    await loadTopics()
+    // 自动选中新创建的主题
+    if (newTopic.id) {
+      selectedTopicId.value = newTopic.id
+    }
+  } catch (err) {
+    topicFormError.value = err instanceof Error ? err.message : '创建主题失败'
+    console.error('创建主题失败:', err)
+  } finally {
+    creatingTopic.value = false
+  }
+}
+
 onMounted(() => {
   loadTopics()
 })
@@ -126,13 +186,22 @@ onMounted(() => {
     <!-- 顶部：主题列表 -->
     <div class="p-topic-list-header">
       <h2 class="p-page-title">主题日志</h2>
-      <button 
-        class="cu-button cu-button--text cu-button--small" 
-        @click="loadTopics" 
-        :disabled="loading"
-      >
-        {{ loading ? '加载中' : '刷新' }}
-      </button>
+      <div class="p-header-actions">
+        <el-button 
+          type="primary" 
+          size="small"
+          @click="handleOpenAddTopicDialog"
+        >
+          添加主题
+        </el-button>
+        <button 
+          class="cu-button cu-button--text cu-button--small" 
+          @click="loadTopics" 
+          :disabled="loading"
+        >
+          {{ loading ? '加载中' : '刷新' }}
+        </button>
+      </div>
     </div>
 
     <!-- 主题选择区域 -->
@@ -154,66 +223,37 @@ onMounted(() => {
       暂无主题
     </div>
 
-    <div v-else class="p-topics-selector">
-      <div 
-        v-for="topic in topics" 
-        :key="topic.id" 
-        class="p-topic-tag"
-        :class="{ 'p-topic-tag--active': selectedTopicId === topic.id }"
-        @click="handleTopicSelect(topic)"
-      >
-        <span class="p-topic-tag-name">{{ topic.topicName }}</span>
+    <div v-else class="p-topics-selector-wrapper">
+      <div class="p-topics-selector">
+        <div 
+          v-for="topic in topics" 
+          :key="topic.id" 
+          class="p-topic-tag"
+          :class="{ 'p-topic-tag--active': selectedTopicId === topic.id }"
+          @click="handleTopicSelect(topic)"
+        >
+          <span class="p-topic-tag-name">{{ topic.topicName }}</span>
+        </div>
+      </div>
+      <div class="p-topics-selector-actions">
+        <button 
+          class="cu-button cu-button--primary cu-button--small"
+          @click="handleSaveLog"
+          :disabled="!selectedTopicId || !editorContent.trim() || saving"
+        >
+          {{ saving ? '保存中...' : '保存' }}
+        </button>
       </div>
     </div>
 
     <!-- 中间：固定编辑器 -->
     <div class="p-editor-section">
-      <div class="p-editor-wrapper">
-        <MdEditor
-          v-model="editorContent"
-          :preview="true"
-          :toolbars="[
-            'bold',
-            'underline',
-            'italic',
-            'strikeThrough',
-            '-',
-            'title',
-            'sub',
-            'sup',
-            'quote',
-            'unorderedList',
-            'orderedList',
-            'task',
-            '-',
-            'codeRow',
-            'code',
-            'link',
-            'table',
-            '-',
-            'revoke',
-            'next',
-            '=',
-            'pageFullscreen',
-            'fullscreen',
-            'preview',
-            'catalog'
-          ]"
-          :placeholder="selectedTopic ? `记录到「${selectedTopic.topicName}」...` : '请先选择一个主题'"
-          language="zh-CN"
-          :style="{ height: '200px' }"
-          :disabled="!selectedTopicId"
-        />
-        <div class="p-editor-save-btn">
-          <button 
-            class="cu-button cu-button--primary cu-button--small"
-            @click="handleSaveLog"
-            :disabled="!selectedTopicId || !editorContent.trim() || saving"
-          >
-            {{ saving ? '保存中...' : '保存' }}
-          </button>
-        </div>
-      </div>
+      <MarkdownEditor
+        v-model="editorContent"
+        :placeholder="selectedTopic ? `记录到「${selectedTopic.topicName}」...` : '请先选择一个主题'"
+        :height="200"
+        :disabled="!selectedTopicId"
+      />
     </div>
 
     <!-- 底部：日志列表 -->
@@ -234,5 +274,51 @@ onMounted(() => {
         </li>
       </ul>
     </div>
+
+    <!-- 添加主题弹窗 -->
+    <el-dialog
+      v-model="showAddTopicDialog"
+      title="添加主题"
+      width="600px"
+      @close="handleCloseAddTopicDialog"
+    >
+      <el-form :model="topicForm" label-width="80px">
+        <el-form-item label="主题名称" required>
+          <el-input
+            v-model="topicForm.topicName"
+            placeholder="请输入主题名称"
+            :maxlength="50"
+            show-word-limit
+          />
+        </el-form-item>
+        <el-form-item label="主题描述">
+          <MarkdownEditor
+            v-model="topicForm.description"
+            placeholder="请输入主题描述（可选，支持 Markdown 格式）"
+            :height="150"
+          />
+        </el-form-item>
+        <el-form-item v-if="topicFormError">
+          <el-alert
+            :title="topicFormError"
+            type="error"
+            :closable="false"
+            show-icon
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handleCloseAddTopicDialog">取消</el-button>
+          <el-button 
+            type="primary" 
+            @click="handleCreateTopic"
+            :loading="creatingTopic"
+          >
+            确定
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>

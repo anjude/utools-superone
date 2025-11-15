@@ -28,6 +28,12 @@
     color: var(--text-color);
     transition: color 0.3s ease;
   }
+
+  .p-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 }
 
 // 加载、错误、空状态
@@ -52,14 +58,23 @@
   }
 }
 
-// 主题选择器
+// 主题选择器容器（左右布局）
+.p-topics-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+// 主题选择器（左侧，可滚动）
 .p-topics-selector {
+  flex: 1;
   display: flex;
   gap: 6px;
-  padding: 4px 0;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  min-width: 0; // 允许 flex 子元素收缩
   
   // 隐藏滚动条但保持滚动功能
   scrollbar-width: thin;
@@ -81,6 +96,13 @@
       background: var(--primary-color);
     }
   }
+}
+
+// 主题选择器操作按钮（右侧，固定宽度）
+.p-topics-selector-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .p-topic-tag {
@@ -133,42 +155,7 @@
 // 编辑器区域
 .p-editor-section {
   flex-shrink: 0;
-}
-
-.p-editor-wrapper {
-  position: relative;
   margin-bottom: 4px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-
-  :deep(.md-editor) {
-    background: var(--bg-color);
-    border: none;
-    
-    .md-editor-content {
-      min-height: 120px;
-    }
-    
-    .md-editor-toolbar {
-      position: relative;
-    }
-  }
-}
-
-.p-editor-save-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 100;
-  
-  .cu-button {
-    font-size: 12px;
-    padding: 4px 12px;
-    height: 28px;
-    line-height: 1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
 }
 
 // 日志区域
