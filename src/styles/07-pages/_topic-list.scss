@@ -146,6 +146,44 @@
   font-weight: 500;
 }
 
+.p-topic-tag-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-left: 4px;
+  font-size: 12px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  .p-topic-tag:hover & {
+    opacity: 0.6;
+  }
+
+  &:hover {
+    opacity: 1 !important;
+    background: rgba(1, 194, 96, 0.15);
+  }
+
+  .p-topic-tag--active & {
+    opacity: 0.7;
+    color: var(--light);
+
+    &:hover {
+      opacity: 1 !important;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
 // 编辑器区域
 .p-editor-section {
   flex-shrink: 0;

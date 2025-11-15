@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElNotification } from 'element-plus'
 import { userApi } from '@/api/user'
 import { idGenerator } from '@/utils/id-generator'
 import { CacheManager } from '@/utils/cache-manager'
@@ -27,11 +28,13 @@ const openExternal = (url: string) => {
 }
 
 // 显示通知
-const showNotification = (title: string) => {
-  if (window.utools && typeof window.utools.showNotification === 'function') {
-    window.utools.showNotification(title)
-    return
-  }
+const showNotification = (title: string, type: 'success' | 'warning' | 'info' | 'error' = 'info') => {
+  ElNotification({
+    message: title,
+    type,
+    duration: 2000,
+    position: 'bottom-right'
+  })
 }
 
 // 获取二维码并开始轮询

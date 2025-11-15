@@ -1,4 +1,5 @@
 import type { Request } from './request-client'
+import { ElNotification } from 'element-plus'
 import { CacheManager } from '@/utils/cache-manager'
 import { CACHE_KEYS } from '@/stores/cache'
 import { idGenerator } from '@/utils/id-generator'
@@ -11,15 +12,13 @@ export class LoginManager {
     this.requestInstance = requestInstance
   }
 
-  private notify(title: string): void {
-    if (window.utools && typeof window.utools.showNotification === 'function') {
-      window.utools.showNotification(title)
-      return
-    }
-    if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-      window.alert(title)
-      return
-    }
+  private notify(title: string, type: 'success' | 'warning' | 'info' | 'error' = 'info'): void {
+    ElNotification({
+      message: title,
+      type,
+      duration: 2000,
+      position: 'bottom-right'
+    })
   }
 
   private openExternal(url: string): void {

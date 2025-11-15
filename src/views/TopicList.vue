@@ -2,7 +2,7 @@
 import { onMounted, ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElNotification } from 'element-plus'
 import { MarkdownEditor, MarkdownViewer } from '@/components'
 import { TopicRepo } from '@/repos/topic-repo'
 import { TopicLogRepo } from '@/repos/topic-log-repo'
@@ -51,8 +51,9 @@ const canSave = computed(() => {
   return selectedTopicId.value !== null && hasEditorContent.value && !saving.value
 })
 
-// 添加主题弹窗相关状态
+// 添加/编辑主题弹窗相关状态
 const showAddTopicDialog = ref(false)
+const editingTopicId = ref<number | null>(null)
 const topicForm = ref<{
   topicName: string
   description: string
@@ -62,6 +63,9 @@ const topicForm = ref<{
 })
 const creatingTopic = ref(false)
 const topicFormError = ref<string>('')
+
+// 判断是否为编辑模式
+const isEditMode = computed(() => editingTopicId.value !== null)
 
 // 右键菜单相关状态
 const contextMenuVisible = ref(false)
@@ -177,13 +181,19 @@ const handleSaveLog = async () => {
     await loadLogs(selectedTopicId.value)
   } catch (err) {
     console.error('保存日志失败:', err)
-    alert(err instanceof Error ? err.message : '保存日志失败')
+    ElNotification({
+      message: err instanceof Error ? err.message : '保存日志失败',
+      type: 'error',
+      duration: 2000,
+      position: 'bottom-right'
+    })
   } finally {
     saving.value = false
   }
 }
 
 const handleOpenAddTopicDialog = () => {
+  editingTopicId.value = null
   topicForm.value = {
     topicName: '',
     description: '',
@@ -192,8 +202,19 @@ const handleOpenAddTopicDialog = () => {
   showAddTopicDialog.value = true
 }
 
+const handleOpenEditTopicDialog = (topic: ITopic) => {
+  editingTopicId.value = topic.id
+  topicForm.value = {
+    topicName: topic.topicName,
+    description: topic.description || '',
+  }
+  topicFormError.value = ''
+  showAddTopicDialog.value = true
+}
+
 const handleCloseAddTopicDialog = () => {
   showAddTopicDialog.value = false
+  editingTopicId.value = null
   topicForm.value = {
     topicName: '',
     description: '',
@@ -230,6 +251,42 @@ const handleCreateTopic = async () => {
     console.error('创建主题失败:', err)
   } finally {
     creatingTopic.value = false
+  }
+}
+
+const handleUpdateTopic = async () => {
+  if (!editingTopicId.value) return
+  
+  if (!topicForm.value.topicName?.trim()) {
+    topicFormError.value = '主题名称不能为空'
+    return
+  }
+
+  creatingTopic.value = true
+  topicFormError.value = ''
+  try {
+    const description = topicForm.value.description?.trim()
+    await TopicRepo.update(editingTopicId.value, {
+      topicName: topicForm.value.topicName.trim(),
+      ...(description ? { description } : {}),
+    })
+    // 关闭弹窗
+    handleCloseAddTopicDialog()
+    // 刷新主题列表
+    await loadTopics()
+  } catch (err) {
+    topicFormError.value = err instanceof Error ? err.message : '更新主题失败'
+    console.error('更新主题失败:', err)
+  } finally {
+    creatingTopic.value = false
+  }
+}
+
+const handleSubmitTopic = () => {
+  if (isEditMode.value) {
+    handleUpdateTopic()
+  } else {
+    handleCreateTopic()
   }
 }
 
@@ -370,14 +427,20 @@ const handleUnpinTopic = async () => {
 const handleCopyLog = async (log: TopicLogListItem) => {
   try {
     await navigator.clipboard.writeText(log.content)
-    if (window.utools && typeof window.utools.showNotification === 'function') {
-      window.utools.showNotification('已复制到剪贴板')
-    } else {
-      alert('已复制到剪贴板')
-    }
+    ElNotification({
+      message: '已复制到剪贴板',
+      type: 'success',
+      duration: 2000,
+      position: 'bottom-right'
+    })
   } catch (err) {
     console.error('复制失败:', err)
-    alert('复制失败')
+    ElNotification({
+      message: '复制失败',
+      type: 'error',
+      duration: 2000,
+      position: 'bottom-right'
+    })
   }
 }
 
@@ -525,6 +588,13 @@ onMounted(() => {
         >
           <span v-if="topic.top > 0" class="p-topic-tag-top-icon">🔝</span>
           <span class="p-topic-tag-name">{{ topic.topicName }}</span>
+          <button
+            class="p-topic-tag-edit-btn"
+            @click.stop="handleOpenEditTopicDialog(topic)"
+            title="编辑主题"
+          >
+            ✏️
+          </button>
         </div>
       </div>
       <div class="p-topics-selector-actions">
@@ -590,10 +660,10 @@ onMounted(() => {
       </ul>
     </div>
 
-    <!-- 添加主题弹窗 -->
+    <!-- 添加/编辑主题弹窗 -->
     <el-dialog
       v-model="showAddTopicDialog"
-      title="添加主题"
+      :title="isEditMode ? '编辑主题' : '添加主题'"
       width="600px"
       @close="handleCloseAddTopicDialog"
     >
@@ -627,7 +697,7 @@ onMounted(() => {
           <el-button @click="handleCloseAddTopicDialog">取消</el-button>
           <el-button 
             type="primary" 
-            @click="handleCreateTopic"
+            @click="handleSubmitTopic"
             :loading="creatingTopic"
           >
             确定

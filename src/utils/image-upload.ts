@@ -1,3 +1,4 @@
+import { ElNotification } from 'element-plus'
 import { logger } from '@/utils/logger'
 import { commonApi } from '@/api/common'
 
@@ -12,23 +13,32 @@ export class ImageUploadUtils {
    */
   static async uploadImage(filePath: string): Promise<string> {
     try {
-      if (window.utools && typeof window.utools.showNotification === 'function') {
-        window.utools.showNotification('上传中...')
-      }
+      ElNotification({
+        message: '上传中...',
+        type: 'info',
+        duration: 2000,
+        position: 'bottom-right'
+      })
 
       const imageUrl = await commonApi.uploadImg(filePath)
 
-      if (window.utools && typeof window.utools.showNotification === 'function') {
-        window.utools.showNotification('上传成功')
-      }
+      ElNotification({
+        message: '上传成功',
+        type: 'success',
+        duration: 2000,
+        position: 'bottom-right'
+      })
 
       return imageUrl
     } catch (error) {
       logger.error('图片上传失败', { error })
 
-      if (window.utools && typeof window.utools.showNotification === 'function') {
-        window.utools.showNotification('上传失败')
-      }
+      ElNotification({
+        message: '上传失败',
+        type: 'error',
+        duration: 2000,
+        position: 'bottom-right'
+      })
 
       throw error
     }

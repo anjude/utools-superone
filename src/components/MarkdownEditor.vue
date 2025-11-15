@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, watch, computed, nextTick } from 'vue'
+import { ElNotification } from 'element-plus'
 import Vditor from 'vditor'
 import '@/styles/vditor/index.css'
 import { commonApi } from '@/api/common'
@@ -239,9 +240,12 @@ onMounted(async () => {
             return ''
           } catch (error) {
             logger.error('图片上传失败', { error })
-            if (window.utools && typeof window.utools.showNotification === 'function') {
-              window.utools.showNotification('图片上传失败')
-            }
+            ElNotification({
+              message: '图片上传失败',
+              type: 'error',
+              duration: 2000,
+              position: 'bottom-right'
+            })
             throw error
           }
         },

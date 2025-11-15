@@ -3,6 +3,7 @@
  * 提供统一的表单验证逻辑
  */
 
+import { ElNotification } from 'element-plus'
 import { logger } from '@/utils/logger'
 
 /**
@@ -102,11 +103,12 @@ export const validateKeyResults = (
  */
 export const showValidationError = (message: string): void => {
   logger.warn('表单验证失败', { message })
-  if (window.utools && typeof window.utools.showNotification === 'function') {
-    window.utools.showNotification(message)
-  } else if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-    window.alert(message)
-  }
+  ElNotification({
+    message,
+    type: 'warning',
+    duration: 2000,
+    position: 'bottom-right'
+  })
 }
 
 /**
