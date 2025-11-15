@@ -6,6 +6,7 @@ import '@/styles/vditor/index.css'
 import { commonApi } from '@/api/common'
 import { logger } from '@/utils/logger'
 import CONFIG from '@/constants/config'
+import { useTheme } from '@/composables/useTheme'
 
 interface Props {
   /** markdown 源码 */
@@ -40,6 +41,9 @@ let editorContainerId: string
 const clickHandlers: Array<{ element: HTMLElement; handler: (e: Event) => void }> = []
 
 const editorContent = ref(props.modelValue)
+
+// 获取主题状态
+const { isDark } = useTheme()
 
 const editorHeight = computed(() => {
   if (typeof props.height === 'number') {
@@ -133,6 +137,16 @@ watch(
   { immediate: true }
 )
 
+// 监听主题变化，动态更新 Vditor 主题
+watch(
+  () => isDark.value,
+  (dark) => {
+    if (vditor.value) {
+      vditor.value.setTheme(dark ? 'dark' : 'classic')
+    }
+  }
+)
+
 onMounted(async () => {
   // 确保 DOM 元素已经准备好
   await nextTick()
@@ -157,6 +171,7 @@ onMounted(async () => {
       cdn: './vditor',
       height: heightValue,
       placeholder: props.placeholder || '',
+      theme: isDark.value ? 'dark' : 'classic',
       toolbar:
         props.toolbars.length > 0
           ? props.toolbars

@@ -31,4 +31,7 @@ export const CACHE_KEYS = {
 
   // 主题管理缓存
   SELECTED_TOPIC_ID: 'selected_topic_id', // 当前选中的主题ID
+
+  // 清单管理缓存
+  SELECTED_CHECKLIST_ID: 'selected_checklist_id', // 当前选中的清单ID
 } as const

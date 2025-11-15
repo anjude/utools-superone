@@ -1,0 +1,652 @@
+// ChecklistList页面样式 - 参考TopicList样式
+@use '../02-tools/mixins' as *;
+
+.p-checklist-list-wrap {
+  padding: 8px;
+  min-height: 100vh;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  @include respond-to('sm') {
+    padding: 12px;
+    gap: 12px;
+  }
+}
+
+.p-checklist-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+
+  .p-page-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+    letter-spacing: -0.02em;
+    transition: color 0.3s ease;
+  }
+
+  .p-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+}
+
+// 加载、错误、空状态
+.p-loading,
+.p-error,
+.p-empty {
+  text-align: center;
+  padding: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 14px;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.p-error {
+  color: var(--error-color);
+  opacity: 0.9;
+
+  p {
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+}
+
+// 清单选择器容器
+.p-checklists-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+// 清单选择器（可滚动）
+.p-checklists-selector {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+    
+    &:hover {
+      background: var(--primary-color);
+    }
+  }
+}
+
+.p-checklist-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
+    color: var(--primary-color);
+  }
+
+  &--active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--light);
+  }
+}
+
+.p-checklist-tag-top-icon {
+  font-size: 14px;
+  line-height: 1;
+  margin-right: 3px;
+  display: inline-block;
+}
+
+.p-checklist-tag-name {
+  font-weight: 500;
+}
+
+// 执行区域
+.p-execution-section {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+  padding: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.p-execution-header {
+  margin-bottom: 12px;
+}
+
+.p-execution-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-progress-text {
+  font-size: 13px;
+  color: var(--text-color);
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.p-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.p-progress-bar-fill {
+  height: 100%;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.p-progress-percent {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+  min-width: 40px;
+  text-align: right;
+}
+
+.p-execution-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.p-execution-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.p-execution-item {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color);
+  transition: all 0.2s ease;
+
+  &--completed {
+    background: rgba(1, 194, 96, 0.05);
+    border-color: var(--primary-color);
+    opacity: 0.8;
+  }
+}
+
+.p-execution-item-checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  .p-execution-item--completed & {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+
+  &:hover {
+    border-color: var(--primary-color);
+  }
+}
+
+.p-check-icon {
+  color: var(--light);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.p-execution-item-content {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.p-execution-item-number {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.p-execution-item-text {
+  color: var(--text-color);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.p-execution-item-notes {
+  margin-top: 8px;
+}
+
+.p-execution-item-notes-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--text-color);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+}
+
+.p-execution-summary {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.p-execution-summary-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.p-execution-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+// 执行记录区域
+.p-executions-section {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.p-executions-title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+.p-executions-loading,
+.p-executions-error,
+.p-executions-empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  font-size: 13px;
+}
+
+.p-executions-error {
+  color: var(--error-color);
+  opacity: 0.9;
+}
+
+.p-executions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.p-execution-record-item {
+  &:hover {
+    border-color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
+  }
+}
+
+.p-execution-record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.p-execution-record-time {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-record-status {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+
+  &--completed {
+    background: rgba(1, 194, 96, 0.1);
+    color: var(--primary-color);
+  }
+
+  &--in-progress {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+  }
+}
+
+.p-execution-record-progress {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.p-execution-record-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-color);
+}
+
+.p-execution-record-action-btn {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--text-color);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
+  }
+
+  &--danger {
+    &:hover {
+      border-color: var(--error-color);
+      color: var(--error-color);
+      background: rgba(245, 101, 101, 0.1);
+    }
+  }
+}
+
+// 清单编辑对话框样式
+.p-checklist-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.p-checklist-item-editor {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color);
+}
+
+.p-checklist-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.p-checklist-item-number {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-checklist-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.p-checklist-item-action-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--text-color);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+
+  &:hover:not(:disabled) {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(1, 194, 96, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  &--danger {
+    &:hover:not(:disabled) {
+      border-color: var(--error-color);
+      color: var(--error-color);
+      background: rgba(245, 101, 101, 0.1);
+    }
+  }
+}
+
+.p-checklist-add-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-checklist-limit-tip {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+// 执行记录详情样式
+.p-execution-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.p-execution-detail-info {
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--text-color);
+  }
+
+  strong {
+    font-weight: 600;
+    margin-right: 8px;
+  }
+}
+
+.p-status-completed {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.p-status-in-progress {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.p-execution-detail-steps {
+  h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+}
+
+.p-execution-detail-step {
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color);
+
+  &--skipped {
+    opacity: 0.6;
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.p-execution-detail-step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.p-execution-detail-step-number {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-execution-detail-step-status {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.p-execution-detail-step-summary {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-color);
+}
+
+.p-execution-detail-summary {
+  h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+}
+
+// 右键菜单样式（复用TopicList的样式）
+.p-context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 120px;
+  padding: 4px 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: default;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  .p-context-menu-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: rgba(1, 194, 96, 0.1);
+      color: var(--primary-color);
+    }
+
+    &--danger {
+      &:hover {
+        background: rgba(245, 101, 101, 0.1);
+        color: var(--error-color);
+      }
+    }
+
+    span {
+      display: block;
+    }
+  }
+}
+

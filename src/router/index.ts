@@ -11,11 +11,11 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/topic/:id',
-    name: 'TopicDetail',
-    component: () => import('@/views/TopicDetail.vue'),
+    path: '/checklist',
+    name: 'ChecklistList',
+    component: () => import('@/views/ChecklistList.vue'),
     meta: {
-      title: '主题详情',
+      title: '检查清单',
     },
   },
   {

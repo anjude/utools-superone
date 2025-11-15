@@ -54,6 +54,8 @@ onMounted(() => {
     // 根据 action.code 路由到对应页面
     if (action.code === 'login') {
       router.push({ name: 'Login' })
+    } else if (action.code === 'checklist') {
+      router.push({ name: 'ChecklistList' })
     } else {
       router.push({ name: 'TopicList' })
     }
