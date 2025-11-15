@@ -114,11 +114,18 @@ export function usePlanManagement(
     planFormError.value = ''
     try {
       const description = planForm.value.description?.trim()
+      // 确保 deadline 是数字类型（秒级时间戳）
+      const deadline = planForm.value.deadline
+        ? typeof planForm.value.deadline === 'string'
+          ? parseInt(planForm.value.deadline, 10)
+          : planForm.value.deadline
+        : undefined
+      
       await planStore.createTask({
         title: planForm.value.title.trim(),
         description: description || '',
         priority: planForm.value.priority,
-        deadline: planForm.value.deadline,
+        deadline,
       })
       handleCloseAddPlanDialog()
       ElNotification({
@@ -164,11 +171,18 @@ export function usePlanManagement(
     planFormError.value = ''
     try {
       const description = planForm.value.description?.trim()
+      // 确保 deadline 是数字类型（秒级时间戳）
+      const deadline = planForm.value.deadline
+        ? typeof planForm.value.deadline === 'string'
+          ? parseInt(planForm.value.deadline, 10)
+          : planForm.value.deadline
+        : undefined
+      
       await planStore.updateTask(editingTaskId.value, {
         title: planForm.value.title.trim(),
         description: description || '',
         priority: planForm.value.priority,
-        deadline: planForm.value.deadline,
+        deadline,
       })
       handleCloseAddPlanDialog()
       ElNotification({

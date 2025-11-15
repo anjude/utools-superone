@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, onUnmounted, computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MarkdownEditor, MarkdownViewer } from '@/components'
+import { MarkdownEditor } from '@/components'
 import { usePlanStore } from '@/stores/plan'
 import { usePlanManagement } from '@/composables/usePlanManagement'
 import { timestampToChineseDateTime, formatDeadline, isTaskOverdue } from '@/utils/time'
 import { TaskEnums } from '@/types/plan'
+import { ElNotification } from 'element-plus'
+import { logger } from '@/utils/logger'
+import type { RecentTask } from '@/types/plan'
 
 const { t } = useI18n()
 
@@ -56,6 +59,99 @@ const tasks = computed(() => planStore.filteredTasks)
 const loading = computed(() => planStore.loading)
 const error = computed(() => planStore.error)
 
+// 任务详情编辑状态管理
+const taskDescriptions = ref<Record<number, string>>({})
+const savingDescriptions = ref<Record<number, boolean>>({})
+const saveTimers = ref<Record<number, ReturnType<typeof setTimeout>>>({})
+
+// 初始化任务描述并同步更新
+watch(tasks, (newTasks) => {
+  newTasks.forEach((task) => {
+    // 如果任务描述在 store 中已更新，同步到本地状态
+    // 只有当本地状态为空或与 store 不一致时才更新（避免覆盖正在编辑的内容）
+    const currentDescription = taskDescriptions.value[task.id]
+    const storeDescription = task.description || ''
+    
+    if (!currentDescription || currentDescription === '') {
+      // 如果本地没有描述，使用 store 中的描述
+      taskDescriptions.value[task.id] = storeDescription
+    } else if (currentDescription !== storeDescription && !savingDescriptions.value[task.id]) {
+      // 如果本地描述与 store 不一致，且不在保存中，说明 store 已更新，同步本地
+      taskDescriptions.value[task.id] = storeDescription
+    }
+  })
+}, { immediate: true })
+
+// 防抖保存任务描述
+const saveTaskDescription = async (taskId: number) => {
+  // 清除之前的定时器
+  if (saveTimers.value[taskId]) {
+    clearTimeout(saveTimers.value[taskId])
+  }
+
+  // 设置新的定时器，1秒后保存
+  saveTimers.value[taskId] = setTimeout(async () => {
+    const newDescription = taskDescriptions.value[taskId] || ''
+    const task = tasks.value.find(t => t.id === taskId)
+    
+    // 如果内容没有变化，不保存
+    if (task && task.description === newDescription) {
+      savingDescriptions.value[taskId] = false
+      return
+    }
+
+    savingDescriptions.value[taskId] = true
+    try {
+      await planStore.updateTask(taskId, { description: newDescription })
+      logger.info('任务描述保存成功', { id: taskId })
+    } catch (err) {
+      logger.error('保存任务描述失败', { error: err, id: taskId })
+      ElNotification({
+        message: err instanceof Error ? err.message : '保存任务描述失败',
+        type: 'error',
+        duration: 2000,
+        position: 'bottom-right',
+      })
+      // 恢复原值
+      if (task) {
+        taskDescriptions.value[taskId] = task.description || ''
+      }
+    } finally {
+      savingDescriptions.value[taskId] = false
+    }
+  }, 1000)
+}
+
+// 处理任务描述变化
+const handleDescriptionChange = (taskId: number, value: string) => {
+  taskDescriptions.value[taskId] = value
+  saveTaskDescription(taskId)
+}
+
+// 直接切换任务状态（用于底部按钮）
+const handleDirectChangeStatus = async (task: RecentTask, newStatus: TaskEnums.Status) => {
+  if (task.status === newStatus) return
+  
+  try {
+    await planStore.updateTaskStatus(task.id, newStatus)
+    ElNotification({
+      message: '状态更新成功',
+      type: 'success',
+      duration: 2000,
+      position: 'bottom-right',
+    })
+    logger.info('任务状态更新成功', { id: task.id, status: newStatus })
+  } catch (err) {
+    logger.error('更新任务状态失败', { error: err, id: task.id, status: newStatus })
+    ElNotification({
+      message: err instanceof Error ? err.message : '更新状态失败',
+      type: 'error',
+      duration: 2000,
+      position: 'bottom-right',
+    })
+  }
+}
+
 // 获取状态标签的样式类
 const getStatusClass = (status: TaskEnums.Status): string => {
   const statusClassMap = {
@@ -65,6 +161,17 @@ const getStatusClass = (status: TaskEnums.Status): string => {
     [TaskEnums.Status.Cancelled]: 'cu-tag--default',
   }
   return statusClassMap[status] || 'cu-tag--default'
+}
+
+// 获取状态按钮的类名
+const getStatusButtonClass = (status: TaskEnums.Status): string => {
+  const statusClassMap = {
+    [TaskEnums.Status.Pending]: 'pending',
+    [TaskEnums.Status.InProgress]: 'in-progress',
+    [TaskEnums.Status.Completed]: 'completed',
+    [TaskEnums.Status.Cancelled]: 'cancelled',
+  }
+  return statusClassMap[status] || 'pending'
 }
 
 // 获取优先级标签的样式类
@@ -79,6 +186,16 @@ const getPriorityClass = (priority: TaskEnums.Priority): string => {
 
 onMounted(() => {
   planStore.loadTasks()
+})
+
+// 组件卸载时清理所有定时器
+onUnmounted(() => {
+  Object.values(saveTimers.value).forEach((timer) => {
+    if (timer) {
+      clearTimeout(timer)
+    }
+  })
+  saveTimers.value = {}
 })
 </script>
 
@@ -166,8 +283,18 @@ onMounted(() => {
             </div>
           </div>
           
-          <div v-if="task.description" class="p-task-description">
-            <MarkdownViewer :content="task.description" />
+          <div class="p-task-description">
+            <MarkdownEditor
+              :model-value="taskDescriptions[task.id] || task.description || ''"
+              @update:model-value="(value: string) => handleDescriptionChange(task.id, value)"
+              placeholder="点击编辑任务详情（支持 Markdown 格式）"
+              :height="'auto'"
+              :min-height="100"
+              :max-height="300"
+            />
+            <div v-if="savingDescriptions[task.id]" class="p-task-description-saving">
+              保存中...
+            </div>
           </div>
 
           <div class="p-task-footer">
@@ -178,6 +305,21 @@ onMounted(() => {
               <span class="p-task-time">{{ timestampToChineseDateTime(task.createTime) }}</span>
             </div>
             <div class="p-task-actions">
+              <div class="p-task-status-buttons">
+                <button
+                  v-for="status in statusList"
+                  :key="status.value"
+                  class="p-task-status-btn"
+                  :class="{
+                    'p-task-status-btn--active': task.status === status.value,
+                    [`p-task-status-btn--${getStatusButtonClass(status.value)}`]: true
+                  }"
+                  @click="handleDirectChangeStatus(task, status.value)"
+                  :title="`切换到${status.label}`"
+                >
+                  {{ status.label }}
+                </button>
+              </div>
               <button 
                 class="p-task-action-btn" 
                 @click="handleOpenEditPlanDialog(task)"
@@ -311,8 +453,4 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-@import '@/styles/07-pages/plan-list';
-</style>
 

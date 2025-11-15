@@ -123,11 +123,7 @@
 
 // 使用 cu-card 作为唯一卡片标准
 .p-task-item {
-  // 页面特定的悬停效果（覆盖 cu-card 默认样式）
-  &:hover {
-    border-color: var(--primary-color);
-    background: var(--primary-light);
-  }
+  // 移除悬停效果
 }
 
 .p-task-header {
@@ -164,59 +160,30 @@
 
 .p-task-description {
   margin: var(--spacing-xs) 0;
+  position: relative;
+
+  :deep(.markdown-editor-wrapper) {
+    border: var(--border-width-base) solid var(--border-color);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--transition-base);
+
+    &:hover {
+      border-color: var(--primary-color);
+    }
+  }
+}
+
+.p-task-description-saving {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-color);
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-normal);
-  word-break: break-word;
-
-  :deep(h1),
-  :deep(h2),
-  :deep(h3),
-  :deep(h4),
-  :deep(h5),
-  :deep(h6) {
-    margin: var(--spacing-6) 0 var(--spacing-3);
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-color);
-    font-size: var(--font-size-body);
-  }
-
-  :deep(p) {
-    margin: var(--spacing-3) 0;
-  }
-
-  :deep(ul),
-  :deep(ol) {
-    margin: var(--spacing-3) 0;
-    padding-left: var(--spacing-18);
-  }
-
-  :deep(li) {
-    margin: 1px 0;
-  }
-
-  :deep(code) {
-    background: var(--black-light);
-    padding: var(--spacing-2) var(--spacing-xs);
-    border-radius: var(--radius-xs);
-    font-size: 0.9em;
-  }
-
-  :deep(pre) {
-    background: var(--black-light);
-    padding: var(--spacing-xs);
-    border-radius: var(--radius-xs);
-    overflow-x: auto;
-    margin: var(--spacing-xs) 0;
-    font-size: var(--font-size-body-sm);
-  }
-
-  :deep(blockquote) {
-    border-left: var(--border-width-thick) solid var(--primary-color);
-    padding-left: var(--spacing-6);
-    margin: var(--spacing-xs) 0;
-    opacity: var(--text-opacity-hover);
-  }
+  opacity: var(--text-opacity-secondary);
+  background: var(--card-bg);
+  padding: var(--spacing-2) var(--spacing-xs);
+  border-radius: var(--radius-xs);
+  z-index: 1;
 }
 
 .p-task-footer {
@@ -257,6 +224,71 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-6);
+  flex-wrap: wrap;
+}
+
+.p-task-status-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.p-task-status-btn {
+  padding: var(--spacing-2) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  background: transparent;
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-quaternary);
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
+  }
+
+  &--active {
+    opacity: 1;
+    font-weight: var(--font-weight-medium);
+  }
+
+  &--pending {
+    &.p-task-status-btn--active {
+      border-color: var(--warning-color);
+      background: var(--warning-light);
+      color: var(--warning-color);
+    }
+  }
+
+  &--in-progress {
+    &.p-task-status-btn--active {
+      border-color: var(--info-color);
+      background: var(--info-light);
+      color: var(--info-color);
+    }
+  }
+
+  &--completed {
+    &.p-task-status-btn--active {
+      border-color: var(--success-color);
+      background: var(--success-light);
+      color: var(--success-color);
+    }
+  }
+
+  &--cancelled {
+    &.p-task-status-btn--active {
+      border-color: var(--text-color);
+      background: var(--black-light);
+      color: var(--text-color);
+    }
+  }
 }
 
 .p-task-action-btn {
