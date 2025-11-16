@@ -4,6 +4,8 @@ import { i18n } from './plugins/i18n'
 import router from './router'
 import './styles/tailwind.css'
 import './styles/main.scss'
+// 引入 Iconfont 字体图标样式
+import './styles/iconfont/iconfont.css'
 // 全局引入 Vditor 样式
 import './styles/vditor/index.css'
 // 引入 Element Plus Notification 样式

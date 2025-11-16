@@ -7,14 +7,14 @@
   },
   "features": [
     {
-      "code": "checklist",
-      "explain": "创建和管理检查清单，支持执行记录和进度跟踪",
-      "cmds": ["清单", "检查清单", "checklist"]
-    },
-    {
       "code": "topic",
       "explain": "管理主题和思考记录，支持 Markdown 编辑和日志管理",
       "cmds": ["主题", "topic"]
+    },
+    {
+      "code": "checklist",
+      "explain": "创建和管理检查清单，支持执行记录和进度跟踪",
+      "cmds": ["清单", "检查清单", "checklist"]
     },
     {
       "code": "plan",

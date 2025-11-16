@@ -3,7 +3,7 @@ import { onMounted, watch, ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { ElDialog } from 'element-plus'
-import { MarkdownEditor, MarkdownViewer } from '@/components'
+import { CuModuleNav, MarkdownEditor, MarkdownViewer } from '@/components'
 import { useChecklistStore } from '@/stores/checklist'
 import { useChecklistExecution } from '@/composables/useChecklistExecution'
 import { useChecklistManagement } from '@/composables/useChecklistManagement'
@@ -107,7 +107,11 @@ onMounted(async () => {
   <div class="p-checklist-list-wrap">
     <!-- 顶部：清单列表 -->
     <div class="p-checklist-list-header">
-      <h2 class="p-page-title">检查清单</h2>
+      <div class="p-header-left">
+        <CuModuleNav>
+          <h2 class="p-page-title">检查清单</h2>
+        </CuModuleNav>
+      </div>
       <div class="p-header-actions">
         <el-button 
           type="primary" 

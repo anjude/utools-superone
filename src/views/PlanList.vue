@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MarkdownEditor } from '@/components'
+import { CuModuleNav, MarkdownEditor } from '@/components'
 import { usePlanStore } from '@/stores/plan'
 import { usePlanManagement } from '@/composables/usePlanManagement'
 import { timestampToChineseDateTime, formatDeadline, isTaskOverdue } from '@/utils/time'
@@ -148,7 +148,7 @@ const handleDirectChangeStatus = async (task: RecentTask, newStatus: TaskEnums.S
     ElNotification({
       message: '状态更新成功',
       type: 'success',
-      duration: 2000,
+      duration: 1000,
       position: 'bottom-right',
     })
     logger.info('任务状态更新成功', { id: task.id, status: newStatus })
@@ -217,7 +217,9 @@ onUnmounted(() => {
     <!-- 顶部：标题和操作按钮 -->
     <div class="p-plan-list-header">
       <div class="p-header-left">
-        <h2 class="p-page-title">近期任务</h2>
+        <CuModuleNav>
+          <h2 class="p-page-title">近期任务</h2>
+        </CuModuleNav>
       </div>
       <div v-if="!loading && !error" class="p-header-center">
         <div class="p-status-filter">
@@ -347,13 +349,6 @@ onUnmounted(() => {
                   {{ status.label }}
                 </button>
               </div>
-              <button 
-                class="p-task-action-btn" 
-                @click="handleOpenEditPlanDialog(selectedTask!)"
-                title="编辑"
-              >
-                编辑
-              </button>
             </div>
           </div>
         </div>

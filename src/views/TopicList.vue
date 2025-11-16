@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MarkdownEditor, MarkdownViewer } from '@/components'
+import { CuModuleNav, MarkdownEditor, MarkdownViewer } from '@/components'
 import { useTopicStore } from '@/stores/topic'
 import { useTopicManagement } from '@/composables/useTopicManagement'
 import { timestampToChineseDateTime } from '@/utils/time'
@@ -99,7 +99,11 @@ onUnmounted(() => {
   <div class="p-topic-list-wrap">
     <!-- 顶部：主题列表 -->
     <div class="p-topic-list-header">
-      <h2 class="p-page-title">主题日志</h2>
+      <div class="p-header-left">
+        <CuModuleNav>
+          <h2 class="p-page-title">主题日志</h2>
+        </CuModuleNav>
+      </div>
       <div class="p-header-actions">
         <el-button 
           type="primary" 

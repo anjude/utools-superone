@@ -23,6 +23,13 @@
   margin-bottom: 0;
   border-bottom: var(--border-width-base) solid var(--border-color);
 
+  .p-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 0 0 auto;
+  }
+
   .p-page-title {
     margin: 0;
     font-size: var(--font-size-h4);
