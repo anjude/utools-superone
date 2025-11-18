@@ -21,7 +21,7 @@ const handleNavClick = (item: NavItem) => {
 
 <template>
   <el-dropdown
-    trigger="click"
+    trigger="hover"
     placement="bottom-start"
     class="cu-module-nav"
   >
