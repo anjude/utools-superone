@@ -2,9 +2,11 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { navItems, type NavItem } from '@/constants/nav-config'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 // 获取当前路由对应的导航项
 const currentNavItem = computed(() => {
@@ -16,6 +18,12 @@ const handleNavClick = (item: NavItem) => {
   if (item.name !== route.name) {
     router.push({ name: item.name })
   }
+}
+
+// 处理退出登录
+const handleLogout = () => {
+  userStore.logout()
+  router.push({ name: 'Login' })
 }
 </script>
 
@@ -42,6 +50,10 @@ const handleNavClick = (item: NavItem) => {
         >
           <i :class="item.icon" class="cu-module-nav__item-icon"></i>
           <span class="cu-module-nav__item-label">{{ item.label }}</span>
+        </el-dropdown-item>
+        <el-dropdown-item divided class="cu-module-nav__item cu-module-nav__item--logout" @click="handleLogout">
+          <i class="iconfont icon-reset cu-module-nav__item-icon"></i>
+          <span class="cu-module-nav__item-label">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </template>

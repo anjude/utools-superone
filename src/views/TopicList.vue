@@ -1,15 +1,19 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { CuModuleNav, MarkdownEditor, MarkdownViewer } from '@/components'
 import { useTopicStore } from '@/stores/topic'
+import { useUserStore } from '@/stores/user'
 import { useTopicManagement } from '@/composables/useTopicManagement'
 import { timestampToChineseDateTime } from '@/utils/time'
 
 const { t } = useI18n()
+const router = useRouter()
 
 // 初始化 store 和 composable
 const topicStore = useTopicStore()
+const userStore = useUserStore()
 const {
   // 编辑主题弹窗状态
   showAddTopicDialog,
@@ -64,6 +68,16 @@ const selectedTopicId = computed(() => topicStore.selectedTopicId)
 const logs = computed(() => topicStore.logs)
 const logsLoading = computed(() => topicStore.logsLoading)
 const logsError = computed(() => topicStore.logsError)
+const isLoggedIn = computed(() => userStore.isLoggedIn)
+
+// 跳转到登录页
+const handleLogin = () => {
+  // 保存当前路由，登录后返回
+  router.push({
+    name: 'Login',
+    query: { redirect: router.currentRoute.value.fullPath },
+  })
+}
 
 // 编辑器容器引用
 const editorSectionRef = ref<HTMLElement | null>(null)
@@ -105,6 +119,14 @@ onUnmounted(() => {
         </CuModuleNav>
       </div>
       <div class="p-header-actions">
+        <el-button 
+          v-if="!isLoggedIn"
+          type="primary" 
+          size="small"
+          @click="handleLogin"
+        >
+          登录
+        </el-button>
         <el-button 
           type="primary" 
           size="small"

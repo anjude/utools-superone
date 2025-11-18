@@ -115,6 +115,20 @@
   white-space: nowrap;
 }
 
+// 退出登录项特殊样式
+.cu-module-nav__item--logout {
+  color: var(--text-danger, #f56c6c);
+  
+  .cu-module-nav__item-icon {
+    color: var(--text-danger, #f56c6c);
+  }
+  
+  &:hover {
+    background-color: var(--bg-danger-light, rgba(245, 108, 108, 0.1));
+    color: var(--text-danger, #f56c6c);
+  }
+}
+
 // ============================================
 // Element Plus 下拉菜单样式覆盖
 // ============================================

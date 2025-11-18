@@ -91,6 +91,14 @@ const getTokenAndNavigate = async (code: string) => {
       // 保存token到缓存并同步更新 userStore
       userStore.setToken(tokenRes.data.jwtToken)
       
+      // 获取用户信息，确保 isLoggedIn 变为 true
+      try {
+        await userStore.fetchUserInfo()
+      } catch (error) {
+        console.error('获取用户信息失败:', error)
+        // 即使获取用户信息失败，也继续登录流程
+      }
+      
       // 清除定时器
       if (jwtInterval) {
         clearInterval(jwtInterval)
