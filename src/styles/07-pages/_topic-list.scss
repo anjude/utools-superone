@@ -130,9 +130,7 @@
   white-space: nowrap;
 
   &:hover {
-    border-color: var(--primary-color);
-    background: var(--primary-light);
-    color: var(--primary-color);
+    transform: scale(0.98);
   }
 
   &--active {
@@ -177,7 +175,7 @@
 
   &:hover {
     opacity: 1 !important;
-    background: var(--primary-light-strong);
+    background: var(--black-light);
   }
 
   .p-topic-tag--active & {
@@ -240,9 +238,10 @@
 // 注意：在 Vue 文件中需要使用 cu-card cu-card--small 类
 .p-log-item {
   // 页面特定的悬停效果（覆盖 cu-card 默认样式）
+  transition: transform var(--transition-base);
+  
   &:hover {
-    border-color: var(--primary-color);
-    background: var(--primary-light);
+    transform: scale(0.99);
   }
 }
 
@@ -337,16 +336,13 @@
 
   &:hover {
     opacity: 1;
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    background: var(--primary-light);
+    transform: scale(0.95);
   }
 
   &--danger {
     &:hover {
-      border-color: var(--error-color);
-      color: var(--error-color);
-      background: var(--error-danger-light);
+      opacity: 1;
+      transform: scale(0.95);
     }
   }
 }
@@ -373,14 +369,12 @@
     transition: background-color var(--transition-base);
 
     &:hover {
-      background: var(--primary-light);
-      color: var(--primary-color);
+      transform: scale(0.98);
     }
 
     &--danger {
       &:hover {
-        background: var(--error-danger-light);
-        color: var(--error-color);
+        transform: scale(0.98);
       }
     }
 

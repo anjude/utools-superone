@@ -35,6 +35,7 @@ export const CACHE_KEYS = {
   SELECTED_TOPIC_ID: 'selected_topic_id', // 当前选中的主题ID
   LOCAL_TOPICS: 'local_topics', // 本地存储的 topics 数组
   LOCAL_TOPIC_LOGS: 'local_topic_logs', // 本地存储的 topic logs 数组
+  DEFAULT_TOPIC_INITIALIZED: 'default_topic_initialized', // 是否已初始化默认主题
 
   // 标的管理缓存
   SELECTED_STOCK_ID: 'selected_stock_id', // 当前选中的标的ID

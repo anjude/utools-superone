@@ -7,6 +7,9 @@ import { useTopicStore } from '@/stores/topic'
 import { useUserStore } from '@/stores/user'
 import { useTopicManagement } from '@/composables/useTopicManagement'
 import { timestampToChineseDateTime } from '@/utils/time'
+import { TopicEnums } from '@/constants/enums'
+import { CacheManager } from '@/utils/cache-manager'
+import { CACHE_KEYS } from '@/stores/cache'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -97,8 +100,85 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
   }
 }
 
-onMounted(() => {
-  topicStore.loadTopics()
+// 初始化默认主题（未登录且没有主题时）
+const initDefaultTopic = async () => {
+  // 只在未登录且本地模式下初始化
+  if (!isLoggedIn.value && topicStore.isLocalMode && topics.value.length === 0) {
+    // 检查是否已经初始化过
+    const hasInitialized = CacheManager.get<boolean>(CACHE_KEYS.DEFAULT_TOPIC_INITIALIZED, false, false)
+    if (hasInitialized) {
+      return
+    }
+
+    try {
+      // 创建"版本日志"主题
+      const defaultTopic = await topicStore.createTopic({
+        topicName: '版本日志(右键删除)',
+        description: '欢迎使用豆流便签！这里记录版本更新和功能介绍。',
+      })
+
+      // 创建功能介绍日志
+      if (defaultTopic.id) {
+        await topicStore.createLog({
+          topicId: defaultTopic.id,
+          topicType: TopicEnums.TopicType.Topic,
+          content: `# 欢迎使用豆流便签！
+
+豆流便签（SuperOne）是一款集成多种实用工具的 uTools 插件，帮助你在 PC 端和手机端高效管理日常工作与思考。
+
+## 📝 核心功能模块
+
+### 1. 主题管理
+- 使用 Markdown 记录思考与知识
+- 支持时间线日志管理
+- 快速记录想法，随时回顾
+
+### 2. 检查清单
+- 创建和管理检查清单
+- 支持执行记录和进度跟踪
+- 确保重要事项不遗漏
+
+### 3. 任务计划
+- 管理近期任务
+- 支持任务创建、编辑、状态流转和删除
+- 清晰掌握工作进度
+
+### 4. 投资标的
+- 管理股票信息
+- 记录和跟踪投资思考
+- 辅助投资决策
+
+## 🔒 核心特性
+
+- **字段级数据加密**：每个敏感字段独立加密，数据库无明文存储
+- **跨平台同步**：uTools + 微信小程序无缝互通，一个账号全平台使用
+- **微信登录**：无需注册，支持多设备同时使用
+
+## 🚀 快速开始
+
+1. 点击右上角「登录」按钮，使用微信扫码登录
+2. 登录后，本地数据会自动同步到云端
+3. 创建主题，使用 Markdown 记录想法
+4. 在微信小程序中搜索「豆流便签」，随时查看和编辑
+
+---
+
+**提示**：未登录时，数据会保存在UTools存储。登录后会自动同步到云端，你可以在任何设备上访问你的数据。`,
+        })
+
+        // 标记已初始化
+        CacheManager.set(CACHE_KEYS.DEFAULT_TOPIC_INITIALIZED, true, false)
+      }
+    } catch (error) {
+      console.error('初始化默认主题失败:', error)
+    }
+  }
+}
+
+onMounted(async () => {
+  await topicStore.loadTopics()
+  // 初始化默认主题（如果需要）
+  await initDefaultTopic()
   // 添加全局键盘事件监听
   document.addEventListener('keydown', handleEditorKeydown)
 })
