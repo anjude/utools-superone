@@ -392,7 +392,7 @@ onUnmounted(() => {
             }"
           />
         </el-form-item>
-        <el-form-item label="任务描述">
+        <el-form-item label="任务描述" label-position="top">
           <MarkdownEditor
             v-model="planForm.description"
             placeholder="请输入任务描述（可选，支持 Markdown 格式）"

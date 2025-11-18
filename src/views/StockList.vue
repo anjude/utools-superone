@@ -339,7 +339,7 @@ onUnmounted(() => {
       @close="handleCloseEditLogDialog"
     >
       <el-form :model="{ content: editLogContent }" label-width="80px">
-        <el-form-item label="记录内容" required>
+        <el-form-item label="记录内容" required label-position="top">
           <MarkdownEditor
             v-model="editLogContent"
             placeholder="请输入思考记录内容（支持 Markdown 格式）"

@@ -205,7 +205,7 @@ onUnmounted(() => {
           size="small"
           @click="handleLogin"
         >
-          登录
+          登录丨多端同步
         </el-button>
         <el-button 
           type="primary" 
@@ -263,7 +263,7 @@ onUnmounted(() => {
           @click="handleSaveLog"
           :disabled="!canSave"
         >
-          {{ saving ? '保存中...' : '保存' }}
+          {{ saving ? '保存中...' : '保存日志' }}
         </button>
       </div>
     </div>
@@ -338,7 +338,7 @@ onUnmounted(() => {
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="主题描述">
+        <el-form-item label="主题描述" label-position="top">
           <MarkdownEditor
             v-model="topicForm.description"
             placeholder="请输入主题描述（可选，支持 Markdown 格式）"
@@ -376,7 +376,7 @@ onUnmounted(() => {
       @close="handleCloseEditLogDialog"
     >
       <el-form :model="{ content: editLogContent }" label-width="80px">
-        <el-form-item label="日志内容" required>
+        <el-form-item label="日志内容" required label-position="top">
           <MarkdownEditor
             v-model="editLogContent"
             placeholder="请输入日志内容（支持 Markdown 格式）"
