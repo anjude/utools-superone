@@ -245,6 +245,43 @@
   }
 }
 
+.p-log-content-wrapper {
+  position: relative;
+}
+
+.p-log-mark-icon {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-tertiary);
+
+  &:hover {
+    opacity: 1;
+    background: var(--black-light);
+    transform: scale(1.1);
+  }
+
+  &--empty {
+    opacity: var(--text-opacity-quaternary);
+
+    &:hover {
+      opacity: var(--text-opacity-secondary);
+    }
+  }
+}
+
 .p-log-content {
   color: var(--text-color);
   font-size: var(--font-size-md);

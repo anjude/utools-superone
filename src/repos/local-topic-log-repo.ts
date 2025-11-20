@@ -2,7 +2,7 @@ import { CacheManager } from '@/utils/cache-manager'
 import { CACHE_KEYS } from '@/stores/cache'
 import { logger } from '@/utils/logger'
 import { getCurrentTimestamp } from '@/utils/time'
-import type { ITopicLog, ITopicLogFormData, TopicLogListItem, TopicType } from '@/types/topic'
+import type { ITopicLog, ITopicLogFormData, TopicLogListItem, TopicType, TopicLogMark } from '@/types/topic'
 import { validateTopicLog } from '@/types/topic'
 import { TopicEnums } from '@/constants/enums'
 
@@ -142,7 +142,7 @@ export class LocalTopicLogRepo {
         topicId: data.topicId,
         content: data.content,
         extraData: data.extraData,
-        mark: data.mark ?? TopicEnums.TopicLogMark.Normal,
+        mark: (data.mark ?? 0) as TopicLogMark, // 默认未标记
         createTime: now,
         updateTime: now,
       }

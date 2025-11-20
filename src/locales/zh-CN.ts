@@ -14,7 +14,7 @@ export default {
     info: '提示'
   },
   login: {
-    title: '登录',
+    title: '免注册同步',
     scanning: '正在获取登录二维码...',
     clickToLogin: '点击下方按钮开始登录',
     loginSuccess: '登录成功！',

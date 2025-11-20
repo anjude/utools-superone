@@ -8,6 +8,8 @@ import { useUserStore } from '@/stores/user'
 import { useTopicManagement } from '@/composables/useTopicManagement'
 import { timestampToChineseDateTime } from '@/utils/time'
 import { TopicEnums } from '@/constants/enums'
+import { ElIcon } from 'element-plus'
+import { Flag } from '@element-plus/icons-vue'
 import { CacheManager } from '@/utils/cache-manager'
 import { CACHE_KEYS } from '@/stores/cache'
 
@@ -54,6 +56,7 @@ const {
   // 日志操作
   handleCopyLog,
   handleDeleteLog,
+  handleToggleMark,
   // 右键菜单方法
   handleContextMenu,
   handleDeleteTopic,
@@ -291,7 +294,30 @@ onUnmounted(() => {
       <div v-else-if="logs.length === 0" class="p-logs-empty">暂无日志</div>
       <ul v-else class="p-logs-list">
         <li v-for="log in logs" :key="log.id" class="cu-card cu-card--small p-log-item">
-          <MarkdownViewer :content="log.content" class="p-log-content" />
+          <div class="p-log-content-wrapper">
+            <!-- 标记图标 - 右上角 -->
+            <button
+              v-if="(log.mark || 0) & TopicEnums.TopicLogMark.Normal"
+              class="p-log-mark-icon"
+              @click.stop="handleToggleMark(log)"
+              title="取消标记"
+            >
+              <ElIcon :size="16" color="#ff9f0a">
+                <Flag />
+              </ElIcon>
+            </button>
+            <button
+              v-else
+              class="p-log-mark-icon p-log-mark-icon--empty"
+              @click.stop="handleToggleMark(log)"
+              title="标记"
+            >
+              <ElIcon :size="16" color="#999">
+                <Flag />
+              </ElIcon>
+            </button>
+            <MarkdownViewer :content="log.content" class="p-log-content" />
+          </div>
           <div class="p-log-meta">
             <span class="p-log-time">{{ timestampToChineseDateTime(log.createTime) }}</span>
             <div class="p-log-actions">

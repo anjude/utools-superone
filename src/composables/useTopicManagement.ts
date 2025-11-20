@@ -299,6 +299,32 @@ export function useTopicManagement(
     }
   }
 
+  // 切换日志标记
+  const handleToggleMark = async (log: TopicLogListItem) => {
+    try {
+      const currentMark = log.mark || 0
+      const isMarked = (currentMark & TopicEnums.TopicLogMark.Normal) > 0
+      const newMark = isMarked
+        ? currentMark & ~TopicEnums.TopicLogMark.Normal // 清除标记
+        : currentMark | TopicEnums.TopicLogMark.Normal // 设置标记
+
+      await topicStore.updateLog(log.id, {
+        mark: newMark,
+        topicId: log.topicId,
+        topicType: log.topicType,
+      })
+      logger.info('日志标记切换成功', { id: log.id, marked: !isMarked })
+    } catch (err) {
+      logger.error('切换日志标记失败', { error: err })
+      ElNotification({
+        message: err instanceof Error ? err.message : '切换标记失败',
+        type: 'error',
+        duration: 2000,
+        position: 'bottom-right',
+      })
+    }
+  }
+
   // 关闭右键菜单
   const closeContextMenu = () => {
     contextMenuVisible.value = false
@@ -459,6 +485,7 @@ export function useTopicManagement(
     // 日志操作
     handleCopyLog,
     handleDeleteLog,
+    handleToggleMark,
     // 右键菜单方法
     handleContextMenu,
     closeContextMenu,
