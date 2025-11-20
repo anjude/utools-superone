@@ -1,0 +1,172 @@
+// PlanDetail 页面样式
+
+.p-plan-detail-wrap {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.p-plan-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.p-loading,
+.p-error {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-color-secondary, #666);
+}
+
+.p-plan-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.p-task-info-card {
+  padding: 20px;
+}
+
+.p-task-header {
+  margin-bottom: 16px;
+}
+
+.p-task-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-task-top-icon {
+  font-size: 20px;
+}
+
+.p-task-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.p-task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--text-color-secondary, #666);
+}
+
+.p-task-deadline--overdue {
+  color: var(--color-danger, #f56c6c);
+  font-weight: 500;
+}
+
+.p-task-description {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color, #e4e7ed);
+}
+
+.p-log-editor-card {
+  padding: 20px;
+}
+
+.p-log-editor-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.p-log-editor-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.p-logs-section {
+  margin-top: 20px;
+}
+
+.p-logs-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.p-logs-loading,
+.p-logs-error,
+.p-logs-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-color-secondary, #666);
+}
+
+.p-logs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.p-log-item {
+  padding: 16px;
+}
+
+.p-log-content {
+  margin-bottom: 12px;
+}
+
+.p-log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color-light, #f0f0f0);
+}
+
+.p-log-time {
+  font-size: 12px;
+  color: var(--text-color-secondary, #999);
+}
+
+.p-log-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.p-log-action-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid var(--border-color, #dcdfe6);
+  background: var(--bg-color, #fff);
+  color: var(--text-color, #606266);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background: var(--bg-color-hover, #f5f7fa);
+  }
+
+  &--danger {
+    color: var(--color-danger, #f56c6c);
+    border-color: var(--color-danger, #f56c6c);
+
+    &:hover {
+      background: var(--color-danger-light, #fef0f0);
+    }
+  }
+}
+
+.p-edit-log-error {
+  margin-top: 12px;
+}
+

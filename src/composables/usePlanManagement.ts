@@ -1,4 +1,5 @@
 import { ref, computed, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import type { RecentTask, RecentTaskForm } from '@/types/plan'
 import { TaskEnums } from '@/types/plan'
@@ -7,6 +8,9 @@ import { logger } from '@/utils/logger'
 import { validateTextField, validatePriority, validateForm } from '@/utils/form-validation'
 import { CacheManager } from '@/utils/cache-manager'
 import { CACHE_KEYS } from '@/stores/cache'
+import { TopicLogRepo } from '@/repos/topic-log-repo'
+import { TopicEnums } from '@/constants/enums'
+import { formatDeadline } from '@/utils/time'
 
 /**
  * 计划管理 Composable
@@ -15,6 +19,7 @@ import { CACHE_KEYS } from '@/stores/cache'
 export function usePlanManagement(
   planStore: ReturnType<typeof import('@/stores/plan').usePlanStore>
 ) {
+  const router = useRouter()
   // 编辑任务弹窗相关状态
   const showAddPlanDialog = ref(false)
   const editingTaskId = ref<number | null>(null)
@@ -488,6 +493,80 @@ export function usePlanManagement(
     return priorityMap[priority] || '未知'
   }
 
+  // 跳转到任务详情页
+  const handleNavigateToDetail = () => {
+    if (!contextMenuTask.value) return
+    closeContextMenu()
+    router.push({ name: 'PlanDetail', params: { id: contextMenuTask.value.id } })
+    logger.info('跳转到任务详情页', { id: contextMenuTask.value.id })
+  }
+
+  // 保存快照
+  const handleSaveSnapshot = async () => {
+    if (!contextMenuTask.value) return
+
+    const task = contextMenuTask.value
+    const taskId = task.id
+
+    try {
+      // 格式化任务详情为 markdown
+      const snapshotContent = formatTaskSnapshot(task)
+      
+      // 创建日志
+      await TopicLogRepo.create({
+        topicType: TopicEnums.TopicType.RecentTask,
+        topicId: taskId,
+        content: snapshotContent
+      })
+      
+      closeContextMenu()
+      logger.info('任务快照保存成功', { taskId })
+      ElNotification({
+        message: '快照保存成功',
+        type: 'success',
+        duration: 2000,
+        position: 'bottom-right',
+      })
+    } catch (err) {
+      logger.error('任务快照保存失败', { error: err, taskId })
+      ElNotification({
+        message: err instanceof Error ? err.message : '保存失败',
+        type: 'error',
+        duration: 2000,
+        position: 'bottom-right',
+      })
+    }
+  }
+
+  // 格式化任务详情为 markdown
+  const formatTaskSnapshot = (taskData: RecentTask): string => {
+    const lines: string[] = []
+    
+    lines.push('# 任务快照')
+    lines.push('')
+    lines.push(`**标题**: ${taskData.title || '-'}`)
+    lines.push(`**状态**: ${getStatusLabel(taskData.status)}`)
+    lines.push(`**优先级**: ${getPriorityLabel(taskData.priority)}`)
+    
+    if (taskData.deadline) {
+      lines.push(`**截止日期**: ${formatDeadline(taskData.deadline)}`)
+    } else {
+      lines.push('**截止日期**: 无')
+    }
+    
+    lines.push('')
+    lines.push('**描述**:')
+    if (taskData.description) {
+      lines.push('')
+      lines.push(taskData.description)
+    } else {
+      lines.push('')
+      lines.push('暂无描述')
+    }
+    
+    return lines.join('\n')
+  }
+
   return {
     // 编辑任务弹窗状态
     showAddPlanDialog,
@@ -534,6 +613,9 @@ export function usePlanManagement(
     // 工具方法
     getStatusLabel,
     getPriorityLabel,
+    // 右键菜单新增方法
+    handleNavigateToDetail,
+    handleSaveSnapshot,
   }
 }
 

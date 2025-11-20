@@ -388,6 +388,29 @@
   flex-wrap: nowrap;
 }
 
+.p-task-detail-jump-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--text-color);
+  background: transparent;
+  border: var(--border-width-base) solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  opacity: var(--text-opacity-quaternary);
+
+  &:hover {
+    opacity: 1;
+    transform: scale(0.95);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+}
+
 .p-task-status-buttons {
   display: flex;
   align-items: center;
@@ -501,6 +524,12 @@
     span {
       display: block;
     }
+  }
+
+  .p-context-menu-divider {
+    height: 1px;
+    margin: var(--spacing-xs) 0;
+    background: var(--border-color);
   }
 }
 

@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { CuModuleNav, MarkdownEditor } from '@/components'
 import { usePlanStore } from '@/stores/plan'
 import { usePlanManagement } from '@/composables/usePlanManagement'
 import { timestampToChineseDateTime, formatDeadline, isTaskOverdue } from '@/utils/time'
 import { TaskEnums } from '@/types/plan'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElIcon } from 'element-plus'
+import { ArrowRight } from '@element-plus/icons-vue'
 import { logger } from '@/utils/logger'
 import type { RecentTask } from '@/types/plan'
 
 const { t } = useI18n()
+const router = useRouter()
 
 // 初始化 store 和 composable
 const planStore = usePlanStore()
@@ -51,6 +54,9 @@ const {
   handleDeleteTask,
   handlePinTask,
   handleUnpinTask,
+  // 右键菜单新增方法
+  handleNavigateToDetail,
+  handleSaveSnapshot,
   // 刷新
   handleRefresh,
   // 工具方法
@@ -319,13 +325,6 @@ onUnmounted(() => {
               >
                 {{ getPriorityLabel(selectedTask!.priority) }}优先级
               </span>
-              <span 
-                class="cu-tag cu-tag--small cu-tag--status"
-                :class="getStatusClass(selectedTask!.status)"
-                @click.stop="handleOpenStatusMenu($event, selectedTask!)"
-              >
-                {{ getStatusLabel(selectedTask!.status) }}
-              </span>
             </div>
             <div class="p-task-detail-info">
               <span v-if="selectedTask!.deadline" class="p-task-detail-deadline" :class="{ 'p-task-detail-deadline--overdue': isTaskOverdue(selectedTask!.deadline, selectedTask!.completed) }">
@@ -349,6 +348,15 @@ onUnmounted(() => {
                   {{ status.label }}
                 </button>
               </div>
+              <button
+                class="p-task-detail-jump-btn"
+                @click="router.push({ name: 'PlanDetail', params: { id: selectedTask!.id } })"
+                title="跳转到详情页"
+              >
+                <ElIcon :size="16">
+                  <ArrowRight />
+                </ElIcon>
+              </button>
             </div>
           </div>
         </div>
@@ -429,6 +437,21 @@ onUnmounted(() => {
       :style="{ left: `${contextMenuPosition.x}px`, top: `${contextMenuPosition.y}px` }"
       @click.stop
     >
+      <div 
+        v-if="contextMenuTask"
+        class="p-context-menu-item" 
+        @click="handleNavigateToDetail"
+      >
+        <span>跳转详情</span>
+      </div>
+      <div 
+        v-if="contextMenuTask"
+        class="p-context-menu-item" 
+        @click="handleSaveSnapshot"
+      >
+        <span>保存快照</span>
+      </div>
+      <div class="p-context-menu-divider"></div>
       <div 
         v-if="contextMenuTask && contextMenuTask.top > 0"
         class="p-context-menu-item" 

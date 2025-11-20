@@ -183,6 +183,7 @@ export namespace TopicEnums {
     Stock = 2, // 标的思考
     Item = 3, // 物品日志
     Feedback = 4, // 用户反馈
+    RecentTask = 5, // 近期任务
   }
 
   // 主题日志标记位枚举
